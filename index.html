@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ReproStats — R Infrastructure for Rigorous Data Science</title>
-  <meta name="description" content="Open-source R packages and consulting for reproducible, regulation-ready pharmaceutical data science.">
+  <title>ReproStats — Open-Source R for Rigorous Pharma Statistics</title>
+  <meta name="description" content="Open-source R packages for reproducible, regulation-ready pharmaceutical data science. reproducr, bayprior, regulog, lineager, estimandr.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Serif:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
@@ -12,25 +12,25 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --ink:       #0c1119;
-      --ink-mid:   #37404f;
-      --ink-soft:  #68717f;
-      --ink-faint: #9aa2ae;
-      --rule:      #d8dce8;
-      --rule-soft: #eceef5;
-      --bg:        #f5f7fc;
-      --bg-card:   #ffffff;
-      --bg-alt:    #eef1f9;
-      --accent:    #1a56db;
-      --accent-lt: #e5ecfb;
-      --accent-dim: rgba(26,86,219,0.08);
-      --green:     #0a7a4a;
-      --green-lt:  #e5f5ed;
-      --orange:    #c45a00;
-      --orange-lt: #fef0e5;
-      --mono:      'IBM Plex Mono', monospace;
-      --sans:      'IBM Plex Sans', sans-serif;
-      --serif:     'IBM Plex Serif', serif;
+      --ink:        #0c1119;
+      --ink-mid:    #37404f;
+      --ink-soft:   #68717f;
+      --ink-faint:  #9aa2ae;
+      --rule:       #d8dce8;
+      --rule-soft:  #eceef5;
+      --bg:         #f5f7fc;
+      --bg-card:    #ffffff;
+      --bg-alt:     #eef1f9;
+      --accent:     #1a56db;
+      --accent-lt:  #e5ecfb;
+      --accent-dim: rgba(26,86,219,0.07);
+      --green:      #0a7a4a;
+      --green-lt:   #e5f5ed;
+      --orange:     #c45a00;
+      --orange-lt:  #fef0e5;
+      --mono:       'IBM Plex Mono', monospace;
+      --sans:       'IBM Plex Sans', sans-serif;
+      --serif:      'IBM Plex Serif', serif;
     }
 
     html { scroll-behavior: smooth; }
@@ -42,69 +42,56 @@
       font-size: 16px;
       line-height: 1.65;
       overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
     }
+
+    a { text-decoration: none; color: inherit; }
 
     /* ─── NAV ─── */
     nav {
       position: sticky;
       top: 0;
       z-index: 100;
-      background: rgba(245,247,252,0.88);
+      background: rgba(245,247,252,0.90);
       backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--rule);
       padding: 0 2.5rem;
       height: 62px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 1.5rem;
     }
 
     .nav-logo {
       font-family: var(--mono);
-      font-size: 1.0625rem;
+      font-size: 1rem;
       font-weight: 500;
       color: var(--ink);
-      text-decoration: none;
       letter-spacing: -0.01em;
     }
     .nav-logo span { color: var(--accent); }
 
     .nav-links {
       display: flex;
-      gap: 2rem;
+      gap: 1.75rem;
       list-style: none;
       align-items: center;
     }
     .nav-links a {
       color: var(--ink-mid);
-      text-decoration: none;
       font-size: 0.875rem;
-      font-weight: 400;
       transition: color 0.2s;
     }
     .nav-links a:hover { color: var(--ink); }
 
-    .nav-gh {
-      font-family: var(--mono);
-      font-size: 0.8rem;
-      color: var(--ink-mid);
-      text-decoration: none;
-      border: 1px solid var(--rule);
-      padding: 0.375rem 0.875rem;
-      border-radius: 4px;
-      transition: border-color 0.2s, color 0.2s;
-    }
-    .nav-gh:hover { border-color: var(--ink-mid); color: var(--ink); }
-
     .nav-cta {
       font-size: 0.875rem;
       font-weight: 500;
-      color: var(--bg-card);
+      color: #fff;
       background: var(--accent);
       padding: 0.4375rem 1.125rem;
       border-radius: 4px;
-      text-decoration: none;
       transition: background 0.2s, transform 0.2s;
     }
     .nav-cta:hover { background: #1648c0; transform: translateY(-1px); }
@@ -113,11 +100,9 @@
     .hero {
       padding: 5.5rem 2.5rem 4.5rem;
       border-bottom: 1px solid var(--rule);
-      position: relative;
-      overflow: hidden;
     }
 
-    .hero-grid {
+    .hero-inner {
       max-width: 1120px;
       margin: 0 auto;
       display: grid;
@@ -142,7 +127,6 @@
       display: block;
       width: 1.5rem; height: 1px;
       background: var(--accent);
-      flex-shrink: 0;
     }
 
     h1 {
@@ -151,13 +135,10 @@
       font-weight: 300;
       line-height: 1.12;
       color: var(--ink);
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.375rem;
       letter-spacing: -0.01em;
     }
-    h1 em {
-      font-style: italic;
-      color: var(--accent);
-    }
+    h1 em { font-style: italic; color: var(--accent); }
 
     .hero-sub {
       font-size: 1.0625rem;
@@ -168,11 +149,7 @@
       max-width: 480px;
     }
 
-    .hero-actions {
-      display: flex;
-      gap: 0.875rem;
-      flex-wrap: wrap;
-    }
+    .hero-actions { display: flex; gap: 0.875rem; flex-wrap: wrap; }
 
     .btn-primary {
       background: var(--accent);
@@ -181,7 +158,6 @@
       border-radius: 4px;
       font-size: 0.9375rem;
       font-weight: 500;
-      text-decoration: none;
       transition: background 0.2s, transform 0.2s;
     }
     .btn-primary:hover { background: #1648c0; transform: translateY(-1px); }
@@ -192,8 +168,6 @@
       padding: 0.8125rem 1.75rem;
       border-radius: 4px;
       font-size: 0.9375rem;
-      font-weight: 400;
-      text-decoration: none;
       transition: border-color 0.2s, color 0.2s;
     }
     .btn-outline:hover { border-color: var(--ink-mid); color: var(--ink); }
@@ -203,10 +177,9 @@
       background: var(--ink);
       border-radius: 10px;
       overflow: hidden;
-      box-shadow: 0 24px 64px rgba(12,17,25,0.18), 0 2px 8px rgba(12,17,25,0.1);
+      box-shadow: 0 24px 64px rgba(12,17,25,0.16), 0 2px 8px rgba(12,17,25,0.08);
       font-family: var(--mono);
     }
-
     .terminal-bar {
       background: #1e2530;
       padding: 0.75rem 1rem;
@@ -215,54 +188,35 @@
       gap: 0.5rem;
       border-bottom: 1px solid rgba(255,255,255,0.06);
     }
-
-    .t-dot {
-      width: 12px; height: 12px;
-      border-radius: 50%;
-    }
+    .t-dot { width: 12px; height: 12px; border-radius: 50%; }
     .t-dot-r { background: #ff5f57; }
     .t-dot-y { background: #febc2e; }
     .t-dot-g { background: #28c840; }
-
-    .terminal-label {
-      font-size: 0.7rem;
-      color: rgba(255,255,255,0.3);
+    .t-bar-label {
+      font-size: 0.68rem;
+      color: rgba(255,255,255,0.28);
       letter-spacing: 0.08em;
       margin-left: auto;
     }
-
     .terminal-body {
-      padding: 1.625rem 1.5rem;
-      font-size: 0.8125rem;
+      padding: 1.5rem;
+      font-size: 0.8rem;
       line-height: 1.85;
-      min-height: 280px;
+      min-height: 260px;
     }
-
     .t-line { display: flex; gap: 0.625rem; min-height: 1.5em; }
     .t-prompt { color: #00c8a8; flex-shrink: 0; }
-    .t-cmd { color: #e0e8f0; }
-    .t-fn  { color: #79b8ff; }
-    .t-str { color: #9ecbff; }
-    .t-out { color: #64a87e; padding-left: 1.25rem; }
-    .t-ok  { color: #28c840; }
-    .t-warn { color: #febc2e; }
-    .t-comment { color: rgba(255,255,255,0.3); }
-
-    .cursor {
-      display: inline-block;
-      width: 8px; height: 1em;
-      background: #00c8a8;
-      vertical-align: middle;
-      animation: blink 1s step-end infinite;
-    }
-
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50%       { opacity: 0; }
-    }
+    .t-cmd    { color: #e0e8f0; }
+    .t-fn     { color: #79b8ff; }
+    .t-str    { color: #9ecbff; }
+    .t-out    { color: #64a87e; padding-left: 1.125rem; }
+    .t-ok     { color: #28c840; }
+    .t-comment{ color: rgba(255,255,255,0.28); }
+    .cursor   { display: inline-block; width: 8px; height: 1em; background: #00c8a8; vertical-align: middle; animation: blink 1s step-end infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
 
     /* ─── HERO STATS ─── */
-    .hero-stats-bar {
+    .hero-stats-row {
       max-width: 1120px;
       margin: 0 auto;
       padding-top: 3rem;
@@ -271,28 +225,20 @@
       gap: 3rem;
       flex-wrap: wrap;
     }
-
-    .hstat { }
     .hstat-num {
       font-family: var(--mono);
       font-size: 1.375rem;
       font-weight: 500;
       color: var(--ink);
+      margin-bottom: 0.125rem;
     }
-    .hstat-label {
-      font-size: 0.8rem;
-      color: var(--ink-faint);
-      margin-top: 0.125rem;
-    }
+    .hstat-label { font-size: 0.78rem; color: var(--ink-faint); }
 
     /* ─── SHARED ─── */
     .section { padding: 6rem 2.5rem; }
     .section-alt { background: var(--bg-alt); }
 
-    .container {
-      max-width: 1120px;
-      margin: 0 auto;
-    }
+    .container { max-width: 1120px; margin: 0 auto; }
 
     .eyebrow {
       font-family: var(--mono);
@@ -301,7 +247,11 @@
       letter-spacing: 0.18em;
       text-transform: uppercase;
       margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
     }
+    .eyebrow::before { content:''; display:block; width:1.5rem; height:1px; background:var(--accent); }
 
     .section-h {
       font-family: var(--serif);
@@ -323,7 +273,7 @@
     }
 
     /* ─── PACKAGES ─── */
-    .packages-grid {
+    .pkg-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 1.25rem;
@@ -335,7 +285,6 @@
       border-radius: 8px;
       padding: 2rem;
       transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
-      position: relative;
     }
     .pkg-card:hover {
       border-color: #b4c6f0;
@@ -347,8 +296,8 @@
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
-      margin-bottom: 0.75rem;
       gap: 1rem;
+      margin-bottom: 0.75rem;
     }
 
     .pkg-name {
@@ -358,25 +307,20 @@
       color: var(--ink);
     }
 
-    .pkg-badge {
+    .pkg-badges { display: flex; gap: 0.375rem; flex-wrap: wrap; }
+
+    .badge {
       font-family: var(--mono);
-      font-size: 0.64rem;
+      font-size: 0.62rem;
       font-weight: 500;
       letter-spacing: 0.06em;
-      padding: 0.25rem 0.625rem;
+      padding: 0.2rem 0.55rem;
       border-radius: 3px;
       flex-shrink: 0;
     }
-    .badge-cran {
-      background: var(--green-lt);
-      color: var(--green);
-      border: 1px solid rgba(10,122,74,0.2);
-    }
-    .badge-dev {
-      background: var(--orange-lt);
-      color: var(--orange);
-      border: 1px solid rgba(196,90,0,0.2);
-    }
+    .badge-cran   { background: var(--green-lt); color: var(--green); border: 1px solid rgba(10,122,74,0.2); }
+    .badge-dev    { background: var(--orange-lt); color: var(--orange); border: 1px solid rgba(196,90,0,0.18); }
+    .badge-shiny  { background: #f0e8ff; color: #6b21a8; border: 1px solid rgba(107,33,168,0.2); }
 
     .pkg-desc {
       font-size: 0.9rem;
@@ -385,136 +329,127 @@
       margin-bottom: 1.25rem;
     }
 
-    .pkg-features {
+    .pkg-feats {
       list-style: none;
       margin-bottom: 1.5rem;
     }
-    .pkg-features li {
+    .pkg-feats li {
       font-size: 0.8125rem;
       color: var(--ink-soft);
-      padding: 0.2rem 0;
-      padding-left: 1rem;
+      padding: 0.2rem 0 0.2rem 1rem;
       position: relative;
     }
-    .pkg-features li::before {
+    .pkg-feats li::before {
       content: '→';
       position: absolute;
       left: 0;
       color: var(--accent);
       font-family: var(--mono);
-      font-size: 0.7rem;
+      font-size: 0.68rem;
     }
 
     .pkg-install {
       background: var(--ink);
       color: #00c8a8;
       font-family: var(--mono);
-      font-size: 0.75rem;
+      font-size: 0.73rem;
       padding: 0.625rem 0.875rem;
       border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      cursor: default;
-      transition: background 0.2s;
+      margin-bottom: 0.875rem;
+      user-select: all;
     }
-    .pkg-install:hover { background: #1e2530; }
-
-    .pkg-install-prompt { color: rgba(255,255,255,0.3); }
+    .pkg-install .prompt { color: rgba(255,255,255,0.3); }
 
     .pkg-link {
       font-size: 0.8125rem;
       color: var(--accent);
-      text-decoration: none;
       font-weight: 500;
-      margin-top: 0.875rem;
       display: inline-block;
     }
     .pkg-link:hover { text-decoration: underline; }
 
-    /* ─── CONSULTING ─── */
-    .consulting-grid {
+    /* ─── BRIDGE TO REPROSIA ─── */
+    .reprosia-bridge {
+      background: var(--ink);
+      padding: 5rem 2.5rem;
+    }
+    .bridge-inner {
+      max-width: 1120px;
+      margin: 0 auto;
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.25rem;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
     }
-
-    .consult-card {
-      background: var(--bg-card);
-      border: 1px solid var(--rule);
-      border-radius: 8px;
-      padding: 1.75rem;
-      transition: border-color 0.25s, box-shadow 0.25s;
-    }
-    .consult-card:hover {
-      border-color: #b4c6f0;
-      box-shadow: 0 4px 20px rgba(26,86,219,0.06);
-    }
-
-    .consult-num {
+    .bridge-label {
       font-family: var(--mono);
-      font-size: 0.68rem;
-      color: var(--accent);
-      letter-spacing: 0.12em;
+      font-size: 0.7rem;
+      color: rgba(0,200,168,0.7);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+    }
+    .bridge-label::before { content:''; display:block; width:1.5rem; height:1px; background:rgba(0,200,168,0.7); }
+
+    .bridge-h {
+      font-family: var(--serif);
+      font-size: clamp(1.75rem, 3vw, 2.5rem);
+      font-weight: 300;
+      color: #dce9f8;
+      line-height: 1.2;
       margin-bottom: 1rem;
     }
+    .bridge-h em { font-style: italic; color: #00c8a8; }
 
-    .consult-card h3 {
-      font-family: var(--serif);
-      font-size: 1.1875rem;
-      font-weight: 400;
+    .bridge-p {
+      font-size: 0.9375rem;
+      color: rgba(220,233,248,0.65);
+      line-height: 1.8;
+      font-weight: 300;
+      margin-bottom: 2rem;
+    }
+
+    .btn-teal {
+      background: #00c8a8;
       color: var(--ink);
-      margin-bottom: 0.625rem;
-      line-height: 1.3;
+      padding: 0.875rem 2rem;
+      border-radius: 4px;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      display: inline-block;
+      transition: transform 0.2s, box-shadow 0.25s;
+    }
+    .btn-teal:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,200,168,0.35);
     }
 
-    .consult-card p {
-      font-size: 0.875rem;
-      color: var(--ink-mid);
-      line-height: 1.7;
-    }
-
-    /* ─── WHO WE WORK WITH ─── */
-    .who-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.25rem;
-    }
-
-    .who-card {
-      background: var(--bg-card);
-      border: 1px solid var(--rule);
-      border-radius: 8px;
-      padding: 2rem 1.75rem;
-      border-top: 3px solid var(--accent);
-    }
-
-    .who-card h3 {
-      font-family: var(--serif);
-      font-size: 1.1875rem;
-      font-weight: 400;
-      color: var(--ink);
-      margin-bottom: 0.875rem;
-    }
-
-    .who-list {
+    .bridge-features {
       list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 1.125rem;
     }
-    .who-list li {
-      font-size: 0.875rem;
-      color: var(--ink-mid);
-      padding: 0.25rem 0;
-      padding-left: 1rem;
-      position: relative;
+    .bridge-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      font-size: 0.9rem;
+      color: rgba(220,233,248,0.65);
+      line-height: 1.6;
     }
-    .who-list li::before {
-      content: '—';
-      position: absolute;
-      left: 0;
-      color: var(--ink-faint);
+    .bridge-features li::before {
+      content: '→';
+      color: #00c8a8;
       font-family: var(--mono);
+      font-size: 0.75rem;
+      flex-shrink: 0;
+      margin-top: 0.1rem;
     }
+    .bridge-features strong { color: #dce9f8; font-weight: 500; }
 
     /* ─── ABOUT ─── */
     .about-layout {
@@ -533,6 +468,7 @@
     }
     .about-prose p:last-child { margin-bottom: 0; }
     .about-prose strong { color: var(--ink); font-weight: 500; }
+    .about-prose a { color: var(--accent); }
 
     .about-stats {
       display: grid;
@@ -546,7 +482,6 @@
       border-radius: 8px;
       padding: 1.5rem;
     }
-
     .astat-num {
       font-family: var(--mono);
       font-size: 1.75rem;
@@ -554,67 +489,7 @@
       color: var(--accent);
       margin-bottom: 0.375rem;
     }
-
-    .astat-label {
-      font-size: 0.8125rem;
-      color: var(--ink-soft);
-      line-height: 1.45;
-    }
-
-    /* ─── REPROSIA STRIP ─── */
-    .reprosia-strip {
-      background: var(--ink);
-      padding: 4rem 2.5rem;
-      text-align: center;
-    }
-
-    .reprosia-strip .strip-label {
-      font-family: var(--mono);
-      font-size: 0.7rem;
-      color: rgba(0,200,168,0.7);
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      margin-bottom: 1rem;
-    }
-
-    .reprosia-strip h2 {
-      font-family: var(--serif);
-      font-size: clamp(1.875rem, 3vw, 2.625rem);
-      font-weight: 300;
-      color: #dce9f8;
-      margin-bottom: 1rem;
-      line-height: 1.2;
-    }
-
-    .reprosia-strip h2 em {
-      font-style: italic;
-      color: #00c8a8;
-    }
-
-    .reprosia-strip p {
-      font-size: 1rem;
-      color: rgba(220,233,248,0.6);
-      max-width: 480px;
-      margin: 0 auto 2rem;
-      line-height: 1.7;
-      font-weight: 300;
-    }
-
-    .btn-teal {
-      background: #00c8a8;
-      color: var(--ink);
-      padding: 0.875rem 2rem;
-      border-radius: 4px;
-      font-size: 0.9375rem;
-      font-weight: 600;
-      text-decoration: none;
-      transition: transform 0.2s, box-shadow 0.25s;
-      display: inline-block;
-    }
-    .btn-teal:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(0,200,168,0.35);
-    }
+    .astat-label { font-size: 0.8125rem; color: var(--ink-soft); line-height: 1.45; }
 
     /* ─── CTA STRIP ─── */
     .cta-strip {
@@ -623,7 +498,6 @@
       border-bottom: 1px solid var(--rule);
       padding: 3.5rem 2.5rem;
     }
-
     .cta-strip-inner {
       max-width: 1120px;
       margin: 0 auto;
@@ -633,32 +507,16 @@
       gap: 2rem;
       flex-wrap: wrap;
     }
-
     .cta-strip h2 {
       font-family: var(--serif);
       font-size: 1.75rem;
       font-weight: 300;
       color: var(--ink);
-      max-width: 440px;
     }
     .cta-strip h2 em { font-style: italic; color: var(--accent); }
-
-    .cta-strip-right {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 0.625rem;
-    }
-
-    .cta-strip-email {
-      font-family: var(--mono);
-      font-size: 0.8125rem;
-      color: var(--ink-soft);
-    }
-    .cta-strip-email a {
-      color: var(--accent);
-      text-decoration: none;
-    }
+    .cta-right { display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem; }
+    .cta-email { font-family: var(--mono); font-size: 0.8rem; color: var(--ink-soft); }
+    .cta-email a { color: var(--accent); }
 
     /* ─── FOOTER ─── */
     footer {
@@ -670,65 +528,40 @@
       flex-wrap: wrap;
       gap: 1rem;
     }
-
-    .footer-logo {
-      font-family: var(--mono);
-      font-size: 0.9375rem;
-      font-weight: 500;
-      color: var(--ink-mid);
-      text-decoration: none;
-    }
+    .footer-logo { font-family: var(--mono); font-size: 0.9375rem; font-weight: 500; color: var(--ink-mid); }
     .footer-logo span { color: var(--accent); }
-
-    .footer-links {
-      display: flex;
-      gap: 1.75rem;
-      list-style: none;
-    }
-    .footer-links a {
-      font-size: 0.8125rem;
-      color: var(--ink-faint);
-      text-decoration: none;
-      transition: color 0.2s;
-    }
+    .footer-links { display: flex; gap: 1.75rem; list-style: none; }
+    .footer-links a { font-size: 0.8125rem; color: var(--ink-faint); transition: color 0.2s; }
     .footer-links a:hover { color: var(--ink-mid); }
-
-    .footer-copy {
-      font-family: var(--mono);
-      font-size: 0.7rem;
-      color: var(--ink-faint);
-    }
+    .footer-copy { font-family: var(--mono); font-size: 0.7rem; color: var(--ink-faint); }
 
     /* ─── ANIMATIONS ─── */
-    .reveal {
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.65s ease, transform 0.65s ease;
-    }
+    .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.65s ease, transform 0.65s ease; }
     .reveal.in { opacity: 1; transform: translateY(0); }
-    .reveal-delay-1 { transition-delay: 0.1s; }
-    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-d1 { transition-delay: 0.08s; }
+    .reveal-d2 { transition-delay: 0.16s; }
+    .reveal-d3 { transition-delay: 0.24s; }
+    .reveal-d4 { transition-delay: 0.32s; }
+    .reveal-d5 { transition-delay: 0.40s; }
 
-    /* ─── MOBILE ─── */
+    /* ─── RESPONSIVE ─── */
     @media (max-width: 900px) {
-      .hero-grid { grid-template-columns: 1fr; }
-      .packages-grid { grid-template-columns: 1fr; }
-      .consulting-grid { grid-template-columns: 1fr; }
-      .who-grid { grid-template-columns: 1fr; }
+      .hero-inner { grid-template-columns: 1fr; }
+      .pkg-grid { grid-template-columns: 1fr; }
       .about-layout { grid-template-columns: 1fr; gap: 2rem; }
-      .about-stats { grid-template-columns: 1fr 1fr; }
+      .bridge-inner { grid-template-columns: 1fr; gap: 2.5rem; }
       .cta-strip-inner { flex-direction: column; align-items: flex-start; }
-      .cta-strip-right { align-items: flex-start; }
+      .cta-right { align-items: flex-start; }
       .nav-links { display: none; }
     }
-
     @media (max-width: 480px) {
       nav { padding: 0 1.25rem; }
       .hero { padding: 4rem 1.25rem 3rem; }
       .section { padding: 4rem 1.25rem; }
-      .reprosia-strip { padding: 3rem 1.25rem; }
+      .reprosia-bridge { padding: 3.5rem 1.25rem; }
       .cta-strip { padding: 2.5rem 1.25rem; }
       footer { padding: 1.5rem 1.25rem; flex-direction: column; align-items: flex-start; }
+      .about-stats { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -739,31 +572,26 @@
   <a href="/" class="nav-logo">repro<span>stats</span>.org</a>
   <ul class="nav-links">
     <li><a href="#packages">Packages</a></li>
-    <li><a href="#consulting">Consulting</a></li>
     <li><a href="#about">About</a></li>
-    <li><a href="https://reprosia.com" target="_blank">Reprosia ↗</a></li>
-    <li><a href="https://github.com/repro-stats" class="nav-gh">GitHub</a></li>
+    <li><a href="https://reprosia.com" target="_blank" rel="noopener">Reprosia ↗</a></li>
+    <li><a href="https://github.com/repro-stats" target="_blank" rel="noopener">GitHub</a></li>
   </ul>
-  <a href="mailto:hello@reprostats.org" class="nav-cta">Get in touch</a>
+  <a href="https://reprosia.com" class="nav-cta" target="_blank" rel="noopener">Enterprise platform →</a>
 </nav>
 
 <!-- ─── HERO ─── -->
 <section class="hero">
-  <div class="hero-grid">
+  <div class="hero-inner">
     <div>
-      <div class="hero-eyebrow">Open-source R infrastructure</div>
-      <h1>
-        Rigorous by<br>
-        <em>design.</em>
-      </h1>
+      <div class="hero-eyebrow">Open-source R packages</div>
+      <h1>Rigorous by<br><em>design.</em></h1>
       <p class="hero-sub">
-        Open-source R packages and consulting for reproducible,
-        regulation-ready pharmaceutical data science. Built for
-        GxP environments and regulatory submissions.
+        Five R packages covering the full lifecycle of regulated pharmaceutical statistics —
+        reproducibility, Bayesian analysis, audit logging, data provenance, and estimand specification.
       </p>
       <div class="hero-actions">
         <a href="#packages" class="btn-primary">Explore packages</a>
-        <a href="#consulting" class="btn-outline">Consulting services</a>
+        <a href="https://github.com/repro-stats" class="btn-outline" target="_blank" rel="noopener">View on GitHub</a>
       </div>
     </div>
     <div>
@@ -772,38 +600,18 @@
           <div class="t-dot t-dot-r"></div>
           <div class="t-dot t-dot-y"></div>
           <div class="t-dot t-dot-g"></div>
-          <span class="terminal-label">R console</span>
+          <span class="t-bar-label">R console</span>
         </div>
-        <div class="terminal-body" id="term-body">
-          <div class="t-line">
-            <span class="t-prompt">&gt;</span>
-            <span class="t-cmd">library(<span class="t-fn">reproducr</span>)</span>
-          </div>
-        </div>
+        <div class="terminal-body" id="term-body"></div>
       </div>
     </div>
   </div>
-  <div class="hero-stats-bar">
-    <div class="hstat">
-      <div class="hstat-num">0.2.1</div>
-      <div class="hstat-label">reproducr on CRAN</div>
-    </div>
-    <div class="hstat">
-      <div class="hstat-num">35+</div>
-      <div class="hstat-label">audit trail entries</div>
-    </div>
-    <div class="hstat">
-      <div class="hstat-num">4</div>
-      <div class="hstat-label">packages in the ecosystem</div>
-    </div>
-    <div class="hstat">
-      <div class="hstat-num">97%</div>
-      <div class="hstat-label">test coverage</div>
-    </div>
-    <div class="hstat">
-      <div class="hstat-num">21 CFR</div>
-      <div class="hstat-label">Part 11 compliant</div>
-    </div>
+  <div class="hero-stats-row">
+    <div><div class="hstat-num">5</div><div class="hstat-label">packages on CRAN or in development</div></div>
+    <div><div class="hstat-num">2</div><div class="hstat-label">packages live on CRAN</div></div>
+    <div><div class="hstat-num">97%</div><div class="hstat-label">test coverage</div></div>
+    <div><div class="hstat-num">21 CFR</div><div class="hstat-label">Part 11 compliant</div></div>
+    <div><div class="hstat-num">FDA 2026</div><div class="hstat-label">Bayesian guidance aligned</div></div>
   </div>
 </section>
 
@@ -812,229 +620,167 @@
   <div class="container">
     <div class="eyebrow">R packages</div>
     <h2 class="section-h">The ReproStats<br><em>ecosystem.</em></h2>
-    <p class="section-p">Four packages covering the full lifecycle of regulated R analysis — from audit and certification to estimand specification and data provenance.</p>
-    <div class="packages-grid">
+    <p class="section-p">Five packages covering reproducibility infrastructure, Bayesian prior methodology, audit logging, data provenance, and estimand specification — designed from the ground up for regulated pharma environments.</p>
 
+    <div class="pkg-grid">
+
+      <!-- reproducr -->
       <div class="pkg-card reveal">
         <div class="pkg-header">
           <span class="pkg-name">reproducr</span>
-          <span class="pkg-badge badge-cran">On CRAN</span>
+          <div class="pkg-badges"><span class="badge badge-cran">CRAN</span></div>
         </div>
-        <p class="pkg-desc">The foundation. Audit, certify, and monitor R scripts and environments for reproducibility in regulated settings. Automates 21 CFR Part 11 compliance for your R analyses.</p>
-        <ul class="pkg-features">
+        <p class="pkg-desc">The reproducibility foundation. Audit, certify, and monitor R scripts and environments for regulated settings. Automates 21 CFR Part 11 compliance for your analyses.</p>
+        <ul class="pkg-feats">
           <li>Script-level audit trail with cryptographic hash</li>
           <li>Risk scoring for regulatory compliance</li>
           <li>Environment certification and lockfiles</li>
           <li>Drift detection across analysis runs</li>
         </ul>
-        <div class="pkg-install">
-          <span><span class="pkg-install-prompt">&gt; </span>install.packages("reproducr")</span>
-        </div>
-        <a href="https://github.com/repro-stats/reproducr" class="pkg-link">Docs &amp; source →</a>
+        <div class="pkg-install"><span class="prompt">&gt; </span>install.packages("reproducr")</div>
+        <a href="https://github.com/repro-stats/reproducr" class="pkg-link" target="_blank" rel="noopener">Docs &amp; source →</a>
       </div>
 
-      <div class="pkg-card reveal reveal-delay-1">
+      <!-- bayprior -->
+      <div class="pkg-card reveal reveal-d1">
+        <div class="pkg-header">
+          <span class="pkg-name">bayprior</span>
+          <div class="pkg-badges">
+            <span class="badge badge-cran">CRAN</span>
+            <span class="badge badge-shiny">Shiny app</span>
+          </div>
+        </div>
+        <p class="pkg-desc">Structured Bayesian prior elicitation, conflict diagnostics, sensitivity analysis, and regulatory reporting for clinical trials. Aligned with the FDA 2026 draft guidance on Bayesian methods.</p>
+        <ul class="pkg-feats">
+          <li>SHELF-style prior elicitation across 6 distribution families</li>
+          <li>Prior-data conflict diagnostics (Box p-value, Bhattacharyya)</li>
+          <li>Sensitivity analysis with tornado plots and influence heatmaps</li>
+          <li>Regulatory-ready prior justification reports (HTML/PDF/Word)</li>
+          <li>Interactive Shiny application for non-programmers</li>
+        </ul>
+        <div class="pkg-install"><span class="prompt">&gt; </span>install.packages("bayprior")</div>
+        <a href="https://ndohpenngit.github.io/bayprior/" class="pkg-link" target="_blank" rel="noopener">Docs &amp; source →</a>
+      </div>
+
+      <!-- regulog -->
+      <div class="pkg-card reveal reveal-d2">
         <div class="pkg-header">
           <span class="pkg-name">regulog</span>
-          <span class="pkg-badge badge-dev">In development</span>
+          <div class="pkg-badges"><span class="badge badge-dev">In development</span></div>
         </div>
-        <p class="pkg-desc">Electronic audit logging for R, built to 21 CFR Part 11 standards. Provides structured, tamper-evident logging of all analytical actions with timestamps and user attribution.</p>
-        <ul class="pkg-features">
+        <p class="pkg-desc">Electronic audit logging for R, built to 21 CFR Part 11 standards. Tamper-evident, user-attributed, timestamp-verified logging of all analytical actions.</p>
+        <ul class="pkg-feats">
           <li>Immutable audit log with digital signatures</li>
-          <li>User-attributed action tracking</li>
+          <li>User-attributed action tracking with timestamps</li>
           <li>Structured output for regulatory review</li>
-          <li>Integration with reproducr audit trail</li>
+          <li>Deep integration with reproducr</li>
         </ul>
-        <div class="pkg-install">
-          <span><span class="pkg-install-prompt">&gt; </span>remotes::install_github("repro-stats/regulog")</span>
-        </div>
-        <a href="https://github.com/repro-stats/regulog" class="pkg-link">View on GitHub →</a>
+        <div class="pkg-install"><span class="prompt">&gt; </span>remotes::install_github("repro-stats/regulog")</div>
+        <a href="https://github.com/repro-stats/regulog" class="pkg-link" target="_blank" rel="noopener">View on GitHub →</a>
       </div>
 
-      <div class="pkg-card reveal">
+      <!-- lineager -->
+      <div class="pkg-card reveal reveal-d3">
         <div class="pkg-header">
           <span class="pkg-name">lineager</span>
-          <span class="pkg-badge badge-dev">In development</span>
+          <div class="pkg-badges"><span class="badge badge-dev">In development</span></div>
         </div>
-        <p class="pkg-desc">Row-level data provenance for clinical datasets. Track every transformation, filter, and derivation applied to your data from raw input to analysis-ready ADaM datasets.</p>
-        <ul class="pkg-features">
+        <p class="pkg-desc">Row-level data provenance for clinical datasets. Track every transformation from raw SDTM input to analysis-ready ADaM datasets with full traceability.</p>
+        <ul class="pkg-feats">
           <li>Row-level transformation tracking</li>
           <li>SDTM to ADaM derivation audit trail</li>
           <li>Visual provenance graph generation</li>
           <li>CDISC-compatible lineage documentation</li>
         </ul>
-        <div class="pkg-install">
-          <span><span class="pkg-install-prompt">&gt; </span>remotes::install_github("repro-stats/lineager")</span>
-        </div>
-        <a href="https://github.com/repro-stats/lineager" class="pkg-link">View on GitHub →</a>
+        <div class="pkg-install"><span class="prompt">&gt; </span>remotes::install_github("repro-stats/lineager")</div>
+        <a href="https://github.com/repro-stats/lineager" class="pkg-link" target="_blank" rel="noopener">View on GitHub →</a>
       </div>
 
-      <div class="pkg-card reveal reveal-delay-1">
+      <!-- estimandr -->
+      <div class="pkg-card reveal reveal-d4" style="grid-column: 1 / -1; max-width: 560px;">
         <div class="pkg-header">
           <span class="pkg-name">estimandr</span>
-          <span class="pkg-badge badge-dev">In development</span>
+          <div class="pkg-badges"><span class="badge badge-dev">In development</span></div>
         </div>
-        <p class="pkg-desc">ICH E9(R1) estimand framework for R. Define, document, and implement your estimand strategy — population, variable, intercurrent events, summary measure — directly in R.</p>
-        <ul class="pkg-features">
+        <p class="pkg-desc">ICH E9(R1) estimand framework for R. Define, document, and implement your estimand strategy — population, variable, intercurrent events, summary measure — directly in your analysis pipeline. Pairs naturally with bayprior for Bayesian estimand analyses.</p>
+        <ul class="pkg-feats">
           <li>Structured estimand specification objects</li>
           <li>Intercurrent event strategy documentation</li>
           <li>SAP-ready estimand output tables</li>
-          <li>Integration with common clinical trial packages</li>
+          <li>Integrates with clinical trial analysis packages</li>
         </ul>
-        <div class="pkg-install">
-          <span><span class="pkg-install-prompt">&gt; </span>remotes::install_github("repro-stats/estimandr")</span>
-        </div>
-        <a href="https://github.com/repro-stats/estimandr" class="pkg-link">View on GitHub →</a>
+        <div class="pkg-install"><span class="prompt">&gt; </span>remotes::install_github("repro-stats/estimandr")</div>
+        <a href="https://github.com/repro-stats/estimandr" class="pkg-link" target="_blank" rel="noopener">View on GitHub →</a>
       </div>
 
     </div>
   </div>
 </section>
 
-<!-- ─── CONSULTING ─── -->
-<section class="section section-alt" id="consulting">
-  <div class="container">
-    <div class="eyebrow">Consulting services</div>
-    <h2 class="section-h">Expert support for<br><em>regulated R environments.</em></h2>
-    <p class="section-p">We work directly with pharma, biotech, and CRO teams to implement reproducible, compliant R infrastructure for clinical data science.</p>
-    <div class="consulting-grid reveal">
-
-      <div class="consult-card">
-        <div class="consult-num">01</div>
-        <h3>Regulatory R implementation</h3>
-        <p>End-to-end implementation of R in GxP environments. Validation strategy, SOPs, system validation, and ongoing compliance support for regulated settings.</p>
-      </div>
-
-      <div class="consult-card">
-        <div class="consult-num">02</div>
-        <h3>Reproducibility audits</h3>
-        <p>Independent audit of your R analysis pipeline. We identify reproducibility risks, compliance gaps, and provide a prioritised remediation roadmap.</p>
-      </div>
-
-      <div class="consult-card">
-        <div class="consult-num">03</div>
-        <h3>Package validation (IQ/OQ/PQ)</h3>
-        <p>Validation of R and R packages to pharmaceutical industry standards. Installation qualification, operational qualification, and performance qualification documentation.</p>
-      </div>
-
-      <div class="consult-card">
-        <div class="consult-num">04</div>
-        <h3>Estimand specification</h3>
-        <p>ICH E9(R1) estimand strategy for your clinical trial programme. From protocol estimand definition to SAP implementation and regulatory submission.</p>
-      </div>
-
-      <div class="consult-card">
-        <div class="consult-num">05</div>
-        <h3>SAS → R migration</h3>
-        <p>Structured migration from SAS to R in regulated environments. Equivalence testing, validation bridging, and staff transition — maintaining compliance throughout.</p>
-      </div>
-
-      <div class="consult-card">
-        <div class="consult-num">06</div>
-        <h3>Training &amp; upskilling</h3>
-        <p>Bespoke training for clinical statistics teams transitioning to R. From R fundamentals to regulatory compliance, tidyverse, and submission-ready workflows.</p>
-      </div>
-
+<!-- ─── BRIDGE TO REPROSIA ─── -->
+<div class="reprosia-bridge">
+  <div class="bridge-inner">
+    <div>
+      <div class="bridge-label">Enterprise platform</div>
+      <h2 class="bridge-h">Need more than<br>open source? <em>Reprosia.</em></h2>
+      <p class="bridge-p">
+        These packages are the open-source foundation. Reprosia is the AI-native platform
+        built on top — adding environment validation, submission tooling, and enterprise
+        workflows for regulated pharma teams.
+      </p>
+      <a href="https://reprosia.com" class="btn-teal" target="_blank" rel="noopener">Explore reprosia.com →</a>
     </div>
+    <ul class="bridge-features">
+      <li><strong>AI-powered IQ/OQ/PQ validation</strong> — automated validation documentation for FDA and EMA submissions</li>
+      <li><strong>Environment management</strong> — locked, certified R environments across your full team</li>
+      <li><strong>eCTD submission packaging</strong> — regulatory-ready output from your existing R pipelines</li>
+      <li><strong>SAS → R migration</strong> — equivalence testing and compliance-safe transition support</li>
+      <li><strong>Early access</strong> — working with a small number of pharma and biotech teams now</li>
+    </ul>
   </div>
-</section>
-
-<!-- ─── WHO WE WORK WITH ─── -->
-<section class="section">
-  <div class="container">
-    <div class="eyebrow">Who we work with</div>
-    <h2 class="section-h">Built for the teams<br><em>that cannot afford errors.</em></h2>
-    <p class="section-p">Our tools and services are designed for teams operating under regulatory scrutiny — where analysis quality is not optional.</p>
-    <div class="who-grid reveal">
-
-      <div class="who-card">
-        <h3>Pharma &amp; Biotech</h3>
-        <ul class="who-list">
-          <li>Clinical biostatisticians</li>
-          <li>Statistical programmers</li>
-          <li>Regulatory affairs teams</li>
-          <li>Data management leads</li>
-          <li>R&amp;D IT / validation teams</li>
-        </ul>
-      </div>
-
-      <div class="who-card">
-        <h3>CRO &amp; Regulatory</h3>
-        <ul class="who-list">
-          <li>Contract research organisations</li>
-          <li>Regulatory submission teams</li>
-          <li>DSMB statistical support</li>
-          <li>Pharmacovigilance teams</li>
-          <li>CMC statistics groups</li>
-        </ul>
-      </div>
-
-      <div class="who-card">
-        <h3>Academic &amp; Research</h3>
-        <ul class="who-list">
-          <li>Academic clinical trial units</li>
-          <li>Research methodology groups</li>
-          <li>Epidemiology departments</li>
-          <li>Health technology assessment</li>
-          <li>Replication &amp; meta-science teams</li>
-        </ul>
-      </div>
-
-    </div>
-  </div>
-</section>
+</div>
 
 <!-- ─── ABOUT ─── -->
 <section class="section section-alt" id="about">
   <div class="container">
     <div class="eyebrow">About ReproStats</div>
-    <h2 class="section-h">Why ReproStats<br><em>exists.</em></h2>
+    <h2 class="section-h">Why these packages<br><em>exist.</em></h2>
     <div class="about-layout reveal">
       <div class="about-prose">
-        <p>Pharmaceutical data science has a reproducibility problem. Most clinical analyses cannot be independently reproduced. Regulatory submissions fail because of undocumented environments and ad-hoc R scripts. Clinical decisions get made on results that were never designed to be verified.</p>
-        <p>ReproStats was built to fix this. We develop <strong>open-source R infrastructure</strong> that makes reproducibility and regulatory compliance the path of least resistance — not an afterthought bolted on at submission time.</p>
-        <p>Our packages are peer-reviewed, tested at 97% coverage, and designed from the ground up for GxP environments. Our consulting practice implements these tools in real clinical programmes — from Phase I to NDA submission.</p>
-        <p>ReproStats is based in <strong>Brussels, Belgium</strong>. We operate as ReproStats BV and work with pharma and biotech teams across Europe and globally. Our platform arm, <a href="https://reprosia.com" style="color:var(--accent)">Reprosia</a>, brings AI to the reproducibility challenge at scale.</p>
+        <p>Pharmaceutical data science has a reproducibility problem. Most clinical analyses cannot be independently reproduced — not because the science was wrong, but because the computational infrastructure around it was never documented properly.</p>
+        <p>ReproStats is an open-source project building the R infrastructure that makes reproducibility and regulatory compliance the path of least resistance. Five packages covering the full lifecycle: from audit and certification (<strong>reproducr</strong>, <strong>regulog</strong>) to Bayesian prior methodology (<strong>bayprior</strong>), data provenance (<strong>lineager</strong>), and estimand specification (<strong>estimandr</strong>).</p>
+        <p>All packages are peer-reviewed, openly developed on GitHub, and designed from the ground up for GxP environments. <strong>reproducr</strong> and <strong>bayprior</strong> are available on CRAN today.</p>
+        <p>ReproStats is founded by <strong>Ndoh Penn</strong>, a biostatistician based in Brussels, Belgium. The enterprise platform built on this foundation is <a href="https://reprosia.com" target="_blank" rel="noopener">Reprosia</a>.</p>
       </div>
-      <div>
-        <div class="about-stats">
-          <div class="astat">
-            <div class="astat-num">0.2.1</div>
-            <div class="astat-label">reproducr current version on CRAN</div>
-          </div>
-          <div class="astat">
-            <div class="astat-num">35+</div>
-            <div class="astat-label">database entries in the audit trail engine</div>
-          </div>
-          <div class="astat">
-            <div class="astat-num">4</div>
-            <div class="astat-label">packages in the ReproStats ecosystem</div>
-          </div>
-          <div class="astat">
-            <div class="astat-num">97%</div>
-            <div class="astat-label">test coverage across all packages</div>
-          </div>
+      <div class="about-stats">
+        <div class="astat">
+          <div class="astat-num">2</div>
+          <div class="astat-label">packages live on CRAN</div>
+        </div>
+        <div class="astat">
+          <div class="astat-num">5</div>
+          <div class="astat-label">packages in the ecosystem</div>
+        </div>
+        <div class="astat">
+          <div class="astat-num">97%</div>
+          <div class="astat-label">test coverage across packages</div>
+        </div>
+        <div class="astat">
+          <div class="astat-num">EU</div>
+          <div class="astat-label">Brussels, Belgium · GDPR compliant</div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ─── REPROSIA STRIP ─── -->
-<div class="reprosia-strip">
-  <div class="strip-label">Platform</div>
-  <h2>Take it further with <em>Reprosia</em></h2>
-  <p>Our AI-native platform brings enterprise-scale reproducibility, validation automation, and regulatory submission tooling — built on the ReproStats open-source foundation.</p>
-  <a href="https://reprosia.com" class="btn-teal">Explore Reprosia →</a>
-</div>
-
 <!-- ─── CTA ─── -->
 <div class="cta-strip">
   <div class="cta-strip-inner">
-    <h2>Ready to make your R analyses<br><em>regulation-ready?</em></h2>
-    <div class="cta-strip-right">
-      <a href="mailto:hello@reprostats.org" class="btn-primary">Get in touch</a>
-      <p class="cta-strip-email"><a href="mailto:hello@reprostats.org">hello@reprostats.org</a></p>
+    <h2>Questions, contributions,<br>or <em>collaboration?</em></h2>
+    <div class="cta-right">
+      <a href="https://github.com/repro-stats" class="btn-primary" target="_blank" rel="noopener">Open an issue on GitHub</a>
+      <p class="cta-email"><a href="mailto:ndoh@reprosia.com">ndoh@reprosia.com</a></p>
     </div>
   </div>
 </div>
@@ -1043,121 +789,93 @@
 <footer>
   <a href="/" class="footer-logo">repro<span>stats</span>.org</a>
   <ul class="footer-links">
-    <li><a href="https://github.com/repro-stats">GitHub</a></li>
-    <li><a href="https://reprosia.com">Reprosia</a></li>
-    <li><a href="mailto:hello@reprostats.org">Contact</a></li>
+    <li><a href="https://github.com/repro-stats" target="_blank" rel="noopener">GitHub</a></li>
+    <li><a href="https://ndohpenngit.github.io/bayprior/" target="_blank" rel="noopener">bayprior docs</a></li>
+    <li><a href="https://reprosia.com" target="_blank" rel="noopener">Reprosia</a></li>
+    <li><a href="mailto:ndoh@reprosia.com">Contact</a></li>
   </ul>
-  <span class="footer-copy">© 2026 ReproStats BV · Brussels, Belgium</span>
+  <span class="footer-copy">© 2026 Ndoh Penn · Brussels, Belgium</span>
 </footer>
 
 <script>
   /* ─── TERMINAL TYPEWRITER ─── */
   (function () {
     const body = document.getElementById('term-body');
-
     const lines = [
-      { type: 'cmd',  content: 'library(<fn>reproducr</fn>)' },
-      { type: 'out',  content: '✓ reproducr 0.2.1 loaded' },
+      { type: 'cmd',     text: 'library(<fn>reproducr</fn>)' },
+      { type: 'out',     text: '✓ reproducr 0.2.1 loaded' },
       { type: 'blank' },
-      { type: 'cmd',  content: 'audit_script(<str>"analysis.R"</str>)' },
-      { type: 'out',  content: '✓ 12 functions certified' },
-      { type: 'out',  content: '✓ Audit trail: 35 entries logged' },
-      { type: 'out',  content: '✓ Hash: a3f8c2d1...' },
+      { type: 'cmd',     text: 'audit_script(<str>"primary_analysis.R"</str>)' },
+      { type: 'out',     text: '✓ 18 functions certified' },
+      { type: 'out',     text: '✓ Risk score: 0.02 (low)' },
       { type: 'blank' },
-      { type: 'cmd',  content: 'risk_score()' },
-      { type: 'comment', content: '# [1] 0.02  ← low risk' },
+      { type: 'cmd',     text: 'library(<fn>bayprior</fn>)' },
+      { type: 'out',     text: '✓ bayprior 0.1.0 loaded' },
+      { type: 'cmd',     text: 'prior <- elicit_beta(mean=0.35, sd=0.10)' },
+      { type: 'out',     text: '✓ Beta(8.2, 15.2) elicited' },
       { type: 'blank' },
-      { type: 'cmd',  content: 'certify(<str>"submission"</str>)' },
-      { type: 'ok',   content: '✓ Environment locked' },
-      { type: 'ok',   content: '✓ Submission ready' },
+      { type: 'cmd',     text: 'certify(<str>"submission"</str>)' },
+      { type: 'ok',      text: '✓ Environment locked — submission ready' },
     ];
 
-    let lineIdx = 0;
-    let charIdx = 0;
-    let currentEl = null;
-    let phase = 'typing'; // typing | newline | pause
+    let li = 0, ci = 0, el = null;
 
-    function addLine(line) {
+    function stripTags(h) { return h.replace(/<[^>]+>/g, ''); }
+
+    function buildVisible(html, n) {
+      let vis = '', count = 0, i = 0;
+      while (i < html.length && count < n) {
+        if (html[i] === '<') {
+          const end = html.indexOf('>', i);
+          vis += html.slice(i, end + 1); i = end + 1;
+        } else { vis += html[i]; count++; i++; }
+      }
+      return vis;
+    }
+
+    function addRow(line) {
       const row = document.createElement('div');
       row.className = 't-line';
-      if (line.type === 'cmd') {
-        row.innerHTML = `<span class="t-prompt">&gt;</span><span class="t-cmd"></span>`;
-      } else if (line.type === 'out') {
-        row.innerHTML = `<span class="t-out"></span>`;
-      } else if (line.type === 'ok') {
-        row.innerHTML = `<span class="t-ok"></span>`;
-      } else if (line.type === 'comment') {
-        row.innerHTML = `<span class="t-comment"></span>`;
-      } else if (line.type === 'blank') {
-        body.appendChild(row);
-        return null;
-      }
+      if (line.type === 'blank') { body.appendChild(row); return null; }
+      if (line.type === 'cmd')   row.innerHTML = `<span class="t-prompt">&gt;</span><span class="t-cmd"></span>`;
+      if (line.type === 'out')   row.innerHTML = `<span class="t-out"></span>`;
+      if (line.type === 'ok')    row.innerHTML = `<span class="t-ok"></span>`;
       body.appendChild(row);
-      return row.querySelector('.t-cmd, .t-out, .t-ok, .t-comment');
+      return row.querySelector('.t-cmd,.t-out,.t-ok');
     }
 
-    function parseHTML(html) {
-      const div = document.createElement('div');
-      div.innerHTML = html;
-      return div.innerHTML; // normalized
-    }
-
-    function stripTags(html) {
-      return html.replace(/<[^>]+>/g, '');
+    function render(html, n) {
+      return buildVisible(html, n)
+        .replace(/<fn>/g, '<span class="t-fn">').replace(/<\/fn>/g, '</span>')
+        .replace(/<str>/g, '<span class="t-str">').replace(/<\/str>/g, '</span>');
     }
 
     function tick() {
-      if (lineIdx >= lines.length) return;
-
-      const line = lines[lineIdx];
-
-      if (!currentEl) {
-        currentEl = addLine(line);
-        charIdx = 0;
-        if (!currentEl) { // blank line
-          lineIdx++;
-          setTimeout(tick, 80);
-          return;
-        }
+      if (li >= lines.length) return;
+      const line = lines[li];
+      if (!el) {
+        el = addRow(line);
+        ci = 0;
+        if (!el) { li++; setTimeout(tick, 80); return; }
       }
-
-      const rawText = stripTags(line.content);
-
-      if (charIdx <= rawText.length) {
-        // Build visible text up to charIdx, preserving tags
-        let visible = '';
-        let textCount = 0;
-        let i = 0;
-        while (i < line.content.length && textCount < charIdx) {
-          if (line.content[i] === '<') {
-            const end = line.content.indexOf('>', i);
-            visible += line.content.slice(i, end + 1);
-            i = end + 1;
-          } else {
-            visible += line.content[i];
-            textCount++;
-            i++;
-          }
-        }
-        currentEl.innerHTML = visible.replace(/<fn>/g, '<span class="t-fn">').replace(/<\/fn>/g, '</span>').replace(/<str>/g, '<span class="t-str">').replace(/<\/str>/g, '</span>');
-        charIdx++;
-        setTimeout(tick, charIdx <= rawText.length ? 38 : 20);
+      const raw = stripTags(line.text);
+      if (ci <= raw.length) {
+        el.innerHTML = render(line.text, ci);
+        ci++;
+        setTimeout(tick, ci <= raw.length ? 36 : 20);
       } else {
-        lineIdx++;
-        currentEl = null;
-        setTimeout(tick, line.type === 'cmd' ? 200 : 60);
+        li++; el = null;
+        setTimeout(tick, line.type === 'cmd' ? 220 : 55);
       }
     }
 
-    // First line already in DOM; clear it and start fresh
-    body.innerHTML = '';
-    setTimeout(tick, 600);
+    setTimeout(tick, 700);
   })();
 
   /* ─── SCROLL REVEAL ─── */
   const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
-  }, { threshold: 0.1 });
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); } });
+  }, { threshold: 0.08 });
   document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 </script>
 </body>
