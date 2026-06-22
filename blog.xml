@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss  xmlns:atom="http://www.w3.org/2005/Atom" 
+      xmlns:media="http://search.yahoo.com/mrss/" 
+      xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+      xmlns:dc="http://purl.org/dc/elements/1.1/" 
+      version="2.0">
+<channel>
+<title>ReproStats</title>
+<link>https://reprostats.org/blog.html</link>
+<atom:link href="https://reprostats.org/blog.xml" rel="self" type="application/rss+xml"/>
+<description>Open-source R packages for rigorous pharma statistics</description>
+<generator>quarto-1.9.38</generator>
+<lastBuildDate>Sun, 21 Jun 2026 22:00:00 GMT</lastBuildDate>
+<item>
+  <title>Bayesian prior elicitation for clinical trials: a practical guide with bayprior</title>
+  <dc:creator>Ndoh Penn</dc:creator>
+  <link>https://reprostats.org/posts/bayesian-priors-clinical-trials/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>The FDA’s 2026 draft guidance on Bayesian statistical methods raises the bar for how sponsors justify and document their prior distributions. For teams using R, the <code>bayprior</code> package provides a structured workflow — from expert elicitation through prior-data conflict diagnostics to a submission-ready justification report.</p>
+<p>This post walks through the core workflow with practical R code. All function signatures have been verified against the <a href="https://ndohpenngit.github.io/bayprior/">package documentation</a>.</p>
+<section id="why-prior-justification-is-now-a-regulatory-concern" class="level2">
+<h2 class="anchored" data-anchor-id="why-prior-justification-is-now-a-regulatory-concern">Why prior justification is now a regulatory concern</h2>
+<p>The guidance makes explicit what was previously implicit: the prior distribution is not just a statistical choice — it is a regulatory claim that requires documented justification, sensitivity analysis, and evidence that the prior does not unduly influence the posterior in ways that conflict with the trial data.</p>
+<p>Specifically, the guidance asks sponsors to:</p>
+<ul>
+<li>Document the source and rationale for the prior</li>
+<li>Assess prior-data conflict</li>
+<li>Conduct sensitivity analyses under alternative priors</li>
+<li>Include this documentation in the SAP and submission</li>
+</ul>
+<p><code>bayprior</code> addresses each of these systematically.</p>
+</section>
+<section id="installation" class="level2">
+<h2 class="anchored" data-anchor-id="installation">Installation</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">install.packages</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"bayprior"</span>)</span>
+<span id="cb1-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(bayprior)</span></code></pre></div></div>
+</div>
+<p>An interactive Shiny app is also available:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">run_app</span>()</span></code></pre></div></div>
+</div>
+</section>
+<section id="step-1-eliciting-the-prior" class="level2">
+<h2 class="anchored" data-anchor-id="step-1-eliciting-the-prior">Step 1: Eliciting the prior</h2>
+<p><code>bayprior</code> supports moment matching, quantile matching, and the SHELF roulette method across six distribution families (Beta, Normal, Gamma, Log-Normal, Exponential, Weibull).</p>
+<p>For a binary endpoint (e.g.&nbsp;response rate), moment matching from a clinical expert’s central estimate and uncertainty:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(bayprior)</span>
+<span id="cb3-2"></span>
+<span id="cb3-3"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Expert believes: mean response ~35%, SD ~10%</span></span>
+<span id="cb3-4">prior <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">elicit_beta</span>(</span>
+<span id="cb3-5">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">mean      =</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.35</span>,</span>
+<span id="cb3-6">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">sd        =</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.10</span>,</span>
+<span id="cb3-7">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">method    =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"moments"</span>,</span>
+<span id="cb3-8">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">label     =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Response rate"</span>,</span>
+<span id="cb3-9">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">expert_id =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Expert_1"</span></span>
+<span id="cb3-10">)</span>
+<span id="cb3-11"></span>
+<span id="cb3-12"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">plot</span>(prior)</span></code></pre></div></div>
+</div>
+<p>For multi-expert pooling:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1">e1 <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">elicit_beta</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">mean =</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.30</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">sd =</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.10</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">method =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"moments"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">expert_id =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"E1"</span>)</span>
+<span id="cb4-2">e2 <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">elicit_beta</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">mean =</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.42</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">sd =</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.12</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">method =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"moments"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">expert_id =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"E2"</span>)</span>
+<span id="cb4-3"></span>
+<span id="cb4-4">agg <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aggregate_experts</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">list</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">E1 =</span> e1, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">E2 =</span> e2), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">weights =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.6</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.4</span>))</span></code></pre></div></div>
+</div>
+</section>
+<section id="step-2-prior-data-conflict-diagnostics" class="level2">
+<h2 class="anchored" data-anchor-id="step-2-prior-data-conflict-diagnostics">Step 2: Prior-data conflict diagnostics</h2>
+<p><code>prior_conflict()</code> computes four complementary diagnostics: Box’s prior predictive p-value, surprise index, Bhattacharyya overlap, and KL divergence. Binary, continuous, Poisson/count, and survival data types are all supported.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 18 responders out of 40 patients</span></span>
+<span id="cb5-2">cd <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">prior_conflict</span>(</span>
+<span id="cb5-3">  prior,</span>
+<span id="cb5-4">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">list</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">type =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"binary"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">18</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">n =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">40</span>)</span>
+<span id="cb5-5">)</span>
+<span id="cb5-6"></span>
+<span id="cb5-7"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">print</span>(cd)</span></code></pre></div></div>
+</div>
+<p>Box’s p-value close to 0 or 1 signals that the observed data are surprising under the prior predictive distribution — a flag for potential conflict.</p>
+</section>
+<section id="step-3-sensitivity-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="step-3-sensitivity-analysis">Step 3: Sensitivity analysis</h2>
+<p><code>sensitivity_grid()</code> evaluates posterior conclusions across a hyperparameter grid. <code>plot_tornado()</code> visualises the results:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1">sa <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sensitivity_grid</span>(</span>
+<span id="cb6-2">  prior,</span>
+<span id="cb6-3">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">data_summary =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">list</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">type =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"binary"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">18</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">n =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">40</span>),</span>
+<span id="cb6-4">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">param_grid   =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">list</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">alpha =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">seq</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">8</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">beta =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">seq</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">20</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)),</span>
+<span id="cb6-5">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">target       =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"posterior_mean"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"prob_efficacy"</span>),</span>
+<span id="cb6-6">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">threshold    =</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.30</span></span>
+<span id="cb6-7">)</span>
+<span id="cb6-8"></span>
+<span id="cb6-9"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">plot_tornado</span>(sa)</span></code></pre></div></div>
+</div>
+<p>This demonstrates to reviewers that conclusions are not uniquely dependent on the specific prior chosen.</p>
+</section>
+<section id="step-4-robust-and-sceptical-priors" class="level2">
+<h2 class="anchored" data-anchor-id="step-4-robust-and-sceptical-priors">Step 4: Robust and sceptical priors</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1">rob  <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">robust_prior</span>(prior, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">vague_weight =</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.20</span>)</span>
+<span id="cb7-2">scep <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sceptical_prior</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">null_value =</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.20</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">family =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"beta"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">strength =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"moderate"</span>)</span></code></pre></div></div>
+</div>
+</section>
+<section id="step-5-generating-the-regulatory-report" class="level2">
+<h2 class="anchored" data-anchor-id="step-5-generating-the-regulatory-report">Step 5: Generating the regulatory report</h2>
+<p><code>prior_report()</code> generates a self-contained prior justification document in HTML, PDF, or Word:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">prior_report</span>(</span>
+<span id="cb8-2">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">prior           =</span> prior,</span>
+<span id="cb8-3">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">conflict        =</span> cd,</span>
+<span id="cb8-4">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">sensitivity     =</span> sa,</span>
+<span id="cb8-5">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">robust_prior    =</span> rob,</span>
+<span id="cb8-6">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">sceptical_prior =</span> scep,</span>
+<span id="cb8-7">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">output_format   =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"html"</span>,</span>
+<span id="cb8-8">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">trial_name      =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"TRIAL-001"</span>,</span>
+<span id="cb8-9">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">sponsor         =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Example Pharma Ltd"</span>,</span>
+<span id="cb8-10">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">author          =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"N.P., Biostatistician"</span></span>
+<span id="cb8-11">)</span></code></pre></div></div>
+</div>
+<blockquote class="blockquote">
+<p>PDF output requires Quarto CLI and a LaTeX installation. Run <code>tinytex::install_tinytex()</code> if needed.</p>
+</blockquote>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<ul>
+<li>O’Hagan, A. et al.&nbsp;(2006). <em>Uncertain Judgements: Eliciting Experts’ Probabilities</em>. Wiley.</li>
+<li>Box, G. E. P. (1980). Sampling and Bayes’ inference in scientific modelling and robustness. <em>JRSS-A</em>, 143, 383–430.</li>
+<li>Schmidli, H. et al.&nbsp;(2014). Robust meta-analytic-predictive priors in clinical trials. <em>Biometrics</em>, 70, 1023–1032.</li>
+<li>Spiegelhalter, D. J., Freedman, L. S. &amp; Parmar, M. K. B. (1994). Bayesian approaches to randomized trials. <em>JRSS-A</em>, 157, 357–416.</li>
+<li>FDA (2026). <em>Draft Guidance: Bayesian Statistical Methods for Drug and Biological Products</em>.</li>
+</ul>
+<hr>
+<p><em>Questions or corrections: <a href="mailto:penn@reprosia.com">penn@reprosia.com</a> or <a href="https://github.com/ndohpenngit/bayprior/issues">open an issue on GitHub</a>.</em></p>
+
+
+</section>
+
+ ]]></description>
+  <category>Bayesian</category>
+  <category>bayprior</category>
+  <category>FDA 2026</category>
+  <category>Clinical trials</category>
+  <guid>https://reprostats.org/posts/bayesian-priors-clinical-trials/</guid>
+  <pubDate>Sun, 21 Jun 2026 22:00:00 GMT</pubDate>
+  <media:content url="https://reprostats.org/posts/bayesian-priors-clinical-trials/thumbnail.png" medium="image" type="image/png"/>
+</item>
+</channel>
+</rss>

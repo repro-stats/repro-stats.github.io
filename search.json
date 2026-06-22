@@ -1,0 +1,163 @@
+[
+  {
+    "objectID": "blog.html",
+    "href": "blog.html",
+    "title": "Blog",
+    "section": "",
+    "text": "Bayesian prior elicitation for clinical trials: a practical guide with bayprior\n\n\n\nBayesian\n\nbayprior\n\nFDA 2026\n\nClinical trials\n\n\n\nHow to elicit, document, and justify informative priors for regulatory submissions using the bayprior R package — aligned with FDA 2026 draft guidance.\n\n\n\n\n\nJun 22, 2026\n\n4 min\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "\n        Rigorous bydesign.\n      ",
+    "section": "",
+    "text": "Open-source R packages\n      \n      \n      \n        Five R packages covering the full lifecycle of regulated pharmaceutical statistics — reproducibility, Bayesian methodology, audit logging, data provenance, and estimand specification.\n      \n      \n        Explore packages\n        View on GitHub\n      \n    \n    \n      \n        \n          \n          \n          \n          R console\n        \n        \n      \n    \n  \n  \n    2packages on CRAN\n    5packages in the ecosystem\n    97%test coverage in reproducr\n    0.2.1reproducr latest version\n    FDA2026 Bayesian guidance aligned"
+  },
+  {
+    "objectID": "index.html#packages",
+    "href": "index.html#packages",
+    "title": "\n        Rigorous bydesign.\n      ",
+    "section": "Packages",
+    "text": "Packages\nFive openly developed packages — two on CRAN today, three in active development.\n\n\nreproducr CRAN\nThe reproducibility foundation. Audit, certify, and monitor R scripts and environments for regulated settings.\n\nScript-level audit trail with cryptographic hash\nRisk scoring and environment certification\nLockfiles and drift detection\n\ninstall.packages(\"reproducr\")\nDocs & source →\n\n\nbayprior CRAN Shiny app\nStructured Bayesian prior elicitation, conflict diagnostics, sensitivity analysis, and regulatory reporting. Aligned with FDA 2026 draft guidance.\n\nSHELF-style elicitation across 6 distribution families\nPrior-data conflict diagnostics\nRegulatory prior justification reports (HTML/PDF/Word)\n\ninstall.packages(\"bayprior\")\nDocs & source →\n\n\nregulog In development\nElectronic audit logging for R, designed around 21 CFR Part 11 requirements.\n\nImmutable audit log with digital signatures\nUser-attributed action tracking\nDeep integration with reproducr\n\nremotes::install_github(\"repro-stats/regulog\")\nView on GitHub →\n\n\nlineager In development\nRow-level data provenance for clinical datasets. Track every transformation from SDTM to ADaM.\n\nRow-level transformation tracking\nSDTM to ADaM derivation audit trail\nCDISC-compatible lineage documentation\n\nremotes::install_github(\"repro-stats/lineager\")\nView on GitHub →\n\n\nestimandr In development\nICH E9(R1) estimand framework for R. Define, document, and implement your estimand strategy directly in your analysis pipeline. Designed to pair with bayprior for Bayesian estimand analyses.\n\nStructured estimand specification objects\nIntercurrent event strategy documentation\nSAP-ready estimand output tables\n\nremotes::install_github(\"repro-stats/estimandr\")\nView on GitHub →"
+  },
+  {
+    "objectID": "index.html#about",
+    "href": "index.html#about",
+    "title": "\n        Rigorous bydesign.\n      ",
+    "section": "About",
+    "text": "About\nReproducibility in clinical analyses is harder than it should be. R environments go undocumented, package versions drift, and the steps between raw data and submission output are rarely captured in a way that supports independent verification.\nReproStats is an open-source project building the R infrastructure to address this. Five packages covering reproducibility and certification (reproducr, regulog), Bayesian prior methodology (bayprior), data provenance (lineager), and estimand specification (estimandr).\nreproducr and bayprior are on CRAN. The remaining three are in active development. All packages are openly developed on GitHub and designed for GxP environments.\nReproStats is maintained by Ndoh Penn, a biostatistician based in Brussels, Belgium. The enterprise platform built on this foundation is Reprosia.\nQuestions, contributions, or collaboration → open an issue on GitHub or penn@reprosia.com."
+  },
+  {
+    "objectID": "posts/bayesian-priors-clinical-trials/index.html",
+    "href": "posts/bayesian-priors-clinical-trials/index.html",
+    "title": "Bayesian prior elicitation for clinical trials: a practical guide with bayprior",
+    "section": "",
+    "text": "The FDA’s 2026 draft guidance on Bayesian statistical methods raises the bar for how sponsors justify and document their prior distributions. For teams using R, the bayprior package provides a structured workflow — from expert elicitation through prior-data conflict diagnostics to a submission-ready justification report.\nThis post walks through the core workflow with practical R code. All function signatures have been verified against the package documentation."
+  },
+  {
+    "objectID": "posts/bayesian-priors-clinical-trials/index.html#why-prior-justification-is-now-a-regulatory-concern",
+    "href": "posts/bayesian-priors-clinical-trials/index.html#why-prior-justification-is-now-a-regulatory-concern",
+    "title": "Bayesian prior elicitation for clinical trials: a practical guide with bayprior",
+    "section": "Why prior justification is now a regulatory concern",
+    "text": "Why prior justification is now a regulatory concern\nThe guidance makes explicit what was previously implicit: the prior distribution is not just a statistical choice — it is a regulatory claim that requires documented justification, sensitivity analysis, and evidence that the prior does not unduly influence the posterior in ways that conflict with the trial data.\nSpecifically, the guidance asks sponsors to:\n\nDocument the source and rationale for the prior\nAssess prior-data conflict\nConduct sensitivity analyses under alternative priors\nInclude this documentation in the SAP and submission\n\nbayprior addresses each of these systematically."
+  },
+  {
+    "objectID": "posts/bayesian-priors-clinical-trials/index.html#installation",
+    "href": "posts/bayesian-priors-clinical-trials/index.html#installation",
+    "title": "Bayesian prior elicitation for clinical trials: a practical guide with bayprior",
+    "section": "Installation",
+    "text": "Installation\n\ninstall.packages(\"bayprior\")\nlibrary(bayprior)\n\nAn interactive Shiny app is also available:\n\nrun_app()"
+  },
+  {
+    "objectID": "posts/bayesian-priors-clinical-trials/index.html#step-1-eliciting-the-prior",
+    "href": "posts/bayesian-priors-clinical-trials/index.html#step-1-eliciting-the-prior",
+    "title": "Bayesian prior elicitation for clinical trials: a practical guide with bayprior",
+    "section": "Step 1: Eliciting the prior",
+    "text": "Step 1: Eliciting the prior\nbayprior supports moment matching, quantile matching, and the SHELF roulette method across six distribution families (Beta, Normal, Gamma, Log-Normal, Exponential, Weibull).\nFor a binary endpoint (e.g. response rate), moment matching from a clinical expert’s central estimate and uncertainty:\n\nlibrary(bayprior)\n\n# Expert believes: mean response ~35%, SD ~10%\nprior &lt;- elicit_beta(\n  mean      = 0.35,\n  sd        = 0.10,\n  method    = \"moments\",\n  label     = \"Response rate\",\n  expert_id = \"Expert_1\"\n)\n\nplot(prior)\n\nFor multi-expert pooling:\n\ne1 &lt;- elicit_beta(mean = 0.30, sd = 0.10, method = \"moments\", expert_id = \"E1\")\ne2 &lt;- elicit_beta(mean = 0.42, sd = 0.12, method = \"moments\", expert_id = \"E2\")\n\nagg &lt;- aggregate_experts(list(E1 = e1, E2 = e2), weights = c(0.6, 0.4))"
+  },
+  {
+    "objectID": "posts/bayesian-priors-clinical-trials/index.html#step-2-prior-data-conflict-diagnostics",
+    "href": "posts/bayesian-priors-clinical-trials/index.html#step-2-prior-data-conflict-diagnostics",
+    "title": "Bayesian prior elicitation for clinical trials: a practical guide with bayprior",
+    "section": "Step 2: Prior-data conflict diagnostics",
+    "text": "Step 2: Prior-data conflict diagnostics\nprior_conflict() computes four complementary diagnostics: Box’s prior predictive p-value, surprise index, Bhattacharyya overlap, and KL divergence. Binary, continuous, Poisson/count, and survival data types are all supported.\n\n# 18 responders out of 40 patients\ncd &lt;- prior_conflict(\n  prior,\n  list(type = \"binary\", x = 18, n = 40)\n)\n\nprint(cd)\n\nBox’s p-value close to 0 or 1 signals that the observed data are surprising under the prior predictive distribution — a flag for potential conflict."
+  },
+  {
+    "objectID": "posts/bayesian-priors-clinical-trials/index.html#step-3-sensitivity-analysis",
+    "href": "posts/bayesian-priors-clinical-trials/index.html#step-3-sensitivity-analysis",
+    "title": "Bayesian prior elicitation for clinical trials: a practical guide with bayprior",
+    "section": "Step 3: Sensitivity analysis",
+    "text": "Step 3: Sensitivity analysis\nsensitivity_grid() evaluates posterior conclusions across a hyperparameter grid. plot_tornado() visualises the results:\n\nsa &lt;- sensitivity_grid(\n  prior,\n  data_summary = list(type = \"binary\", x = 18, n = 40),\n  param_grid   = list(alpha = seq(1, 8, 0.5), beta = seq(2, 20, 1)),\n  target       = c(\"posterior_mean\", \"prob_efficacy\"),\n  threshold    = 0.30\n)\n\nplot_tornado(sa)\n\nThis demonstrates to reviewers that conclusions are not uniquely dependent on the specific prior chosen."
+  },
+  {
+    "objectID": "posts/bayesian-priors-clinical-trials/index.html#step-4-robust-and-sceptical-priors",
+    "href": "posts/bayesian-priors-clinical-trials/index.html#step-4-robust-and-sceptical-priors",
+    "title": "Bayesian prior elicitation for clinical trials: a practical guide with bayprior",
+    "section": "Step 4: Robust and sceptical priors",
+    "text": "Step 4: Robust and sceptical priors\n\nrob  &lt;- robust_prior(prior, vague_weight = 0.20)\nscep &lt;- sceptical_prior(null_value = 0.20, family = \"beta\", strength = \"moderate\")"
+  },
+  {
+    "objectID": "posts/bayesian-priors-clinical-trials/index.html#step-5-generating-the-regulatory-report",
+    "href": "posts/bayesian-priors-clinical-trials/index.html#step-5-generating-the-regulatory-report",
+    "title": "Bayesian prior elicitation for clinical trials: a practical guide with bayprior",
+    "section": "Step 5: Generating the regulatory report",
+    "text": "Step 5: Generating the regulatory report\nprior_report() generates a self-contained prior justification document in HTML, PDF, or Word:\n\nprior_report(\n  prior           = prior,\n  conflict        = cd,\n  sensitivity     = sa,\n  robust_prior    = rob,\n  sceptical_prior = scep,\n  output_format   = \"html\",\n  trial_name      = \"TRIAL-001\",\n  sponsor         = \"Example Pharma Ltd\",\n  author          = \"N.P., Biostatistician\"\n)\n\n\nPDF output requires Quarto CLI and a LaTeX installation. Run tinytex::install_tinytex() if needed."
+  },
+  {
+    "objectID": "posts/bayesian-priors-clinical-trials/index.html#references",
+    "href": "posts/bayesian-priors-clinical-trials/index.html#references",
+    "title": "Bayesian prior elicitation for clinical trials: a practical guide with bayprior",
+    "section": "References",
+    "text": "References\n\nO’Hagan, A. et al. (2006). Uncertain Judgements: Eliciting Experts’ Probabilities. Wiley.\nBox, G. E. P. (1980). Sampling and Bayes’ inference in scientific modelling and robustness. JRSS-A, 143, 383–430.\nSchmidli, H. et al. (2014). Robust meta-analytic-predictive priors in clinical trials. Biometrics, 70, 1023–1032.\nSpiegelhalter, D. J., Freedman, L. S. & Parmar, M. K. B. (1994). Bayesian approaches to randomized trials. JRSS-A, 157, 357–416.\nFDA (2026). Draft Guidance: Bayesian Statistical Methods for Drug and Biological Products.\n\n\nQuestions or corrections: penn@reprosia.com or open an issue on GitHub."
+  },
+  {
+    "objectID": "blog-content/bayesian-priors-clinical-trials.html",
+    "href": "blog-content/bayesian-priors-clinical-trials.html",
+    "title": "Bayesian prior elicitation for clinical trials: a practical guide with bayprior",
+    "section": "",
+    "text": "Date: 22 Jun 2026 Author: Ndoh Penn Reading time: ~8 min Tags: Bayesian, bayprior, FDA 2026, Clinical trials\n\n\n\nThe FDA’s 2026 draft guidance on Bayesian statistical methods for drug and biological products raises the bar for how sponsors justify and document their prior distributions. For teams using R, the bayprior package provides a structured workflow that takes you from expert elicitation through prior-data conflict diagnostics to a submission-ready justification report.\nThis guide walks through the core workflow with practical R code, using verified function signatures from the package documentation. We assume basic familiarity with Bayesian methods and a regulated environment where documentation matters.\n\n\n\n\nBayesian methods have been used in clinical trials for years, but the FDA’s 2026 guidance makes explicit what was previously implicit: the prior distribution is not just a statistical choice — it is a regulatory claim that requires documented justification, sensitivity analysis, and evidence that the prior does not unduly influence the posterior in ways that conflict with the trial data.\nSpecifically, the guidance asks sponsors to:\n\nDocument the source and rationale for the prior (expert opinion, historical data, or literature)\nAssess prior-data conflict — whether the prior and the observed data are compatible\nConduct sensitivity analyses showing how conclusions change under alternative priors\nInclude this documentation in the SAP and the regulatory submission\n\nbayprior is built to address each of these requirements systematically.\n\n\n\n\ninstall.packages(\"bayprior\")\nlibrary(bayprior)\nAn interactive Shiny application is also available:\nrun_app()\n\n\n\n\nbayprior supports three elicitation methods: moment matching, quantile matching, and the SHELF roulette method — across six distribution families (Beta, Normal, Gamma, Log-Normal, Exponential, Weibull).\nThe most common scenario for a response rate is moment matching from an expert’s central estimate and uncertainty:\n# Elicit a Beta prior on a response rate\n# Expert believes: mean response ~35%, SD ~10%\nprior &lt;- elicit_beta(\n  mean      = 0.35,\n  sd        = 0.10,\n  method    = \"moments\",\n  label     = \"Response rate\",\n  expert_id = \"Expert_1\"\n)\n\nplot(prior)\nFor multi-expert pooling, bayprior supports linear and logarithmic opinion pooling with Bhattacharyya agreement diagnostics:\ne1  &lt;- elicit_beta(mean = 0.30, sd = 0.10, method = \"moments\", expert_id = \"E1\")\ne2  &lt;- elicit_beta(mean = 0.42, sd = 0.12, method = \"moments\", expert_id = \"E2\")\n\nagg &lt;- aggregate_experts(list(E1 = e1, E2 = e2), weights = c(0.6, 0.4))\n\n\n\n\nOnce trial data are available, prior_conflict() computes four complementary diagnostics: Box’s prior predictive p-value, surprise index, Bhattacharyya overlap, and KL divergence. It supports binary, continuous, Poisson/count, and survival data types.\n# Observed data: 18 responders out of 40 patients (binary endpoint)\ncd &lt;- prior_conflict(\n  prior,\n  list(type = \"binary\", x = 18, n = 40)\n)\n\nprint(cd)\nValues of Box’s p-value close to 0 or 1 indicate potential prior-data conflict — the data are surprising under the prior predictive distribution.\n\n\n\n\nsensitivity_grid() evaluates posterior conclusions across a hyperparameter grid. Results are visualised with plot_tornado():\nsa &lt;- sensitivity_grid(\n  prior,\n  data_summary = list(type = \"binary\", x = 18, n = 40),\n  param_grid   = list(alpha = seq(1, 8, 0.5), beta = seq(2, 20, 1)),\n  target       = c(\"posterior_mean\", \"prob_efficacy\"),\n  threshold    = 0.30\n)\n\nplot_tornado(sa)\nThis demonstrates to regulators that conclusions are not uniquely dependent on the specific prior chosen.\n\n\n\n\nFor regulatory sensitivity analyses, bayprior also implements robust mixture priors (Schmidli et al.) and sceptical priors (Spiegelhalter & Freedman):\nrob  &lt;- robust_prior(prior, vague_weight = 0.20)\nscep &lt;- sceptical_prior(null_value = 0.20, family = \"beta\", strength = \"moderate\")\n\n\n\n\nprior_report() generates a self-contained prior justification report in HTML, PDF, or Word format:\nprior_report(\n  prior           = prior,\n  conflict        = cd,\n  sensitivity     = sa,\n  robust_prior    = rob,\n  sceptical_prior = scep,\n  output_format   = \"html\",\n  trial_name      = \"TRIAL-001\",\n  sponsor         = \"Example Pharma Ltd\",\n  author          = \"N.P., Biostatistician\"\n)\nNote: PDF output requires Quarto CLI and a LaTeX installation (tinytex::install_tinytex()).\n\n\n\n\n\nO’Hagan, A. et al. (2006). Uncertain Judgements: Eliciting Experts’ Probabilities. Wiley.\nBox, G. E. P. (1980). Sampling and Bayes’ inference in scientific modelling and robustness. JRSS-A, 143, 383–430.\nSchmidli, H. et al. (2014). Robust meta-analytic-predictive priors in clinical trials. Biometrics, 70, 1023–1032.\nSpiegelhalter, D. J., Freedman, L. S. & Parmar, M. K. B. (1994). Bayesian approaches to randomized trials. JRSS-A, 157, 357–416.\nIbrahim, J. G. & Chen, M.-H. (2000). Power prior distributions for regression models. Statistical Science, 15, 46–60.\nFDA (2026). Draft Guidance: Bayesian Statistical Methods for Drug and Biological Products.\n\n\nQuestions or corrections: penn@reprosia.com or open an issue on GitHub."
+  },
+  {
+    "objectID": "blog-content/bayesian-priors-clinical-trials.html#introduction",
+    "href": "blog-content/bayesian-priors-clinical-trials.html#introduction",
+    "title": "Bayesian prior elicitation for clinical trials: a practical guide with bayprior",
+    "section": "",
+    "text": "The FDA’s 2026 draft guidance on Bayesian statistical methods for drug and biological products raises the bar for how sponsors justify and document their prior distributions. For teams using R, the bayprior package provides a structured workflow that takes you from expert elicitation through prior-data conflict diagnostics to a submission-ready justification report.\nThis guide walks through the core workflow with practical R code, using verified function signatures from the package documentation. We assume basic familiarity with Bayesian methods and a regulated environment where documentation matters."
+  },
+  {
+    "objectID": "blog-content/bayesian-priors-clinical-trials.html#why-prior-justification-is-now-a-regulatory-concern",
+    "href": "blog-content/bayesian-priors-clinical-trials.html#why-prior-justification-is-now-a-regulatory-concern",
+    "title": "Bayesian prior elicitation for clinical trials: a practical guide with bayprior",
+    "section": "",
+    "text": "Bayesian methods have been used in clinical trials for years, but the FDA’s 2026 guidance makes explicit what was previously implicit: the prior distribution is not just a statistical choice — it is a regulatory claim that requires documented justification, sensitivity analysis, and evidence that the prior does not unduly influence the posterior in ways that conflict with the trial data.\nSpecifically, the guidance asks sponsors to:\n\nDocument the source and rationale for the prior (expert opinion, historical data, or literature)\nAssess prior-data conflict — whether the prior and the observed data are compatible\nConduct sensitivity analyses showing how conclusions change under alternative priors\nInclude this documentation in the SAP and the regulatory submission\n\nbayprior is built to address each of these requirements systematically."
+  },
+  {
+    "objectID": "blog-content/bayesian-priors-clinical-trials.html#installation",
+    "href": "blog-content/bayesian-priors-clinical-trials.html#installation",
+    "title": "Bayesian prior elicitation for clinical trials: a practical guide with bayprior",
+    "section": "",
+    "text": "install.packages(\"bayprior\")\nlibrary(bayprior)\nAn interactive Shiny application is also available:\nrun_app()"
+  },
+  {
+    "objectID": "blog-content/bayesian-priors-clinical-trials.html#step-1-eliciting-the-prior",
+    "href": "blog-content/bayesian-priors-clinical-trials.html#step-1-eliciting-the-prior",
+    "title": "Bayesian prior elicitation for clinical trials: a practical guide with bayprior",
+    "section": "",
+    "text": "bayprior supports three elicitation methods: moment matching, quantile matching, and the SHELF roulette method — across six distribution families (Beta, Normal, Gamma, Log-Normal, Exponential, Weibull).\nThe most common scenario for a response rate is moment matching from an expert’s central estimate and uncertainty:\n# Elicit a Beta prior on a response rate\n# Expert believes: mean response ~35%, SD ~10%\nprior &lt;- elicit_beta(\n  mean      = 0.35,\n  sd        = 0.10,\n  method    = \"moments\",\n  label     = \"Response rate\",\n  expert_id = \"Expert_1\"\n)\n\nplot(prior)\nFor multi-expert pooling, bayprior supports linear and logarithmic opinion pooling with Bhattacharyya agreement diagnostics:\ne1  &lt;- elicit_beta(mean = 0.30, sd = 0.10, method = \"moments\", expert_id = \"E1\")\ne2  &lt;- elicit_beta(mean = 0.42, sd = 0.12, method = \"moments\", expert_id = \"E2\")\n\nagg &lt;- aggregate_experts(list(E1 = e1, E2 = e2), weights = c(0.6, 0.4))"
+  },
+  {
+    "objectID": "blog-content/bayesian-priors-clinical-trials.html#step-2-prior-data-conflict-diagnostics",
+    "href": "blog-content/bayesian-priors-clinical-trials.html#step-2-prior-data-conflict-diagnostics",
+    "title": "Bayesian prior elicitation for clinical trials: a practical guide with bayprior",
+    "section": "",
+    "text": "Once trial data are available, prior_conflict() computes four complementary diagnostics: Box’s prior predictive p-value, surprise index, Bhattacharyya overlap, and KL divergence. It supports binary, continuous, Poisson/count, and survival data types.\n# Observed data: 18 responders out of 40 patients (binary endpoint)\ncd &lt;- prior_conflict(\n  prior,\n  list(type = \"binary\", x = 18, n = 40)\n)\n\nprint(cd)\nValues of Box’s p-value close to 0 or 1 indicate potential prior-data conflict — the data are surprising under the prior predictive distribution."
+  },
+  {
+    "objectID": "blog-content/bayesian-priors-clinical-trials.html#step-3-sensitivity-analysis",
+    "href": "blog-content/bayesian-priors-clinical-trials.html#step-3-sensitivity-analysis",
+    "title": "Bayesian prior elicitation for clinical trials: a practical guide with bayprior",
+    "section": "",
+    "text": "sensitivity_grid() evaluates posterior conclusions across a hyperparameter grid. Results are visualised with plot_tornado():\nsa &lt;- sensitivity_grid(\n  prior,\n  data_summary = list(type = \"binary\", x = 18, n = 40),\n  param_grid   = list(alpha = seq(1, 8, 0.5), beta = seq(2, 20, 1)),\n  target       = c(\"posterior_mean\", \"prob_efficacy\"),\n  threshold    = 0.30\n)\n\nplot_tornado(sa)\nThis demonstrates to regulators that conclusions are not uniquely dependent on the specific prior chosen."
+  },
+  {
+    "objectID": "blog-content/bayesian-priors-clinical-trials.html#step-4-robust-and-sceptical-priors",
+    "href": "blog-content/bayesian-priors-clinical-trials.html#step-4-robust-and-sceptical-priors",
+    "title": "Bayesian prior elicitation for clinical trials: a practical guide with bayprior",
+    "section": "",
+    "text": "For regulatory sensitivity analyses, bayprior also implements robust mixture priors (Schmidli et al.) and sceptical priors (Spiegelhalter & Freedman):\nrob  &lt;- robust_prior(prior, vague_weight = 0.20)\nscep &lt;- sceptical_prior(null_value = 0.20, family = \"beta\", strength = \"moderate\")"
+  },
+  {
+    "objectID": "blog-content/bayesian-priors-clinical-trials.html#step-5-generating-the-regulatory-report",
+    "href": "blog-content/bayesian-priors-clinical-trials.html#step-5-generating-the-regulatory-report",
+    "title": "Bayesian prior elicitation for clinical trials: a practical guide with bayprior",
+    "section": "",
+    "text": "prior_report() generates a self-contained prior justification report in HTML, PDF, or Word format:\nprior_report(\n  prior           = prior,\n  conflict        = cd,\n  sensitivity     = sa,\n  robust_prior    = rob,\n  sceptical_prior = scep,\n  output_format   = \"html\",\n  trial_name      = \"TRIAL-001\",\n  sponsor         = \"Example Pharma Ltd\",\n  author          = \"N.P., Biostatistician\"\n)\nNote: PDF output requires Quarto CLI and a LaTeX installation (tinytex::install_tinytex())."
+  },
+  {
+    "objectID": "blog-content/bayesian-priors-clinical-trials.html#references",
+    "href": "blog-content/bayesian-priors-clinical-trials.html#references",
+    "title": "Bayesian prior elicitation for clinical trials: a practical guide with bayprior",
+    "section": "",
+    "text": "O’Hagan, A. et al. (2006). Uncertain Judgements: Eliciting Experts’ Probabilities. Wiley.\nBox, G. E. P. (1980). Sampling and Bayes’ inference in scientific modelling and robustness. JRSS-A, 143, 383–430.\nSchmidli, H. et al. (2014). Robust meta-analytic-predictive priors in clinical trials. Biometrics, 70, 1023–1032.\nSpiegelhalter, D. J., Freedman, L. S. & Parmar, M. K. B. (1994). Bayesian approaches to randomized trials. JRSS-A, 157, 357–416.\nIbrahim, J. G. & Chen, M.-H. (2000). Power prior distributions for regression models. Statistical Science, 15, 46–60.\nFDA (2026). Draft Guidance: Bayesian Statistical Methods for Drug and Biological Products.\n\n\nQuestions or corrections: penn@reprosia.com or open an issue on GitHub."
+  }
+]
