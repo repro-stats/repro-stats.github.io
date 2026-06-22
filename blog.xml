@@ -10,7 +10,7 @@
 <atom:link href="https://reprostats.org/blog.xml" rel="self" type="application/rss+xml"/>
 <description>Open-source R packages for rigorous pharma statistics</description>
 <generator>quarto-1.9.38</generator>
-<lastBuildDate>Sun, 21 Jun 2026 22:00:00 GMT</lastBuildDate>
+<lastBuildDate>Mon, 22 Jun 2026 00:00:00 GMT</lastBuildDate>
 <item>
   <title>Bayesian prior elicitation for clinical trials: a practical guide with bayprior</title>
   <dc:creator>Ndoh Penn</dc:creator>
@@ -378,7 +378,7 @@ font-style: inherit;">"N.P., Biostatistician"</span></span>
   <category>FDA 2026</category>
   <category>Clinical trials</category>
   <guid>https://reprostats.org/posts/bayesian-priors-clinical-trials/</guid>
-  <pubDate>Sun, 21 Jun 2026 22:00:00 GMT</pubDate>
+  <pubDate>Mon, 22 Jun 2026 00:00:00 GMT</pubDate>
   <media:content url="https://reprostats.org/posts/bayesian-priors-clinical-trials/thumbnail.png" medium="image" type="image/png"/>
 </item>
 </channel>
