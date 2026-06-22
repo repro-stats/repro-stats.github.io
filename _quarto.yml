@@ -16,16 +16,12 @@ website:
         href: blog.qmd
       - text: "About"
         href: index.qmd#about
-      - text: "Reprosia ↗"
+      - text: "Reprosia"
         href: https://reprosia.com
-        target: _blank
     right:
       - icon: github
         href: https://github.com/repro-stats
         target: _blank
-      - text: "{{< fa sun >}}"
-        id: theme-toggle
-        aria-label: "Toggle theme"
 
   page-footer:
     left: "© 2026 Ndoh Penn · Brussels, Belgium"
@@ -38,13 +34,12 @@ website:
         href: https://reprosia.com
 
   open-graph: true
-
   comments: false
 
 format:
   html:
     theme:
-      light: [flatly, styles.scss]
+      light: [flatly,  styles.scss]
       dark:  [darkly,  styles.scss]
     toc: false
     code-copy: true
@@ -56,7 +51,7 @@ format:
     linestretch: 1.65
 
 execute:
-  freeze: auto       # re-run cells only when source changes
+  freeze: auto
   echo: true
   warning: false
   message: false

@@ -7,7 +7,7 @@ format:
 ---
 
 ```{=html}
-<section style="padding:5.5rem 0 4.5rem; border-bottom:1px solid var(--bs-border-color)">
+<section style="padding:5rem 0 4rem;border-bottom:1px solid #d8dce8;background:#f5f7fc;margin:-1rem -1rem 0">
   <div style="max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;padding:0 2.5rem">
     <div>
       <div style="font-family:'IBM Plex Mono',monospace;font-size:0.7rem;color:#1a56db;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:1.5rem;display:flex;align-items:center;gap:0.625rem">
@@ -26,23 +26,38 @@ format:
       </div>
     </div>
     <div>
-      <div id="hero-terminal" style="background:#0f1520;border-radius:10px;overflow:hidden;box-shadow:0 24px 64px rgba(12,17,25,0.16);font-family:'IBM Plex Mono',monospace">
+      <div style="background:#0f1520;border-radius:10px;overflow:hidden;box-shadow:0 24px 64px rgba(12,17,25,0.16);font-family:'IBM Plex Mono',monospace;font-size:0.8rem;line-height:1.85">
         <div style="background:#1e2530;padding:0.75rem 1rem;display:flex;align-items:center;gap:0.5rem;border-bottom:1px solid rgba(255,255,255,0.06)">
           <span style="width:12px;height:12px;border-radius:50%;background:#ff5f57;display:inline-block"></span>
           <span style="width:12px;height:12px;border-radius:50%;background:#febc2e;display:inline-block"></span>
           <span style="width:12px;height:12px;border-radius:50%;background:#28c840;display:inline-block"></span>
           <span style="font-size:0.68rem;color:rgba(255,255,255,0.28);margin-left:auto">R console</span>
         </div>
-        <div id="term-body" style="padding:1.5rem;font-size:0.8rem;line-height:1.85;min-height:260px"></div>
+        <div style="padding:1.5rem;color:#e0e8f0">
+          <div><span style="color:#00c8a8">&gt;</span> library(<span style="color:#79b8ff">reproducr</span>)</div>
+          <div style="color:#64a87e;padding-left:1.25rem">✓ reproducr 0.2.1 loaded</div>
+          <br>
+          <div><span style="color:#00c8a8">&gt;</span> <span style="color:#79b8ff">audit_script</span>(<span style="color:#9ecbff">"analysis.R"</span>)</div>
+          <div style="color:#64a87e;padding-left:1.25rem">✓ 18 functions certified</div>
+          <div style="color:#64a87e;padding-left:1.25rem">✓ Risk score: 0.02 (low)</div>
+          <br>
+          <div><span style="color:#00c8a8">&gt;</span> library(<span style="color:#79b8ff">bayprior</span>)</div>
+          <div style="color:#64a87e;padding-left:1.25rem">✓ bayprior 0.1.0 loaded</div>
+          <div><span style="color:#00c8a8">&gt;</span> p &lt;- <span style="color:#79b8ff">elicit_beta</span>(mean=0.35, sd=0.10)</div>
+          <div style="color:#64a87e;padding-left:1.25rem">✓ Beta(8.2, 15.3) elicited</div>
+          <br>
+          <div><span style="color:#00c8a8">&gt;</span> <span style="color:#79b8ff">certify</span>(<span style="color:#9ecbff">"submission"</span>)</div>
+          <div style="color:#28c840;padding-left:1.25rem">✓ Environment locked — submission ready</div>
+        </div>
       </div>
     </div>
   </div>
-  <div style="max-width:1100px;margin:0 auto;padding:3rem 2.5rem 0;border-top:1px solid #d8dce8;display:flex;gap:3rem;flex-wrap:wrap;margin-top:3rem">
-    <div><div style="font-family:'IBM Plex Mono',monospace;font-size:1.375rem;font-weight:500;color:#0c1119;margin-bottom:0.125rem">2</div><div style="font-size:0.78rem;color:#9aa2ae">packages on CRAN</div></div>
-    <div><div style="font-family:'IBM Plex Mono',monospace;font-size:1.375rem;font-weight:500;color:#0c1119;margin-bottom:0.125rem">5</div><div style="font-size:0.78rem;color:#9aa2ae">packages in the ecosystem</div></div>
-    <div><div style="font-family:'IBM Plex Mono',monospace;font-size:1.375rem;font-weight:500;color:#0c1119;margin-bottom:0.125rem">97%</div><div style="font-size:0.78rem;color:#9aa2ae">test coverage in reproducr</div></div>
-    <div><div style="font-family:'IBM Plex Mono',monospace;font-size:1.375rem;font-weight:500;color:#0c1119;margin-bottom:0.125rem">0.2.1</div><div style="font-size:0.78rem;color:#9aa2ae">reproducr latest version</div></div>
-    <div><div style="font-family:'IBM Plex Mono',monospace;font-size:1.375rem;font-weight:500;color:#0c1119;margin-bottom:0.125rem">FDA</div><div style="font-size:0.78rem;color:#9aa2ae">2026 Bayesian guidance aligned</div></div>
+  <div style="max-width:1100px;margin:3rem auto 0;padding:2.5rem 2.5rem 0;border-top:1px solid #d8dce8;display:grid;grid-template-columns:repeat(5,1fr);gap:1.5rem">
+    <div><div style="font-family:'IBM Plex Mono',monospace;font-size:1.25rem;font-weight:500;color:#0c1119;margin-bottom:0.25rem">2</div><div style="font-size:0.76rem;color:#9aa2ae;line-height:1.4">packages<br>on CRAN</div></div>
+    <div><div style="font-family:'IBM Plex Mono',monospace;font-size:1.25rem;font-weight:500;color:#0c1119;margin-bottom:0.25rem">5</div><div style="font-size:0.76rem;color:#9aa2ae;line-height:1.4">packages in<br>the ecosystem</div></div>
+    <div><div style="font-family:'IBM Plex Mono',monospace;font-size:1.25rem;font-weight:500;color:#0c1119;margin-bottom:0.25rem">97%</div><div style="font-size:0.76rem;color:#9aa2ae;line-height:1.4">test coverage<br>in reproducr</div></div>
+    <div><div style="font-family:'IBM Plex Mono',monospace;font-size:1.25rem;font-weight:500;color:#0c1119;margin-bottom:0.25rem">0.2.1</div><div style="font-size:0.76rem;color:#9aa2ae;line-height:1.4">reproducr<br>latest version</div></div>
+    <div><div style="font-family:'IBM Plex Mono',monospace;font-size:1.25rem;font-weight:500;color:#0c1119;margin-bottom:0.25rem">FDA</div><div style="font-size:0.76rem;color:#9aa2ae;line-height:1.4">2026 Bayesian<br>guidance aligned</div></div>
   </div>
 </section>
 ```
@@ -149,39 +164,4 @@ ReproStats is maintained by **Ndoh Penn**, a biostatistician based in Brussels, 
 
 Questions, contributions, or collaboration → [open an issue on GitHub](https://github.com/repro-stats){target="_blank"} or [penn@reprosia.com](mailto:penn@reprosia.com).
 
-```{=html}
-<script>
-(function(){
-  const body = document.getElementById('term-body');
-  if (!body) return;
-  const lines = [
-    {type:'cmd', text:'library(<fn>reproducr</fn>)'},
-    {type:'out', text:'✓ reproducr 0.2.1 loaded'},
-    {type:'blank'},
-    {type:'cmd', text:'audit_script(<str>"primary_analysis.R"</str>)'},
-    {type:'out', text:'✓ 18 functions certified'},
-    {type:'out', text:'✓ Risk score: 0.02 (low)'},
-    {type:'blank'},
-    {type:'cmd', text:'library(<fn>bayprior</fn>)'},
-    {type:'out', text:'✓ bayprior 0.1.0 loaded'},
-    {type:'cmd', text:'prior <- elicit_beta(mean=0.35, sd=0.10, method="moments")'},
-    {type:'out', text:'✓ Beta prior elicited'},
-    {type:'blank'},
-    {type:'cmd', text:'certify(<str>"submission"</str>)'},
-    {type:'ok',  text:'✓ Environment locked — submission ready'},
-  ];
-  let li=0,ci=0,el=null;
-  function stripTags(h){return h.replace(/<[^>]+>/g,'');}
-  function buildVisible(html,n){let v='',c=0,i=0;while(i<html.length&&c<n){if(html[i]==='<'){const e=html.indexOf('>',i);v+=html.slice(i,e+1);i=e+1;}else{v+=html[i];c++;i++;}}return v;}
-  function addRow(line){const row=document.createElement('div');row.style.cssText='display:flex;gap:0.625rem;min-height:1.5em';if(line.type==='blank'){body.appendChild(row);return null;}
-  if(line.type==='cmd') row.innerHTML='<span style="color:#00c8a8;flex-shrink:0">&gt;</span><span style="color:#e0e8f0"></span>';
-  if(line.type==='out') row.innerHTML='<span style="color:#64a87e;padding-left:1.125rem"></span>';
-  if(line.type==='ok')  row.innerHTML='<span style="color:#28c840"></span>';
-  body.appendChild(row);return row.querySelector('span:last-child');}
-  function render(html,n){return buildVisible(html,n).replace(/<fn>/g,'<span style="color:#79b8ff">').replace(/<\/fn>/g,'</span>').replace(/<str>/g,'<span style="color:#9ecbff">').replace(/<\/str>/g,'</span>');}
-  function tick(){if(li>=lines.length)return;const line=lines[li];if(!el){el=addRow(line);ci=0;if(!el){li++;setTimeout(tick,80);return;}}
-  const raw=stripTags(line.text);if(ci<=raw.length){el.innerHTML=render(line.text,ci);ci++;setTimeout(tick,ci<=raw.length?36:20);}else{li++;el=null;setTimeout(tick,line.type==='cmd'?220:55);}}
-  setTimeout(tick,700);
-})();
-</script>
-```
+
