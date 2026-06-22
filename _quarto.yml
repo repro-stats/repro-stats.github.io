@@ -1,0 +1,62 @@
+project:
+  type: website
+
+website:
+  title: "ReproStats"
+  description: "Open-source R packages for rigorous pharma statistics"
+  site-url: "https://reprostats.org"
+
+  navbar:
+    background: light
+    border: true
+    left:
+      - text: "Packages"
+        href: index.qmd
+      - text: "Blog"
+        href: blog.qmd
+      - text: "About"
+        href: index.qmd#about
+      - text: "Reprosia ↗"
+        href: https://reprosia.com
+        target: _blank
+    right:
+      - icon: github
+        href: https://github.com/repro-stats
+        target: _blank
+      - text: "{{< fa sun >}}"
+        id: theme-toggle
+        aria-label: "Toggle theme"
+
+  page-footer:
+    left: "© 2026 Ndoh Penn · Brussels, Belgium"
+    right:
+      - text: "GitHub"
+        href: https://github.com/repro-stats
+      - text: "bayprior docs"
+        href: https://ndohpenngit.github.io/bayprior/
+      - text: "Reprosia"
+        href: https://reprosia.com
+
+  open-graph: true
+
+  comments: false
+
+format:
+  html:
+    theme:
+      light: [flatly, styles.scss]
+      dark:  [darkly,  styles.scss]
+    toc: false
+    code-copy: true
+    code-overflow: wrap
+    highlight-style: github-dark
+    mainfont: "IBM Plex Sans"
+    monofont: "IBM Plex Mono"
+    fontsize: "1rem"
+    linestretch: 1.65
+
+execute:
+  freeze: auto       # re-run cells only when source changes
+  echo: true
+  warning: false
+  message: false

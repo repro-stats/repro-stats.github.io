@@ -1,0 +1,204 @@
+/*-- scss:defaults --*/
+
+// ── Google Fonts ──────────────────────────────
+// (loaded via Quarto's mainfont/monofont + this import)
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Serif:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap');
+
+// ── Typography ────────────────────────────────
+$font-family-sans-serif: 'IBM Plex Sans', system-ui, sans-serif !default;
+$font-family-monospace:  'IBM Plex Mono', 'Courier New', monospace !default;
+$headings-font-family:   'IBM Plex Serif', Georgia, serif !default;
+$headings-font-weight:   300 !default;
+$headings-line-height:   1.2 !default;
+$font-size-base:         1rem !default;
+$line-height-base:       1.65 !default;
+
+// ── Colours ───────────────────────────────────
+$primary:   #1a56db !default;
+$link-color: #1a56db !default;
+$body-bg:   #f5f7fc !default;
+$body-color: #37404f !default;
+
+// ── Borders & radius ──────────────────────────
+$border-radius:  4px !default;
+$border-color:   #d8dce8 !default;
+$card-border-radius: 8px !default;
+
+// ── Code ──────────────────────────────────────
+$code-bg:    #0f1520 !default;
+$code-color: #e0e8f0 !default;
+
+/*-- scss:rules --*/
+
+// ── Navbar ────────────────────────────────────
+.navbar {
+  font-size: 0.875rem;
+  border-bottom: 1px solid #d8dce8 !important;
+  padding: 0 2.5rem;
+  min-height: 62px;
+}
+
+.navbar-brand {
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 500;
+  font-size: 1rem;
+  letter-spacing: -0.01em;
+  color: #0c1119 !important;
+}
+
+.navbar-nav .nav-link {
+  font-size: 0.875rem;
+  color: #68717f !important;
+  padding: 0 0.75rem;
+  transition: color 0.2s;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+  color: #0c1119 !important;
+}
+
+// Dark mode navbar
+[data-bs-theme="dark"] .navbar {
+  border-bottom-color: rgba(255,255,255,0.1) !important;
+}
+[data-bs-theme="dark"] .navbar-brand { color: #d8e6f5 !important; }
+[data-bs-theme="dark"] .navbar-nav .nav-link { color: #8aa4c0 !important; }
+[data-bs-theme="dark"] .navbar-nav .nav-link:hover { color: #d8e6f5 !important; }
+
+// ── Body / page ───────────────────────────────
+body {
+  -webkit-font-smoothing: antialiased;
+}
+
+// ── Headings ──────────────────────────────────
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'IBM Plex Serif', serif;
+  font-weight: 300;
+  color: #0c1119;
+  line-height: 1.2;
+}
+
+h1 em, h2 em { font-style: italic; color: #1a56db; }
+
+[data-bs-theme="dark"] h1,
+[data-bs-theme="dark"] h2,
+[data-bs-theme="dark"] h3 { color: #d8e6f5; }
+
+// ── Blog listing ──────────────────────────────
+.quarto-listing-default .list-group-item {
+  border: 1px solid #d8dce8;
+  border-radius: 8px;
+  margin-bottom: 0.875rem;
+  padding: 1.5rem;
+  transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+  background: #fff;
+}
+
+.quarto-listing-default .list-group-item:hover {
+  border-color: #b4c6f0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(26,86,219,0.07);
+}
+
+.quarto-post h3.listing-title {
+  font-family: 'IBM Plex Serif', serif;
+  font-weight: 400;
+  color: #0c1119;
+  font-size: 1.1875rem;
+}
+
+.listing-date, .listing-reading-time {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.7rem;
+  color: #9aa2ae;
+  letter-spacing: 0.06em;
+}
+
+.listing-category {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.64rem;
+  background: #e5ecfb;
+  color: #1a56db;
+  border: 1px solid rgba(26,86,219,0.15);
+  border-radius: 3px;
+  padding: 0.15rem 0.5rem;
+  letter-spacing: 0.06em;
+}
+
+// ── Article (blog post) ───────────────────────
+.quarto-title h1 {
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  line-height: 1.1;
+  margin-bottom: 1.25rem;
+}
+
+.quarto-title-meta {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.72rem;
+  color: #9aa2ae;
+  letter-spacing: 0.06em;
+}
+
+#quarto-document-content p {
+  font-weight: 300;
+  line-height: 1.8;
+  color: #37404f;
+  margin-bottom: 1.25rem;
+}
+
+[data-bs-theme="dark"] #quarto-document-content p { color: #8aa4c0; }
+
+// ── Code blocks ───────────────────────────────
+pre.sourceCode {
+  background: #0f1520 !important;
+  border-radius: 6px;
+  padding: 1.25rem 1.5rem;
+  border: none;
+}
+
+code.sourceCode {
+  color: #e0e8f0;
+  font-size: 0.8rem;
+  line-height: 1.75;
+}
+
+// Inline code
+p code, li code {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.875em;
+  background: rgba(26,86,219,0.07);
+  color: #1a56db;
+  padding: 0.125rem 0.375rem;
+  border-radius: 3px;
+}
+
+[data-bs-theme="dark"] p code,
+[data-bs-theme="dark"] li code {
+  background: rgba(90,144,245,0.1);
+  color: #5a90f5;
+}
+
+// Code copy button
+.code-copy-button { color: #64748b; }
+
+// ── Blockquote ────────────────────────────────
+blockquote {
+  border-left: 3px solid #1a56db;
+  padding-left: 1.5rem;
+  font-style: italic;
+  color: #68717f;
+  margin: 1.5rem 0;
+}
+
+// ── Footer ────────────────────────────────────
+.nav-footer {
+  border-top: 1px solid #d8dce8;
+  padding: 1.5rem 2.5rem;
+  font-size: 0.8rem;
+  color: #9aa2ae;
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.nav-footer a { color: #9aa2ae; }
+.nav-footer a:hover { color: #68717f; }
