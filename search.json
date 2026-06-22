@@ -1,10 +1,17 @@
 [
   {
+    "objectID": "blog.html",
+    "href": "blog.html",
+    "title": "Blog",
+    "section": "",
+    "text": "Bayesian prior elicitation for clinical trials: a practical guide with bayprior\n\n\n\nBayesian\n\nbayprior\n\nFDA 2026\n\nClinical trials\n\n\n\nHow to elicit, document, and justify informative priors for regulatory submissions using the bayprior R package — aligned with FDA 2026 draft guidance.\n\n\n\n\n\nJun 22, 2026\n\n4 min\n\n\n\n\nNo matching items"
+  },
+  {
     "objectID": "index.html",
     "href": "index.html",
     "title": "\n        Rigorous bydesign.\n      ",
     "section": "",
-    "text": "Open-source R packages\n      \n      \n      \n        Five R packages covering the full lifecycle of regulated pharmaceutical statistics — reproducibility, Bayesian methodology, audit logging, data provenance, and estimand specification.\n      \n      \n        Explore packages\n        View on GitHub\n      \n    \n    \n      \n        \n          \n          \n          \n          R console\n        \n        \n      \n    \n  \n  \n    2packages on CRAN\n    5packages in the ecosystem\n    97%test coverage in reproducr\n    0.2.1reproducr latest version\n    FDA2026 Bayesian guidance aligned"
+    "text": "Open-source R packages\n      \n      \n      \n        Five R packages covering the full lifecycle of regulated pharmaceutical statistics — reproducibility, Bayesian methodology, audit logging, data provenance, and estimand specification.\n      \n      \n        Explore packages\n        View on GitHub\n      \n    \n    \n      \n        \n          \n          \n          \n          R console\n        \n        \n          &gt; library(reproducr)\n          ✓ reproducr 0.2.1 loaded\n          \n          &gt; audit_script(\"analysis.R\")\n          ✓ 18 functions certified\n          ✓ Risk score: 0.02 (low)\n          \n          &gt; library(bayprior)\n          ✓ bayprior 0.1.0 loaded\n          &gt; p &lt;- elicit_beta(mean=0.35, sd=0.10)\n          ✓ Beta(8.2, 15.3) elicited\n          \n          &gt; certify(\"submission\")\n          ✓ Environment locked — submission ready\n        \n      \n    \n  \n  \n    2packages on CRAN\n    5packages in the ecosystem\n    97%test coverage in reproducr\n    0.2.1reproducr latest version\n    FDA2026 Bayesian guidance aligned"
   },
   {
     "objectID": "index.html#packages",
@@ -152,12 +159,5 @@
     "title": "Bayesian prior elicitation for clinical trials: a practical guide with bayprior",
     "section": "",
     "text": "O’Hagan, A. et al. (2006). Uncertain Judgements: Eliciting Experts’ Probabilities. Wiley.\nBox, G. E. P. (1980). Sampling and Bayes’ inference in scientific modelling and robustness. JRSS-A, 143, 383–430.\nSchmidli, H. et al. (2014). Robust meta-analytic-predictive priors in clinical trials. Biometrics, 70, 1023–1032.\nSpiegelhalter, D. J., Freedman, L. S. & Parmar, M. K. B. (1994). Bayesian approaches to randomized trials. JRSS-A, 157, 357–416.\nIbrahim, J. G. & Chen, M.-H. (2000). Power prior distributions for regression models. Statistical Science, 15, 46–60.\nFDA (2026). Draft Guidance: Bayesian Statistical Methods for Drug and Biological Products.\n\n\nQuestions or corrections: penn@reprosia.com or open an issue on GitHub."
-  },
-  {
-    "objectID": "blog.html",
-    "href": "blog.html",
-    "title": "Blog",
-    "section": "",
-    "text": "Bayesian prior elicitation for clinical trials: a practical guide with bayprior\n\n\n\nBayesian\n\nbayprior\n\nFDA 2026\n\nClinical trials\n\n\n\nHow to elicit, document, and justify informative priors for regulatory submissions using the bayprior R package — aligned with FDA 2026 draft guidance.\n\n\n\n\n\nJun 22, 2026\n\n4 min\n\n\n\n\nNo matching items"
   }
 ]
