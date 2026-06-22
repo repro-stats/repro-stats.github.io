@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bayesian prior elicitation for clinical trials: a practical guide with bayprior — ReproStats</title>
+  <meta name="description" content="How to elicit, document, and justify informative priors for regulatory submissions using the bayprior R package, aligned with FDA 2026 draft guidance.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Serif:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+<nav class="nav">
+  <a href="../index.html" class="nav-logo">repro<span>stats</span>.org</a>
+  <ul class="nav-links">
+    <li><a href="../index.html">Packages</a></li>
+    <li><a href="../blog.html" class="active">Blog</a></li>
+    <li><a href="../index.html#about">About</a></li>
+    <li><a href="https://reprosia.com" target="_blank" rel="noopener">Reprosia ↗</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="theme-toggle" aria-label="Toggle theme">
+      <svg class="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg class="icon-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+    <a href="https://github.com/repro-stats" class="btn btn-outline btn-sm" target="_blank" rel="noopener">GitHub</a>
+  </div>
+  <button class="nav-burger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+</nav>
+<nav class="nav-drawer">
+  <a href="../index.html">Packages</a>
+  <a href="../blog.html" class="active">Blog</a>
+  <a href="../index.html#about">About</a>
+  <a href="https://reprosia.com" target="_blank" rel="noopener">Reprosia ↗</a>
+</nav>
+
+<section class="post-hero">
+  <div class="post-hero-inner">
+    <a href="../blog.html" class="post-back">← Back to blog</a>
+    <div class="post-meta">
+      <span class="post-meta-item">22 Jun 2026</span>
+      <span class="post-meta-item">·</span>
+      <span class="post-meta-item">8 min read</span>
+      <span class="post-meta-item">·</span>
+      <span class="post-meta-item">Ndoh Penn</span>
+    </div>
+    <h1 class="display display-lg">Bayesian prior elicitation for clinical trials: a practical guide with <em>bayprior</em></h1>
+    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:1.5rem">
+      <span class="tag">Bayesian</span>
+      <span class="tag">bayprior</span>
+      <span class="tag">FDA 2026</span>
+      <span class="tag">Clinical trials</span>
+    </div>
+  </div>
+</section>
+
+<article class="post-body">
+
+  <p>The FDA's 2026 draft guidance on Bayesian statistical methods for drug and biological products raises the bar for how sponsors justify and document their prior distributions. For teams using R, the <code>bayprior</code> package provides a structured workflow that takes you from expert elicitation through prior-data conflict diagnostics to a submission-ready justification report.</p>
+
+  <p>This guide walks through the core workflow with practical R code. All function signatures have been verified against the package documentation. We assume basic familiarity with Bayesian methods and a regulated environment where documentation matters.</p>
+
+  <h2>Why prior justification is now a regulatory concern</h2>
+
+  <p>The FDA's 2026 guidance makes explicit what was previously implicit: the prior distribution is not just a statistical choice — it is a regulatory claim that requires documented justification, sensitivity analysis, and evidence that the prior does not unduly influence the posterior in ways that conflict with the trial data.</p>
+
+  <p>Specifically, the guidance asks sponsors to:</p>
+  <ul>
+    <li>Document the source and rationale for the prior (expert opinion, historical data, or literature)</li>
+    <li>Assess prior-data conflict — whether the prior and the observed data are compatible</li>
+    <li>Conduct sensitivity analyses showing how conclusions change under alternative priors</li>
+    <li>Include this documentation in the SAP and the regulatory submission</li>
+  </ul>
+
+  <p><code>bayprior</code> is built to address each of these requirements in a single, integrated workflow.</p>
+
+  <h2>Installation</h2>
+
+  <pre><code>install.packages("bayprior")
+library(bayprior)</code></pre>
+
+  <p>An interactive Shiny application is also available for teams who prefer a point-and-click interface:</p>
+
+  <pre><code>run_app()</code></pre>
+
+  <h2>Step 1: Eliciting the prior</h2>
+
+  <p><code>bayprior</code> supports three elicitation methods — moment matching, quantile matching, and the SHELF roulette method — across six distribution families: Beta, Normal, Gamma, Log-Normal, Exponential, and Weibull.</p>
+
+  <p>The most common scenario for a binary endpoint (e.g. response rate) is moment matching from a clinical expert's central estimate and uncertainty:</p>
+
+  <pre><code># Elicit a Beta prior on a response rate
+# Expert believes: mean ~35%, SD ~10%
+prior &lt;- elicit_beta(
+  mean      = 0.35,
+  sd        = 0.10,
+  method    = "moments",
+  label     = "Response rate",
+  expert_id = "Expert_1"
+)
+
+plot(prior)</code></pre>
+
+  <p>For multi-expert elicitation, <code>bayprior</code> supports linear and logarithmic opinion pooling with pairwise Bhattacharyya agreement diagnostics:</p>
+
+  <pre><code>e1  &lt;- elicit_beta(mean = 0.30, sd = 0.10, method = "moments", expert_id = "E1")
+e2  &lt;- elicit_beta(mean = 0.42, sd = 0.12, method = "moments", expert_id = "E2")
+
+agg &lt;- aggregate_experts(list(E1 = e1, E2 = e2), weights = c(0.6, 0.4))</code></pre>
+
+  <h2>Step 2: Prior-data conflict diagnostics</h2>
+
+  <p>Once trial data are available, <code>prior_conflict()</code> computes four complementary diagnostics: Box's prior predictive p-value, surprise index, Bhattacharyya overlap, and KL divergence. Binary, continuous, Poisson/count, and survival data types are all supported.</p>
+
+  <pre><code># Observed data: 18 responders out of 40 patients
+cd &lt;- prior_conflict(
+  prior,
+  list(type = "binary", x = 18, n = 40)
+)
+
+print(cd)</code></pre>
+
+  <p>Box's p-value close to 0 or 1 indicates the observed data are surprising under the prior predictive distribution — a signal of potential conflict between the prior and the trial data.</p>
+
+  <h2>Step 3: Sensitivity analysis</h2>
+
+  <p><code>sensitivity_grid()</code> evaluates posterior conclusions across a hyperparameter grid. The <code>plot_tornado()</code> function visualises the results:</p>
+
+  <pre><code>sa &lt;- sensitivity_grid(
+  prior,
+  data_summary = list(type = "binary", x = 18, n = 40),
+  param_grid   = list(alpha = seq(1, 8, 0.5), beta = seq(2, 20, 1)),
+  target       = c("posterior_mean", "prob_efficacy"),
+  threshold    = 0.30
+)
+
+plot_tornado(sa)</code></pre>
+
+  <p>This demonstrates to reviewers that conclusions are not uniquely dependent on a specific prior specification.</p>
+
+  <h2>Step 4: Robust and sceptical priors</h2>
+
+  <p>For regulatory sensitivity analyses, <code>bayprior</code> implements the robust mixture prior (Schmidli et al., 2014) and the sceptical prior (Spiegelhalter &amp; Freedman, 1994):</p>
+
+  <pre><code>rob  &lt;- robust_prior(prior, vague_weight = 0.20)
+scep &lt;- sceptical_prior(null_value = 0.20, family = "beta", strength = "moderate")</code></pre>
+
+  <h2>Step 5: Generating the regulatory report</h2>
+
+  <p><code>prior_report()</code> generates a self-contained prior justification document in HTML, PDF, or Word format, designed for inclusion in a regulatory submission package:</p>
+
+  <pre><code>prior_report(
+  prior           = prior,
+  conflict        = cd,
+  sensitivity     = sa,
+  robust_prior    = rob,
+  sceptical_prior = scep,
+  output_format   = "html",
+  trial_name      = "TRIAL-001",
+  sponsor         = "Example Pharma Ltd",
+  author          = "N.P., Biostatistician"
+)</code></pre>
+
+  <blockquote>PDF output requires Quarto CLI and a LaTeX installation. Run <code>tinytex::install_tinytex()</code> if needed.</blockquote>
+
+  <h2>References</h2>
+
+  <ul>
+    <li>O'Hagan, A. et al. (2006). <em>Uncertain Judgements: Eliciting Experts' Probabilities</em>. Wiley.</li>
+    <li>Box, G. E. P. (1980). Sampling and Bayes' inference in scientific modelling and robustness. <em>JRSS-A</em>, 143, 383–430.</li>
+    <li>Schmidli, H. et al. (2014). Robust meta-analytic-predictive priors in clinical trials with historical control information. <em>Biometrics</em>, 70, 1023–1032.</li>
+    <li>Spiegelhalter, D. J., Freedman, L. S. &amp; Parmar, M. K. B. (1994). Bayesian approaches to randomized trials. <em>JRSS-A</em>, 157, 357–416.</li>
+    <li>FDA (2026). <em>Draft Guidance: Bayesian Statistical Methods for Drug and Biological Products</em>.</li>
+  </ul>
+
+  <hr class="post-divider">
+
+  <p><strong>Ndoh Penn</strong> is a biostatistician based in Brussels, Belgium, and the author of the <code>bayprior</code> and <code>reproducr</code> R packages. Questions or corrections: <a href="mailto:penn@reprosia.com">penn@reprosia.com</a> or <a href="https://github.com/ndohpenngit/bayprior/issues" target="_blank" rel="noopener">open an issue on GitHub</a>.</p>
+
+</article>
+
+<footer>
+  <a href="../" class="footer-logo">repro<span>stats</span>.org</a>
+  <ul class="footer-links">
+    <li><a href="https://github.com/repro-stats" target="_blank" rel="noopener">GitHub</a></li>
+    <li><a href="../blog.html">Blog</a></li>
+    <li><a href="https://ndohpenngit.github.io/bayprior/" target="_blank" rel="noopener">bayprior docs</a></li>
+    <li><a href="https://reprosia.com" target="_blank" rel="noopener">Reprosia</a></li>
+  </ul>
+  <span class="footer-copy">© 2026 Ndoh Penn · Brussels, Belgium</span>
+</footer>
+
+<script src="../main.js"></script>
+</body>
+</html>

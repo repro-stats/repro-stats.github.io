@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog — ReproStats</title>
+  <meta name="description" content="Practical guides, methodology notes, and regulatory context for pharma statisticians working in R.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Serif:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* ── Filter tabs ── */
+    .filter-bar {
+      display: flex;
+      gap: 0.375rem;
+      flex-wrap: wrap;
+      margin-bottom: 3rem;
+    }
+    .filter-btn {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      color: var(--ink-soft);
+      background: none;
+      border: 1px solid var(--rule);
+      border-radius: 20px;
+      padding: 0.375rem 1rem;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s, background 0.2s !important;
+    }
+    .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .filter-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    /* ── Featured post ── */
+    .post-featured {
+      background: var(--bg-card);
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      padding: 2.5rem;
+      margin-bottom: 1.25rem;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 2rem;
+      align-items: start;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s !important;
+    }
+    .post-featured:hover {
+      border-color: var(--accent-lt);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 32px var(--shadow);
+    }
+    .featured-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.64rem;
+      color: var(--accent);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 0.875rem;
+    }
+    .post-featured h2 {
+      font-family: 'IBM Plex Serif', serif;
+      font-size: clamp(1.375rem, 2vw, 1.75rem);
+      font-weight: 400;
+      color: var(--ink);
+      line-height: 1.3;
+      margin-bottom: 0.875rem;
+    }
+    .post-featured p {
+      font-size: 0.9375rem;
+      color: var(--ink-mid);
+      line-height: 1.7;
+      font-weight: 300;
+      margin-bottom: 1.25rem;
+      max-width: 600px;
+    }
+    .post-featured-arrow {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 1.5rem;
+      color: var(--accent);
+      opacity: 0.4;
+      align-self: center;
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 640px) {
+      .post-featured { grid-template-columns: 1fr; }
+      .post-featured-arrow { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── NAV ─── -->
+<nav class="nav">
+  <a href="index.html" class="nav-logo">repro<span>stats</span>.org</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Packages</a></li>
+    <li><a href="blog.html" class="active">Blog</a></li>
+    <li><a href="index.html#about">About</a></li>
+    <li><a href="https://reprosia.com" target="_blank" rel="noopener">Reprosia ↗</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="theme-toggle" aria-label="Toggle theme">
+      <svg class="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg class="icon-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+    <a href="https://github.com/repro-stats" class="btn btn-outline btn-sm" target="_blank" rel="noopener">GitHub</a>
+  </div>
+  <button class="nav-burger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+</nav>
+<nav class="nav-drawer">
+  <a href="index.html">Packages</a>
+  <a href="blog.html" class="active">Blog</a>
+  <a href="index.html#about">About</a>
+  <a href="https://reprosia.com" target="_blank" rel="noopener">Reprosia ↗</a>
+  <a href="https://github.com/repro-stats" target="_blank" rel="noopener">GitHub</a>
+</nav>
+
+<!-- ─── PAGE HERO ─── -->
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <div class="eyebrow">Blog</div>
+    <h1 class="display display-lg">Writing on R in<br><em>regulated settings.</em></h1>
+    <p class="lead">Practical guides, methodology notes, and regulatory context for pharma statisticians. Written by Ndoh Penn.</p>
+  </div>
+</section>
+
+<!-- ─── POSTS ─── -->
+<section class="section">
+  <div class="container">
+
+    <!-- Filter -->
+    <div class="filter-bar">
+      <button class="filter-btn active">All</button>
+      <button class="filter-btn">Bayesian</button>
+      <button class="filter-btn">Reproducibility</button>
+      <button class="filter-btn">Regulatory</button>
+      <button class="filter-btn">Estimands</button>
+      <button class="filter-btn">Migration</button>
+    </div>
+
+    <!-- Featured -->
+    <a href="blog/bayesian-priors-clinical-trials.html" class="post-featured reveal">
+      <div>
+        <div class="featured-label">Latest post</div>
+        <h2>Bayesian prior elicitation for clinical trials: a practical guide with bayprior</h2>
+        <p>How to elicit, document, and justify informative priors for regulatory submissions using the bayprior package — covering SHELF-style elicitation, prior-data conflict diagnostics, and the FDA 2026 draft guidance on Bayesian statistical methods.</p>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center">
+          <span class="tag">Bayesian</span><span class="tag">bayprior</span><span class="tag">FDA 2026</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:0.68rem;color:var(--ink-faint);margin-left:0.5rem">22 Jun 2026 · 8 min read</span>
+        </div>
+      </div>
+      <div class="post-featured-arrow">→</div>
+    </a>
+
+    <!-- Grid -->
+    <div class="blog-grid reveal">
+
+      <a href="blog/reproducr-getting-started.html" class="blog-card">
+        <div class="blog-meta"><span class="blog-date">15 Jun 2026</span><span class="blog-read">6 min read</span></div>
+        <h3>Getting started with reproducr: audit trails for clinical R analyses</h3>
+        <p>A step-by-step introduction to reproducr — how to audit scripts, certify your environment, and generate compliance documentation.</p>
+        <div class="blog-card-footer"><div class="blog-tags"><span class="tag">reproducr</span><span class="tag">Compliance</span></div><span class="blog-arrow">→</span></div>
+      </a>
+
+      <a href="blog/ich-e9-r1-estimands-in-r.html" class="blog-card">
+        <div class="blog-meta"><span class="blog-date">8 Jun 2026</span><span class="blog-read">10 min read</span></div>
+        <h3>ICH E9(R1) in practice: implementing estimands in R</h3>
+        <p>From protocol estimand definition to SAP implementation — structuring your estimand strategy using the estimandr framework.</p>
+        <div class="blog-card-footer"><div class="blog-tags"><span class="tag">ICH E9(R1)</span><span class="tag">estimandr</span></div><span class="blog-arrow">→</span></div>
+      </a>
+
+      <a href="blog/cfr-part-11-for-r-users.html" class="blog-card">
+        <div class="blog-meta"><span class="blog-date">1 Jun 2026</span><span class="blog-read">7 min read</span></div>
+        <h3>21 CFR Part 11 for R users: what you need to know</h3>
+        <p>The key requirements of 21 CFR Part 11 as they apply to R-based clinical analyses — and how to approach compliance in practice.</p>
+        <div class="blog-card-footer"><div class="blog-tags"><span class="tag">Regulatory</span><span class="tag">21 CFR Part 11</span></div><span class="blog-arrow">→</span></div>
+      </a>
+
+      <a href="blog/sas-to-r-migration.html" class="blog-card">
+        <div class="blog-meta"><span class="blog-date">22 May 2026</span><span class="blog-read">9 min read</span></div>
+        <h3>SAS to R migration in regulated environments: maintaining compliance throughout</h3>
+        <p>A practical framework for transitioning from SAS to R without losing your compliance posture — equivalence testing, parallel validation, and documentation.</p>
+        <div class="blog-card-footer"><div class="blog-tags"><span class="tag">Migration</span><span class="tag">SAS</span></div><span class="blog-arrow">→</span></div>
+      </a>
+
+      <a href="blog/reproducible-analysis-pipelines.html" class="blog-card">
+        <div class="blog-meta"><span class="blog-date">14 May 2026</span><span class="blog-read">5 min read</span></div>
+        <h3>Building reproducible analysis pipelines for regulatory submissions</h3>
+        <p>Environment management, lockfiles, and audit trails — the building blocks of a reproducible R pipeline that holds up at submission time.</p>
+        <div class="blog-card-footer"><div class="blog-tags"><span class="tag">Reproducibility</span><span class="tag">Pipelines</span></div><span class="blog-arrow">→</span></div>
+      </a>
+
+      <a href="blog/bayesian-adaptive-designs.html" class="blog-card">
+        <div class="blog-meta"><span class="blog-date">5 May 2026</span><span class="blog-read">11 min read</span></div>
+        <h3>Bayesian adaptive designs in R: power priors and historical data borrowing</h3>
+        <p>When and how to use power priors and robust mixture priors for adaptive clinical trial designs — a methodological overview with R examples.</p>
+        <div class="blog-card-footer"><div class="blog-tags"><span class="tag">Bayesian</span><span class="tag">Adaptive design</span></div><span class="blog-arrow">→</span></div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── CTA ─── -->
+<div class="cta-strip">
+  <div class="cta-strip-inner">
+    <h2>Want to contribute<br>or <em>suggest a topic?</em></h2>
+    <div class="cta-right">
+      <a href="https://github.com/repro-stats" class="btn btn-primary" target="_blank" rel="noopener">Open an issue on GitHub</a>
+      <p class="cta-email"><a href="mailto:penn@reprosia.com">penn@reprosia.com</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <a href="/" class="footer-logo">repro<span>stats</span>.org</a>
+  <ul class="footer-links">
+    <li><a href="https://github.com/repro-stats" target="_blank" rel="noopener">GitHub</a></li>
+    <li><a href="blog.html">Blog</a></li>
+    <li><a href="https://ndohpenngit.github.io/bayprior/" target="_blank" rel="noopener">bayprior docs</a></li>
+    <li><a href="https://reprosia.com" target="_blank" rel="noopener">Reprosia</a></li>
+    <li><a href="mailto:penn@reprosia.com">Contact</a></li>
+  </ul>
+  <span class="footer-copy">© 2026 Ndoh Penn · Brussels, Belgium</span>
+</footer>
+
+<script src="main.js"></script>
+<script>
+  /* Filter tabs — visual only for now */
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>
