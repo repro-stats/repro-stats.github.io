@@ -1,12 +1,5 @@
 [
   {
-    "objectID": "blog.html",
-    "href": "blog.html",
-    "title": "Blog",
-    "section": "",
-    "text": "Bayesian prior elicitation for clinical trials: a practical guide with bayprior\n\n\n\nBayesian\n\nbayprior\n\nFDA 2026\n\nClinical trials\n\n\n\nHow to elicit, document, and justify informative priors for regulatory submissions using the bayprior R package — aligned with FDA 2026 draft guidance.\n\n\n\n\n\nJun 22, 2026\n\n4 min\n\n\n\n\nNo matching items"
-  },
-  {
     "objectID": "index.html",
     "href": "index.html",
     "title": "\n        Rigorous bydesign.\n      ",
@@ -159,5 +152,12 @@
     "title": "Bayesian prior elicitation for clinical trials: a practical guide with bayprior",
     "section": "",
     "text": "O’Hagan, A. et al. (2006). Uncertain Judgements: Eliciting Experts’ Probabilities. Wiley.\nBox, G. E. P. (1980). Sampling and Bayes’ inference in scientific modelling and robustness. JRSS-A, 143, 383–430.\nSchmidli, H. et al. (2014). Robust meta-analytic-predictive priors in clinical trials. Biometrics, 70, 1023–1032.\nSpiegelhalter, D. J., Freedman, L. S. & Parmar, M. K. B. (1994). Bayesian approaches to randomized trials. JRSS-A, 157, 357–416.\nIbrahim, J. G. & Chen, M.-H. (2000). Power prior distributions for regression models. Statistical Science, 15, 46–60.\nFDA (2026). Draft Guidance: Bayesian Statistical Methods for Drug and Biological Products.\n\n\nQuestions or corrections: penn@reprosia.com or open an issue on GitHub."
+  },
+  {
+    "objectID": "blog.html",
+    "href": "blog.html",
+    "title": "Blog",
+    "section": "",
+    "text": "Bayesian prior elicitation for clinical trials: a practical guide with bayprior\n\n\n\nBayesian\n\nbayprior\n\nFDA 2026\n\nClinical trials\n\n\n\nHow to elicit, document, and justify informative priors for regulatory submissions using the bayprior R package — aligned with FDA 2026 draft guidance.\n\n\n\n\n\nJun 22, 2026\n\n4 min\n\n\n\n\nNo matching items"
   }
 ]
