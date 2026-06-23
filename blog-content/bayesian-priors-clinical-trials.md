@@ -158,4 +158,4 @@ Note: PDF output requires Quarto CLI and a LaTeX installation (`tinytex::install
 
 ---
 
-*Questions or corrections: [penn@reprosia.com](mailto:penn@reprosia.com) or [open an issue on GitHub](https://github.com/repro-stats).*
+*Questions or corrections: [open an issue on GitHub](https://github.com/repro-stats).*

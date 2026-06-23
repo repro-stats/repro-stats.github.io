@@ -11,7 +11,7 @@ ReproStats is a collection of R packages designed for statisticians and programm
 | Package | Version | Description |
 |---------|---------|-------------|
 | [reproducr](https://github.com/repro-stats/reproducr) | 0.2.1 | Script audit, environment certification, risk scoring, and drift detection for 21 CFR Part 11-aligned R analyses |
-| [bayprior](https://ndohpenngit.github.io/bayprior/) | 0.1.0 | Bayesian prior elicitation, conflict diagnostics, sensitivity analysis, and regulatory reporting — aligned with FDA 2026 draft guidance |
+| [bayprior](https://ndohpenngit.github.io/bayprior/) | 0.2.12 | Bayesian prior elicitation, conflict diagnostics, sensitivity analysis, and regulatory reporting — aligned with FDA 2026 draft guidance |
 
 ### In development
 
