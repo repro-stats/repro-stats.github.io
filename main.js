@@ -95,7 +95,12 @@
       while (i < html.length && count < n) {
         if (html[i] === '<') {
           const end = html.indexOf('>', i);
-          vis += html.slice(i, end + 1); i = end + 1;
+          if (end === -1) {
+            // No closing > — treat < as a literal character (e.g. <- in R)
+            vis += html[i]; count++; i++;
+          } else {
+            vis += html.slice(i, end + 1); i = end + 1;
+          }
         } else { vis += html[i]; count++; i++; }
       }
       return vis;
