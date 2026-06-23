@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ReproStats — Open-Source R for Rigorous Pharma Statistics</title>
+  <meta name="description" content="Open-source R packages for reproducible, regulation-ready pharmaceutical data science.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Serif:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .hero { padding:5.5rem 2.5rem 4.5rem; border-bottom:1px solid var(--rule); }
+    .hero-inner { max-width:1120px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:4rem; align-items:center; }
+    .hero-eyebrow { font-family:'IBM Plex Mono',monospace; font-size:0.7rem; color:var(--accent); letter-spacing:0.16em; text-transform:uppercase; margin-bottom:1.5rem; display:flex; align-items:center; gap:0.625rem; }
+    .hero-eyebrow::before { content:''; display:block; width:1.5rem; height:1px; background:var(--accent); }
+    .hero-sub { font-size:1.0625rem; color:var(--ink-mid); line-height:1.75; margin-bottom:2.25rem; font-weight:300; max-width:480px; }
+    .hero-stats-row { max-width:1120px; margin:0 auto; padding-top:3rem; border-top:1px solid var(--rule); display:flex; gap:3rem; flex-wrap:wrap; }
+    .hstat-num { font-family:'IBM Plex Mono',monospace; font-size:1.375rem; font-weight:500; color:var(--ink); margin-bottom:0.125rem; }
+    .hstat-label { font-size:0.78rem; color:var(--ink-faint); }
+    .pkg-grid-top { display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem; margin-bottom:1.25rem; }
+    .pkg-grid-bottom { display:grid; grid-template-columns:repeat(2,1fr); gap:1.25rem; }
+    @media(max-width:960px){ .pkg-grid-top{grid-template-columns:repeat(2,1fr);} }
+    @media(max-width:768px){ .hero-inner{grid-template-columns:1fr;} .hero-stats-row{gap:2rem;} }
+    @media(max-width:640px){ .hero{padding:4rem 1.25rem 3rem;} .pkg-grid-top,.pkg-grid-bottom{grid-template-columns:1fr;} }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav-logo">repro<span>stats</span>.org</a>
+  <ul class="nav-links">
+    <li><a href="index.html" class="active">Packages</a></li>
+    <li><a href="blog.html">Blog</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="https://reprosia.com" target="_blank" rel="noopener">Reprosia ↗</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="theme-toggle" aria-label="Toggle theme">
+      <svg class="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg class="icon-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+    <a href="https://github.com/repro-stats" class="btn btn-outline btn-sm" target="_blank" rel="noopener">GitHub</a>
+  </div>
+  <button class="nav-burger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+</nav>
+<nav class="nav-drawer">
+  <a href="index.html" class="active">Packages</a>
+  <a href="blog.html">Blog</a>
+  <a href="#about">About</a>
+  <a href="https://reprosia.com" target="_blank" rel="noopener">Reprosia ↗</a>
+  <a href="https://github.com/repro-stats" target="_blank" rel="noopener">GitHub</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-eyebrow">Open-source R packages</div>
+      <h1 class="display display-xl">Rigorous by<br><em>design.</em></h1>
+      <p class="hero-sub">Five R packages covering the full lifecycle of regulated pharmaceutical statistics — reproducibility, Bayesian methodology, audit logging, data provenance, and estimand specification.</p>
+      <div class="btn-group">
+        <a href="#packages" class="btn btn-primary">Explore packages</a>
+        <a href="https://github.com/repro-stats" class="btn btn-outline" target="_blank" rel="noopener">View on GitHub</a>
+      </div>
+    </div>
+    <div>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="t-dot t-dot-r"></div><div class="t-dot t-dot-y"></div><div class="t-dot t-dot-g"></div>
+          <span class="t-bar-label">R console</span>
+        </div>
+        <div class="terminal-body" id="term-body"></div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-stats-row">
+    <div><div class="hstat-num">2</div><div class="hstat-label">packages on CRAN</div></div>
+    <div><div class="hstat-num">5</div><div class="hstat-label">packages in the ecosystem</div></div>
+    <div><div class="hstat-num">97%</div><div class="hstat-label">test coverage in reproducr</div></div>
+    <div><div class="hstat-num">0.2.1</div><div class="hstat-label">reproducr latest version</div></div>
+    <div><div class="hstat-num">FDA</div><div class="hstat-label">2026 Bayesian guidance aligned</div></div>
+  </div>
+</section>
+
+<section class="section" id="packages">
+  <div class="container">
+    <div class="eyebrow">R packages</div>
+    <h2 class="display display-lg" style="margin-bottom:1rem">The ReproStats<br><em>ecosystem.</em></h2>
+    <p style="font-size:1rem;color:var(--ink-mid);max-width:560px;line-height:1.75;font-weight:300;margin-bottom:3rem">Five openly developed packages — two on CRAN today, three in active development. Each addresses a distinct layer of the regulated analysis lifecycle.</p>
+
+    <div class="pkg-grid-top">
+      <div class="pkg-card reveal">
+        <div class="pkg-header"><span class="pkg-name">reproducr</span><div class="pkg-badges"><span class="badge badge-cran">CRAN</span></div></div>
+        <p class="pkg-desc">The reproducibility foundation. Audit, certify, and monitor R scripts and environments for regulated settings. Designed around 21 CFR Part 11-aligned compliance processes.</p>
+        <ul class="pkg-feats">
+          <li>Script-level audit trail with cryptographic hash</li>
+          <li>Risk scoring for regulatory compliance</li>
+          <li>Environment certification and lockfiles</li>
+          <li>Drift detection across analysis runs</li>
+        </ul>
+        <div class="pkg-install"><span class="prompt">&gt; </span>install.packages("reproducr")</div>
+        <a href="https://github.com/repro-stats/reproducr" class="pkg-link" target="_blank" rel="noopener">Docs &amp; source →</a>
+      </div>
+
+      <div class="pkg-card reveal reveal-d1">
+        <div class="pkg-header"><span class="pkg-name">bayprior</span><div class="pkg-badges"><span class="badge badge-cran">CRAN</span><span class="badge badge-shiny">Shiny app</span></div></div>
+        <p class="pkg-desc">Structured Bayesian prior elicitation, conflict diagnostics, sensitivity analysis, and regulatory reporting for clinical trials. Aligned with the FDA 2026 draft guidance on Bayesian methods.</p>
+        <ul class="pkg-feats">
+          <li>SHELF-style elicitation across 6 distribution families</li>
+          <li>Prior-data conflict diagnostics</li>
+          <li>Sensitivity analysis with tornado plots</li>
+          <li>Regulatory prior justification reports (HTML/PDF/Word)</li>
+        </ul>
+        <div class="pkg-install"><span class="prompt">&gt; </span>install.packages("bayprior")</div>
+        <a href="https://ndohpenngit.github.io/bayprior/" class="pkg-link" target="_blank" rel="noopener">Docs &amp; source →</a>
+      </div>
+
+      <div class="pkg-card reveal reveal-d2">
+        <div class="pkg-header"><span class="pkg-name">regulog</span><div class="pkg-badges"><span class="badge badge-dev">In development</span></div></div>
+        <p class="pkg-desc">Electronic audit logging for R, designed around 21 CFR Part 11 requirements. Tamper-evident, user-attributed, timestamp-verified logging of all analytical actions.</p>
+        <ul class="pkg-feats">
+          <li>Immutable audit log with digital signatures</li>
+          <li>User-attributed action tracking</li>
+          <li>Structured output for regulatory review</li>
+          <li>Deep integration with reproducr</li>
+        </ul>
+        <div class="pkg-install"><span class="prompt">&gt; </span>remotes::install_github("repro-stats/regulog")</div>
+        <a href="https://github.com/repro-stats/regulog" class="pkg-link" target="_blank" rel="noopener">View on GitHub →</a>
+      </div>
+    </div>
+
+    <div class="pkg-grid-bottom">
+      <div class="pkg-card reveal reveal-d3">
+        <div class="pkg-header"><span class="pkg-name">lineager</span><div class="pkg-badges"><span class="badge badge-dev">In development</span></div></div>
+        <p class="pkg-desc">Row-level data provenance for clinical datasets. Track every transformation from raw SDTM input to analysis-ready ADaM datasets with complete traceability.</p>
+        <ul class="pkg-feats">
+          <li>Row-level transformation tracking</li>
+          <li>SDTM to ADaM derivation audit trail</li>
+          <li>Visual provenance graph generation</li>
+          <li>CDISC-compatible lineage documentation</li>
+        </ul>
+        <div class="pkg-install"><span class="prompt">&gt; </span>remotes::install_github("repro-stats/lineager")</div>
+        <a href="https://github.com/repro-stats/lineager" class="pkg-link" target="_blank" rel="noopener">View on GitHub →</a>
+      </div>
+
+      <div class="pkg-card reveal reveal-d4">
+        <div class="pkg-header"><span class="pkg-name">estimandr</span><div class="pkg-badges"><span class="badge badge-dev">In development</span></div></div>
+        <p class="pkg-desc">ICH E9(R1) estimand framework for R. Define, document, and implement your estimand strategy — population, variable, intercurrent events, summary measure — directly in your R pipeline. Designed to pair with bayprior for Bayesian estimand analyses.</p>
+        <ul class="pkg-feats">
+          <li>Structured estimand specification objects</li>
+          <li>Intercurrent event strategy documentation</li>
+          <li>SAP-ready estimand output tables</li>
+          <li>Integrates with clinical trial analysis packages</li>
+        </ul>
+        <div class="pkg-install"><span class="prompt">&gt; </span>remotes::install_github("repro-stats/estimandr")</div>
+        <a href="https://github.com/repro-stats/estimandr" class="pkg-link" target="_blank" rel="noopener">View on GitHub →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-alt">
+  <div class="container">
+    <div class="eyebrow">From the blog</div>
+    <h2 class="display display-md" style="margin-bottom:0.875rem">Recent writing on<br><em>R in regulated settings.</em></h2>
+    <p style="font-size:1rem;color:var(--ink-mid);max-width:480px;line-height:1.75;font-weight:300;margin-bottom:3rem">Practical guides, methodology notes, and regulatory context for pharma statisticians. <a href="blog.html" style="color:var(--accent)">See all posts →</a></p>
+    <div class="blog-grid reveal">
+      <a href="blog/bayesian-priors-clinical-trials.html" class="blog-card">
+        <div class="blog-meta"><span class="blog-date">22 Jun 2026</span><span class="blog-read">8 min read</span></div>
+        <h3>Bayesian prior elicitation for clinical trials: a practical guide with bayprior</h3>
+        <p>How to elicit, document, and justify informative priors for regulatory submissions — aligned with FDA 2026 draft guidance.</p>
+        <div class="blog-card-footer"><div class="blog-tags"><span class="tag">Bayesian</span><span class="tag">bayprior</span></div><span class="blog-arrow">→</span></div>
+      </a>
+      <a href="blog/reproducr-getting-started.html" class="blog-card">
+        <div class="blog-meta"><span class="blog-date">15 Jun 2026</span><span class="blog-read">6 min read</span></div>
+        <h3>Getting started with reproducr: audit trails for clinical R analyses</h3>
+        <p>A step-by-step introduction to reproducr — audit scripts, certify your environment, and generate compliance-ready documentation.</p>
+        <div class="blog-card-footer"><div class="blog-tags"><span class="tag">reproducr</span><span class="tag">Compliance</span></div><span class="blog-arrow">→</span></div>
+      </a>
+      <a href="blog/ich-e9-r1-estimands-in-r.html" class="blog-card">
+        <div class="blog-meta"><span class="blog-date">8 Jun 2026</span><span class="blog-read">10 min read</span></div>
+        <h3>ICH E9(R1) in practice: implementing estimands in R</h3>
+        <p>From protocol estimand definition to SAP implementation using the estimandr framework.</p>
+        <div class="blog-card-footer"><div class="blog-tags"><span class="tag">ICH E9(R1)</span><span class="tag">estimandr</span></div><span class="blog-arrow">→</span></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<div class="reprosia-bridge">
+  <div class="bridge-inner">
+    <div>
+      <div class="bridge-eyebrow">Enterprise platform</div>
+      <h2 class="bridge-h">Need more than<br>open source? <em>Reprosia.</em></h2>
+      <p class="bridge-p">These packages are the open-source foundation. Reprosia is the platform built on top — adding environment validation, submission tooling, and expert services for regulated pharma teams.</p>
+      <a href="https://reprosia.com" class="btn-teal" target="_blank" rel="noopener">Explore reprosia.com →</a>
+    </div>
+    <ul class="bridge-features">
+      <li><strong>IQ/OQ/PQ validation</strong> — automated validation documentation for FDA and EMA submissions</li>
+      <li><strong>Environment management</strong> — locked, certified R environments across your full team</li>
+      <li><strong>eCTD submission packaging</strong> — regulatory-ready output from your R pipelines</li>
+      <li><strong>SAS → R migration</strong> — equivalence testing and compliance-safe transition support</li>
+      <li><strong>Expert consulting</strong> — direct support from Ndoh Penn for your programme</li>
+    </ul>
+  </div>
+</div>
+
+<section class="section section-alt" id="about">
+  <div class="container">
+    <div class="eyebrow">About ReproStats</div>
+    <h2 class="display display-md" style="margin-bottom:3rem">Why these packages<br><em>exist.</em></h2>
+    <div class="about-layout reveal">
+      <div class="about-prose">
+        <p>Reproducibility in clinical analyses is harder than it should be. R environments go undocumented, package versions drift, and the steps between raw data and submission output are rarely captured in a way that supports independent verification.</p>
+        <p>ReproStats is an open-source project building the R infrastructure to address this. Five packages covering the key areas: reproducibility and certification (<strong>reproducr</strong>, <strong>regulog</strong>), Bayesian prior methodology (<strong>bayprior</strong>), data provenance (<strong>lineager</strong>), and estimand specification (<strong>estimandr</strong>).</p>
+        <p><strong>reproducr</strong> and <strong>bayprior</strong> are on CRAN. The remaining three are in active development. All packages are openly developed on GitHub and designed for GxP environments.</p>
+        <p>ReproStats is maintained by <strong>Ndoh Penn</strong>, a biostatistician based in Brussels, Belgium. The enterprise platform built on this foundation is <a href="https://reprosia.com" target="_blank" rel="noopener">Reprosia</a>.</p>
+      </div>
+      <div class="about-stats">
+        <div class="astat"><div class="astat-num">2</div><div class="astat-label">packages on CRAN</div></div>
+        <div class="astat"><div class="astat-num">5</div><div class="astat-label">packages in the ecosystem</div></div>
+        <div class="astat"><div class="astat-num">97%</div><div class="astat-label">test coverage in reproducr</div></div>
+        <div class="astat"><div class="astat-num">EU</div><div class="astat-label">Brussels, Belgium</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="cta-strip">
+  <div class="cta-strip-inner">
+    <h2>Questions, contributions,<br>or <em>collaboration?</em></h2>
+    <div class="cta-right">
+      <a href="https://github.com/repro-stats" class="btn btn-primary" target="_blank" rel="noopener">Open an issue on GitHub</a>
+      <p class="cta-email"><a href="mailto:penn@reprosia.com">penn@reprosia.com</a></p>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <a href="/" class="footer-logo">repro<span>stats</span>.org</a>
+  <ul class="footer-links">
+    <li><a href="https://github.com/repro-stats" target="_blank" rel="noopener">GitHub</a></li>
+    <li><a href="blog.html">Blog</a></li>
+    <li><a href="https://ndohpenngit.github.io/bayprior/" target="_blank" rel="noopener">bayprior docs</a></li>
+    <li><a href="https://reprosia.com" target="_blank" rel="noopener">Reprosia</a></li>
+    <li><a href="mailto:penn@reprosia.com">Contact</a></li>
+  </ul>
+  <span class="footer-copy">© 2026 Ndoh Penn · Brussels, Belgium</span>
+</footer>
+
+<script src="main.js"></script>
+</body>
+</html>
