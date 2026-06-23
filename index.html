@@ -98,8 +98,8 @@
           <li>Environment certification and lockfiles</li>
           <li>Drift detection across analysis runs</li>
         </ul>
-        <div class="pkg-install"><span class="prompt">&gt; </span>install.packages("reproducr") <span style="color:rgba(255,255,255,0.3)"># v<span data-cran-version="reproducr">0.2.1</span></span></div>
-        <a href="https://github.com/repro-stats/reproducr" class="pkg-link" target="_blank" rel="noopener">Docs &amp; source →</a>
+        <div class="pkg-install"><span class="prompt">&gt; </span>remotes::install_github("repro-stats/reproducr")</div>
+        <a href="https://repro-stats.github.io/reproducr/" class="pkg-link" target="_blank" rel="noopener">Docs &amp; source →</a>
       </div>
 
       <div class="pkg-card reveal reveal-d1">
@@ -212,7 +212,7 @@
     <div class="about-layout reveal">
       <div class="about-prose">
         <p>Reproducibility in clinical analyses is harder than it should be. R environments go undocumented, package versions drift, and the steps between raw data and submission output are rarely captured in a way that supports independent verification.</p>
-        <p>ReproStats is an open-source project building the R infrastructure to address this. Five packages covering the key areas: reproducibility and certification (<strong>reproducr</strong>, <strong>regulog</strong>), Bayesian prior methodology (<strong>bayprior</strong>), data provenance (<strong>lineager</strong>), and estimand specification (<strong>estimandr</strong>).</p>
+        <p>ReproStats is an open-source project building the R infrastructure to address this. Five packages covering the key areas: behavioural reproducibility auditing (<strong>reproducr</strong>) and audit logging (<strong>regulog</strong>), Bayesian prior methodology (<strong>bayprior</strong>), data provenance (<strong>lineager</strong>), and estimand specification (<strong>estimandr</strong>).</p>
         <p><strong>reproducr</strong> and <strong>bayprior</strong> are on CRAN. The remaining three are in active development. All packages are openly developed on GitHub and designed for GxP environments.</p>
         <p>ReproStats is maintained by <strong>Ndoh Penn</strong>, a biostatistician based in Brussels, Belgium. The enterprise platform built on this foundation is <a href="https://reprosia.com" target="_blank" rel="noopener">Reprosia</a>.</p>
       </div>
