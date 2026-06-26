@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Traceable ADaM derivation: every exclusion documented with lineager — ReproStats</title>
+  <meta name="description" content="Row-level data provenance and exclusion tracking for a Phase III atopic dermatitis trial — building ADEFF from ADSL and ADLB with complete lineage using lineager.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Serif:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+<nav class="nav">
+  <a href="../index.html" class="nav-logo">repro<span>stats</span>.org</a>
+  <ul class="nav-links">
+    <li><a href="../index.html">Packages</a></li>
+    <li><a href="../blog.html" class="active">Blog</a></li>
+    <li><a href="../index.html#about">About</a></li>
+    <li><a href="https://reprosia.com" target="_blank" rel="noopener">Reprosia ↗</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="theme-toggle" aria-label="Toggle theme">
+      <svg class="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg class="icon-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+    <a href="https://github.com/repro-stats" class="btn btn-outline btn-sm" target="_blank" rel="noopener">GitHub</a>
+  </div>
+  <button class="nav-burger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+</nav>
+<nav class="nav-drawer">
+  <a href="../index.html">Packages</a>
+  <a href="../blog.html" class="active">Blog</a>
+  <a href="../index.html#about">About</a>
+  <a href="https://reprosia.com" target="_blank" rel="noopener">Reprosia ↗</a>
+  <a href="https://github.com/repro-stats" target="_blank" rel="noopener">GitHub</a>
+</nav>
+
+<section class="post-hero">
+  <div class="post-hero-inner">
+    <a href="../blog.html" class="post-back">← Back to blog</a>
+    <div class="post-meta">
+      <span class="post-meta-item">26 Jun 2026</span>
+      <span class="post-meta-item">·</span>
+      <span class="post-meta-item">9 min read</span>
+      <span class="post-meta-item">·</span>
+      <span class="post-meta-item">Ndoh Penn</span>
+    </div>
+    <h1 class="display display-lg">Traceable ADaM derivation: every exclusion documented with <em>lineager</em></h1>
+    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:1.5rem">
+      <span class="tag">lineager</span>
+      <span class="tag">CDISC ADaM</span>
+      <span class="tag">Data provenance</span>
+      <span class="tag">Dermatology</span>
+      <span class="tag">Exclusion tracking</span>
+    </div>
+  </div>
+</section>
+
+<article class="post-body">
+
+  <p>Every ADaM derivation involves exclusions. Screen failures, missing baselines, protocol deviations, out-of-window assessments — they all remove rows from the analytical dataset. The standard documentation is aggregate: "47 subjects were excluded from the per-protocol population for the reasons listed in Table 14.1.3." Which 47? Why exactly? Can you trace subject DUP301-0082 from the ADLB source record through to the ADEFF analysis record and show every step in between?</p>
+
+  <p>In most trials, the answer is: eventually, with effort, after checking with the programmer. <code>lineager</code> makes it immediate, automatic, and self-documenting.</p>
+
+  <h2>The idea: lineage IDs that travel with rows</h2>
+
+  <p>The core concept is simple. When you tag a source dataset with <code>lg_tag()</code>, every row receives a unique lineage ID (<code>.__lid__</code>) that is embedded in the USUBJID and dataset name:</p>
+
+  <pre><code>lg_start(analyst = "Ndoh Penn", study = "DERM-DUP-301",
+         purpose = "ADEFF derivation — primary efficacy analysis")
+
+adlb_tagged <- lg_tag(adlb, name = "ADLB", id_var = "USUBJID")
+
+# Every row now carries:
+# .__lid__ = "ADLB:DUP301-0001:row001"</code></pre>
+
+  <p>This ID survives every subsequent operation. When you filter, the excluded rows are logged. When you join, both sides of the join are tracked. When you derive, the derivation description is recorded. At any point, <code>lg_trace("DUP301-0082")</code> returns that subject's complete journey.</p>
+
+  <h2>Building ADEFF step by step</h2>
+
+  <p>The derivation follows the standard ADaM ADEFF pattern: start from ADLB, apply population flags, merge ADSL covariates, derive baseline and change from baseline, flag responders. Each filter uses <code>lg_filter()</code> instead of <code>dplyr::filter()</code>, and each derivation uses <code>lg_derive()</code> instead of <code>mutate()</code>:</p>
+
+  <pre><code># Step 1: Safety population
+adlb_saf <- lg_filter(
+  adlb_tagged,
+  USUBJID %in% adsl$USUBJID[adsl$SAFFL == "Y"],
+  reason = "Restrict to safety analysis set (SAFFL = Y) per SAP Section 4.1"
+)
+
+# Step 2: ITT population
+adlb_itt <- lg_filter(
+  adlb_saf,
+  USUBJID %in% adsl$USUBJID[adsl$ITTFL == "Y"],
+  reason = "Restrict to ITT population (ITTFL = Y) per SAP Section 4.2"
+)
+
+# Step 3: Join ADSL for treatment and covariates
+adeff <- lg_join(
+  adlb_itt, adsl_core, by = "USUBJID", type = "left",
+  description = "Left join ADLB to ADSL for treatment and baseline covariates"
+)
+
+# Step 4: Derive baseline
+adeff <- lg_derive(
+  adeff,
+  BASE = AVAL[AVISITN == 0L][1L],
+  .by  = "USUBJID",
+  description = "Derive baseline EASI score as AVAL at Visit 0"
+)
+
+# Step 5: Exclude missing baseline
+adeff <- lg_filter(
+  adeff,
+  !is.na(BASE),
+  reason = "Exclude subjects with missing baseline EASI — required for
+            change-from-baseline analysis per SAP Section 5.1"
+)
+
+# Step 6: Derive CHG and PCHG
+adeff <- lg_derive(
+  adeff,
+  CHG  = AVAL - BASE,
+  PCHG = (AVAL - BASE) / BASE * 100,
+  description = "Derive CHG and PCHG per CDISC ADaM IG Section 3.2.7"
+)
+
+# Step 7: EASI-75 responder flag
+adeff_final <- lg_derive(
+  adeff,
+  EASI75FL = ifelse(AVISITN > 0 & !is.na(PCHG),
+                    ifelse(PCHG <= -75, "Y", "N"), NA_character_),
+  description = "EASI-75 responder flag: Y if percent change <= -75%"
+)</code></pre>
+
+  <p>The syntax is almost identical to standard dplyr. The difference is what gets recorded.</p>
+
+  <h2>What the exclusion registry looks like</h2>
+
+  <p>After the derivation, <code>lg_exclusions()</code> returns a data frame of every step:</p>
+
+  <pre><code>lg_exclusions()
+
+# step  reason                                          n_excluded  n_remaining
+# 1     Restrict to safety set (SAFFL = Y)              6           1914
+# 2     Restrict to ITT population (ITTFL = Y)          18          1896
+# 3     Exclude subjects with missing baseline EASI      12          1884
+# 4     Retain baseline and post-baseline visits only    320         1564
+# 5     Exclude missing post-baseline EASI assessments   94          1470</code></pre>
+
+  <p>Each row is an audit record, not a manually maintained count. If the derivation code changes, the registry updates automatically.</p>
+
+  <h2>CONSORT table from derivation objects</h2>
+
+  <p>The CONSORT-style disposition table — the one that appears in Table 14.1.1 of most clinical study reports — is derived directly from the lineage objects, not from a separate count script:</p>
+
+  <pre><code>lg_disposition(
+  groups = list(
+    Randomised     = adsl_tagged,
+    "Safety set"   = adsl_tagged |> filter(SAFFL  == "Y"),
+    "ITT set"      = adsl_tagged |> filter(ITTFL  == "Y"),
+    "PP set"       = adsl_tagged |> filter(PPROTFL == "Y"),
+    "Week 16 EASI" = adeff_final |> filter(ANL01FL == "Y")
+  ),
+  group_var = "TRT01P"
+)</code></pre>
+
+  <p>The numbers in this table match the exclusion registry by construction. You cannot have a CONSORT table that disagrees with the derivation code.</p>
+
+  <h2>Tracing a subject</h2>
+
+  <p>For any subject, at any time:</p>
+
+  <pre><code>lg_trace("DUP301-0082")
+
+# Subject: DUP301-0082
+# ─────────────────────────────────────────────────────────
+# ADLB (source)         → 6 records tagged
+# After SAFFL filter    → 6 records retained
+# After ITTFL filter    → 6 records retained
+# After baseline filter → 6 records retained (BASE = 38.4)
+# After visit filter    → 5 records (baseline + 4 post-BL)
+# ADEFF (final)         → 5 records, CHG at Week 16: -28.1
+#                         EASI75FL at Week 16: N
+# ─────────────────────────────────────────────────────────</code></pre>
+
+  <p>And for a subject who was excluded:</p>
+
+  <pre><code>lg_trace("DUP301-0019")
+
+# Subject: DUP301-0019
+# ─────────────────────────────────────────────────────────
+# ADLB (source)          → 6 records tagged
+# After SAFFL filter     → 6 records retained
+# After ITTFL filter     → EXCLUDED at step 2
+#   Reason: Restrict to ITT population (ITTFL = Y) per SAP Section 4.2
+#   ITTFL = N for this subject
+# ─────────────────────────────────────────────────────────</code></pre>
+
+  <h2>The provenance report</h2>
+
+  <pre><code>lg_report(
+  output  = "DERM-DUP-301_ADEFF_provenance_v1.html",
+  title   = "ADEFF Provenance Report — DERM-DUP-301",
+  version = "1.0",
+  date    = as.Date("2026-06-26"),
+  author  = "Ndoh Penn"
+)</code></pre>
+
+  <p>The report is a self-contained HTML document containing the full exclusion registry, CONSORT table, pipeline summary, and analyst information. It can be attached to the submission package, shared with QC programmers, or archived alongside the analysis dataset.</p>
+
+  <h2>What changes for the programmer</h2>
+
+  <p>Almost nothing. Replace <code>filter()</code> with <code>lg_filter()</code> and add a <code>reason</code> argument. Replace <code>mutate()</code> with <code>lg_derive()</code> and add a <code>description</code>. The analytical logic is identical. What changes is that the decisions embedded in the logic are now on permanent record, automatically aggregated, and traceable at the subject level.</p>
+
+  <p>The full Quarto article with complete R code, all simulation, and rendered outputs is available in the <a href="https://reprostats.org/lineager/articles/lineager-dermatology.html" target="_blank" rel="noopener">lineager pkgdown documentation</a>.</p>
+
+  <hr class="post-divider">
+
+  <p><strong>Ndoh Penn</strong> is a biostatistician based in Brussels, Belgium. Questions — <a href="mailto:hello@reprostats.org">hello@reprostats.org</a>.</p>
+
+</article>
+
+<footer>
+  <a href="../" class="footer-logo">repro<span>stats</span>.org</a>
+  <ul class="footer-links">
+    <li><a href="https://github.com/repro-stats" target="_blank" rel="noopener">GitHub</a></li>
+    <li><a href="../blog.html">Blog</a></li>
+    <li><a href="https://reprosia.com" target="_blank" rel="noopener">Reprosia</a></li>
+  </ul>
+  <span class="footer-copy">© 2026 Ndoh Penn · Brussels, Belgium</span>
+</footer>
+
+<script src="../main.js"></script>
+</body>
+</html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Row-level provenance in real-world evidence studies with lineager — ReproStats</title>
+  <meta name="description" content="New-user active comparator cohort derivation with complete exclusion documentation using lineager — building a defensible RWE study from administrative claims data.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Serif:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+<nav class="nav">
+  <a href="../index.html" class="nav-logo">repro<span>stats</span>.org</a>
+  <ul class="nav-links">
+    <li><a href="../index.html">Packages</a></li>
+    <li><a href="../blog.html" class="active">Blog</a></li>
+    <li><a href="../index.html#about">About</a></li>
+    <li><a href="https://reprosia.com" target="_blank" rel="noopener">Reprosia ↗</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="theme-toggle" aria-label="Toggle theme">
+      <svg class="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg class="icon-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+    <a href="https://github.com/repro-stats" class="btn btn-outline btn-sm" target="_blank" rel="noopener">GitHub</a>
+  </div>
+  <button class="nav-burger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+</nav>
+<nav class="nav-drawer">
+  <a href="../index.html">Packages</a>
+  <a href="../blog.html" class="active">Blog</a>
+  <a href="../index.html#about">About</a>
+  <a href="https://reprosia.com" target="_blank" rel="noopener">Reprosia ↗</a>
+  <a href="https://github.com/repro-stats" target="_blank" rel="noopener">GitHub</a>
+</nav>
+
+<section class="post-hero">
+  <div class="post-hero-inner">
+    <a href="../blog.html" class="post-back">← Back to blog</a>
+    <div class="post-meta">
+      <span class="post-meta-item">26 Jun 2026</span>
+      <span class="post-meta-item">·</span>
+      <span class="post-meta-item">8 min read</span>
+      <span class="post-meta-item">·</span>
+      <span class="post-meta-item">Ndoh Penn</span>
+    </div>
+    <h1 class="display display-lg">Row-level provenance in real-world evidence studies with <em>lineager</em></h1>
+    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:1.5rem">
+      <span class="tag">lineager</span>
+      <span class="tag">RWE</span>
+      <span class="tag">Cohort derivation</span>
+      <span class="tag">HEOR</span>
+      <span class="tag">Data provenance</span>
+    </div>
+  </div>
+</section>
+
+<article class="post-body">
+
+  <p>RWE studies are increasingly used to support regulatory and payer decisions — but they face a documentation problem that randomised trials have largely solved. In a clinical trial, the analysis population is defined prospectively, the exclusion criteria are pre-specified, and the ADaM derivation is auditable. In a retrospective RWE study, the cohort definition is operationalised in code, and the documentation is usually a flow chart produced at the end.</p>
+
+  <p>The gap matters. NICE, ICER, and FDA's RWE programme all ask how closely the operational cohort matches the pre-specified eligibility criteria. When a reviewer asks "why was patient PT-0038291 excluded?" the expected answer is not "let me check the code." <code>lineager</code> makes the answer immediate and complete.</p>
+
+  <h2>The new-user design problem</h2>
+
+  <p>The new-user active comparator design is the methodological gold standard for comparative effectiveness research. But it involves a series of eligibility criteria — minimum lookback, washout period, prevalent user exclusion, contraindication screen — each of which excludes a subset of the initial patient pool. A study comparing GLP-1 receptor agonists to DPP-4 inhibitors in type 2 diabetes might start with 25,000 patients and arrive at 6,000 after applying all criteria. The question is not just how many were excluded at each step, but which ones, and whether the exclusion logic faithfully implements the SAP.</p>
+
+  <h2>Tagging the source data</h2>
+
+  <pre><code>lg_start(
+  analyst  = "Ndoh Penn",
+  study    = "T2DM-GLP1-RWE-001",
+  purpose  = "New-user active comparator cohort derivation",
+  sap_ref  = "SAP v1.2, Section 3 — Cohort Definition"
+)
+
+claims <- lg_tag(claims_raw, name = "CLAIMS_RAW", id_var = "PATID")
+# 25,000 patients tagged with lineage IDs</code></pre>
+
+  <h2>Documenting every exclusion criterion</h2>
+
+  <p>Each eligibility criterion is a filter with a mandatory reason. The reason is not a code comment — it is a structured log entry tied to the specific patient records it affects:</p>
+
+  <pre><code># Criterion 1: Age 40–89
+cohort <- lg_filter(
+  claims,
+  AGE_INDEX >= 40L & AGE_INDEX <= 89L,
+  reason = "Eligible age range 40–89 years at index date per SAP Section 3.1.
+            Excludes paediatric patients and those with extreme age where
+            T2DM prevalence and drug indication differ substantially."
+)
+
+# Criterion 2: Confirmed T2DM
+cohort <- lg_filter(
+  cohort,
+  T2DM_DX == TRUE,
+  reason = "Require confirmed T2DM diagnosis (ICD-10 E11.x) in 12 months
+            prior to index date per SAP Section 3.1.2."
+)
+
+# Criterion 3: 12-month continuous enrolment lookback
+cohort <- lg_filter(
+  cohort,
+  LOOKBACK_MO >= 12L,
+  reason = "Require >= 12 months continuous enrolment prior to index date
+            per SAP Section 3.2. Ensures adequate capture of prior drug use
+            and comorbidities for PS model and new-user ascertainment."
+)
+
+# Criterion 4: New user — no prior use of index drug class
+cohort <- lg_filter(
+  cohort,
+  PRIOR_USE == FALSE,
+  reason = "Exclude prevalent users: no dispensing of index drug class in
+            12-month lookback per SAP Section 3.3 (new-user design).
+            Prevents depletion of susceptibles bias."
+)
+
+# Criterion 5: No insulin at index
+cohort <- lg_filter(
+  cohort,
+  INSULIN_USE == FALSE,
+  reason = "Exclude patients on insulin at index date per SAP Section 3.4.
+            Insulin represents a different disease stage; differential
+            indication for GLP-1 RA versus DPP-4i in this setting."
+)
+
+# Criterion 6: No end-stage renal disease
+cohort <- lg_filter(
+  cohort,
+  ESRD == FALSE,
+  reason = "Exclude ESRD (CKD Stage 5 or RRT) per SAP Section 3.5.
+            DPP-4i requires dose adjustment in severe CKD — introduces
+            differential measurement error in comparator arm."
+)
+
+# Criterion 7: 12 months follow-up available
+cohort <- lg_filter(
+  cohort,
+  FOLLOW_MO >= 12L,
+  reason = "Require >= 12 months follow-up for primary 12-month MACE outcome
+            per SAP Section 3.6."
+)</code></pre>
+
+  <h2>The exclusion registry</h2>
+
+  <p>After applying all criteria, <code>lg_exclusions()</code> returns the complete derivation record:</p>
+
+  <pre><code>lg_exclusions()
+
+# step  reason                              n_excluded  n_remaining
+# 1     Age 40-89                           3,841       21,159
+# 2     T2DM confirmed                      2,548       18,611
+# 3     12m enrolment lookback              1,923       16,688
+# 4     New user (no prior use)             4,709       11,979
+# 5     No insulin at index                 2,156        9,823
+# 6     No ESRD                               394        9,429
+# 7     12m follow-up available             3,287        6,142</code></pre>
+
+  <p>This is the CONSORT flow table — generated automatically from the derivation, not maintained separately. The numbers are always consistent with the code because they are produced by the code.</p>
+
+  <h2>Tracing any patient</h2>
+
+  <p>When a reviewer questions a specific patient's inclusion or exclusion:</p>
+
+  <pre><code>lg_trace("PT-0038291")
+
+# Patient: PT-0038291
+# ─────────────────────────────────────────────────────────────
+# CLAIMS_RAW (source)     → tagged at row 38291
+# After age criterion     → retained (AGE_INDEX = 57)
+# After T2DM criterion    → retained (T2DM_DX = TRUE)
+# After lookback criterion → retained (LOOKBACK_MO = 18)
+# After new-user criterion → EXCLUDED at step 4
+#   Reason: No prior use of index drug class in 12-month lookback
+#   PRIOR_USE = TRUE for this patient
+# ─────────────────────────────────────────────────────────────</code></pre>
+
+  <p>The answer is immediate, precise, and does not require re-running the derivation or examining the source data.</p>
+
+  <h2>Why this matters for RWE reviewers</h2>
+
+  <p>NICE's real-world evidence framework, ICER's value assessment methodology, and FDA's RWE programme all ask the same core question: does the operational cohort match the pre-specified protocol? Aggregate flow charts answer this at the population level. Row-level provenance answers it at the patient level.</p>
+
+  <p>When a sensitivity analysis re-runs the derivation with a different lookback window, <code>lineager</code> shows exactly which patients changed status — not just the count difference. When an independent analyst replicates the study, they can verify not just that the final N matches, but that the same patients are included and excluded at each step.</p>
+
+  <p>The distinction between a reproducible RWE study and a defensible one is provenance at the row level. <code>lineager</code> makes this the default rather than the exception.</p>
+
+  <p>Full R code for the complete cohort derivation — including PS model derivation, outcome analysis, and attrition waterfall chart — is in the <a href="https://reprostats.org/lineager/articles/lineager-rwe.html" target="_blank" rel="noopener">lineager pkgdown article</a>.</p>
+
+  <hr class="post-divider">
+
+  <p><strong>Ndoh Penn</strong> is a biostatistician based in Brussels, Belgium. Questions — <a href="mailto:hello@reprostats.org">hello@reprostats.org</a>.</p>
+
+</article>
+
+<footer>
+  <a href="../" class="footer-logo">repro<span>stats</span>.org</a>
+  <ul class="footer-links">
+    <li><a href="https://github.com/repro-stats" target="_blank" rel="noopener">GitHub</a></li>
+    <li><a href="../blog.html">Blog</a></li>
+    <li><a href="https://reprosia.com" target="_blank" rel="noopener">Reprosia</a></li>
+  </ul>
+  <span class="footer-copy">© 2026 Ndoh Penn · Brussels, Belgium</span>
+</footer>
+
+<script src="../main.js"></script>
+</body>
+</html>
