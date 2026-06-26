@@ -93,6 +93,7 @@
       .post-featured { grid-template-columns: 1fr; }
       .post-featured-arrow { display: none; }
     }
+    .post-hidden { display: none !important; }
   </style>
 </head>
 <body>
@@ -221,6 +222,46 @@
 </footer>
 
 <script src="main.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var btns     = document.querySelectorAll('.filter-btn');
+    var featured = document.querySelector('.post-featured');
+    var cards    = document.querySelectorAll('.blog-card');
+
+    function filterPosts(tag) {
+      /* Featured post */
+      if (featured) {
+        var ftags = (featured.getAttribute('data-tags') || '').split(' ');
+        if (tag === 'all' || ftags.indexOf(tag) !== -1) {
+          featured.classList.remove('post-hidden');
+        } else {
+          featured.classList.add('post-hidden');
+        }
+      }
+
+      /* Blog cards */
+      cards.forEach(function(card) {
+        var ctags = (card.getAttribute('data-tags') || '').split(' ');
+        if (tag === 'all' || ctags.indexOf(tag) !== -1) {
+          card.classList.remove('post-hidden');
+        } else {
+          card.classList.add('post-hidden');
+        }
+      });
+    }
+
+    btns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        btns.forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+
+        /* Convert button text to tag: lowercase, spaces to hyphens */
+        var tag = btn.textContent.trim().toLowerCase().split(' ').join('-');
+        filterPosts(tag);
+      });
+    });
+  });
+</script>
 <script>
   (function () {
     const btns     = document.querySelectorAll('.filter-btn');
