@@ -148,7 +148,7 @@
     </div>
 
     <!-- Featured -->
-    <a href="blog/regulog-vaccine-immunogenicity.html" class="post-featured reveal">
+    <a href="blog/regulog-vaccine-immunogenicity.html" class="post-featured reveal" data-tags="regulatory safety">
       <div>
         <div class="featured-label">Latest post</div>
         <h2>21 CFR Part 11-compliant immunogenicity analysis in R with regulog</h2>
@@ -164,28 +164,28 @@
     <!-- Grid -->
     <div class="blog-grid reveal">
 
-      <a href="blog/lineager-dermatology.html" class="blog-card">
+      <a href="blog/lineager-dermatology.html" class="blog-card" data-tags="data-provenance">
         <div class="blog-meta"><span class="blog-date">26 Jun 2026</span><span class="blog-read">9 min read</span></div>
         <h3>Traceable ADaM derivation: every exclusion documented with lineager</h3>
         <p>Building ADEFF from ADSL and ADLB with row-level provenance — population flags, change from baseline, EASI-75 responder flag, CONSORT table, and subject-level tracing.</p>
         <div class="blog-card-footer"><div class="blog-tags"><span class="tag">lineager</span><span class="tag">CDISC ADaM</span></div><span class="blog-arrow">→</span></div>
       </a>
 
-      <a href="blog/lineager-rwe.html" class="blog-card">
+      <a href="blog/lineager-rwe.html" class="blog-card" data-tags="rwe data-provenance">
         <div class="blog-meta"><span class="blog-date">26 Jun 2026</span><span class="blog-read">8 min read</span></div>
         <h3>Row-level provenance in real-world evidence studies with lineager</h3>
         <p>New-user active comparator cohort derivation from administrative claims — every exclusion criterion documented, every patient traceable, CONSORT table automatic.</p>
         <div class="blog-card-footer"><div class="blog-tags"><span class="tag">lineager</span><span class="tag">RWE</span><span class="tag">HEOR</span></div><span class="blog-arrow">→</span></div>
       </a>
 
-      <a href="blog/regulog-oncology-safety.html" class="blog-card">
+      <a href="blog/regulog-oncology-safety.html" class="blog-card" data-tags="regulatory safety">
         <div class="blog-meta"><span class="blog-date">26 Jun 2026</span><span class="blog-read">10 min read</span></div>
         <h3>Audit-ready oncology safety monitoring in R with regulog</h3>
         <p>TEAE summaries, SAE flagging, safety signal documentation, dual electronic sign-off, and submission-ready audit trail for a Phase III NSCLC trial.</p>
         <div class="blog-card-footer"><div class="blog-tags"><span class="tag">regulog</span><span class="tag">Oncology</span><span class="tag">Safety</span></div><span class="blog-arrow">→</span></div>
       </a>
 
-      <a href="blog/bayesian-priors-clinical-trials.html" class="blog-card">
+      <a href="blog/bayesian-priors-clinical-trials.html" class="blog-card" data-tags="bayesian">
         <div class="blog-meta"><span class="blog-date">22 Jun 2026</span><span class="blog-read">8 min read</span></div>
         <h3>Bayesian prior elicitation for clinical trials: a practical guide with bayprior</h3>
         <p>How to elicit, document, and justify informative priors for regulatory submissions — aligned with FDA 2026 draft guidance.</p>
@@ -222,13 +222,43 @@
 
 <script src="main.js"></script>
 <script>
-  /* Filter tabs — visual only for now */
-  document.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+  (function () {
+    const btns     = document.querySelectorAll('.filter-btn');
+    const featured = document.querySelector('.post-featured');
+    const cards    = document.querySelectorAll('.blog-card');
+
+    function filterPosts(tag) {
+      /* Featured post */
+      if (featured) {
+        const ftags = (featured.dataset.tags || '').split(' ');
+        const show  = tag === 'all' || ftags.includes(tag);
+        featured.style.display = show ? '' : 'none';
+      }
+
+      /* Blog cards */
+      cards.forEach(card => {
+        const ctags = (card.dataset.tags || '').split(' ');
+        const show  = tag === 'all' || ctags.includes(tag);
+        card.style.display = show ? '' : 'none';
+      });
+
+      /* Hide grid wrapper if all cards hidden */
+      const grid = document.querySelector('.blog-grid');
+      if (grid) {
+        const anyVisible = [...cards].some(c => c.style.display !== 'none');
+        grid.style.display = anyVisible ? '' : 'none';
+      }
+    }
+
+    btns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        btns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const tag = btn.textContent.trim().toLowerCase().replace(/\s+/g, '-');
+        filterPosts(tag);
+      });
     });
-  });
+  })();
 </script>
 </body>
 </html>
