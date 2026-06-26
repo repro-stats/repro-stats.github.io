@@ -57,7 +57,7 @@
     <div>
       <div class="hero-eyebrow">Open-source R packages</div>
       <h1 class="display display-xl">Rigorous by<br><em>design.</em></h1>
-      <p class="hero-sub">Five R packages covering the full lifecycle of regulated pharmaceutical statistics — reproducibility, Bayesian methodology, audit logging, data provenance, and estimand specification.</p>
+      <p class="hero-sub">R infrastructure for regulated pharmaceutical statistics — reproducibility auditing, Bayesian methodology, electronic audit logging, and row-level data provenance.</p>
       <div class="btn-group">
         <a href="#packages" class="btn btn-primary">Explore packages</a>
         <a href="https://github.com/repro-stats" class="btn btn-outline" target="_blank" rel="noopener">View on GitHub</a>
@@ -74,11 +74,10 @@
     </div>
   </div>
   <div class="hero-stats-row">
-    <div><div class="hstat-num">2</div><div class="hstat-label">packages on CRAN</div></div>
-    <div><div class="hstat-num">5</div><div class="hstat-label">packages in the ecosystem</div></div>
-    <div><div class="hstat-num">97%</div><div class="hstat-label">test coverage in reproducr</div></div>
-    <div><div class="hstat-num" data-cran-version="reproducr">0.2.1</div><div class="hstat-label">reproducr latest version</div></div>
+    <div><div class="hstat-num">21 CFR</div><div class="hstat-label">Part 11 &amp; EU Annex 11 compliant</div></div>
+    <div><div class="hstat-num">CDISC</div><div class="hstat-label">ADaM &amp; SDTM aligned</div></div>
     <div><div class="hstat-num">FDA</div><div class="hstat-label">2026 Bayesian guidance aligned</div></div>
+    <div><div class="hstat-num">ICH</div><div class="hstat-label">E9(R1) estimand framework ready</div></div>
   </div>
 </section>
 
@@ -98,7 +97,7 @@
           <li>Environment certification and lockfiles</li>
           <li>Drift detection across analysis runs</li>
         </ul>
-        <div class="pkg-install"><span class="prompt">&gt; </span>remotes::install_github("repro-stats/reproducr")</div>
+        <div class="pkg-install"><span class="prompt">&gt; </span>install.packages("reproducr")</div>
         <a href="https://repro-stats.github.io/reproducr/" class="pkg-link" target="_blank" rel="noopener">Docs &amp; source →</a>
       </div>
 
@@ -144,13 +143,13 @@
       </div>
 
       <div class="pkg-card reveal reveal-d4">
-        <div class="pkg-header"><span class="pkg-name">estimandr</span><div class="pkg-badges"><span class="badge badge-dev">In development</span></div></div>
-        <p class="pkg-desc">ICH E9(R1) estimand framework for R. Define, document, and implement your estimand strategy — population, variable, intercurrent events, summary measure — directly in your R pipeline. Designed to pair with bayprior for Bayesian estimand analyses.</p>
+        <div class="pkg-header"><span class="pkg-name">estimandr</span><div class="pkg-badges"><span class="badge badge-dev">GitHub</span></div></div>
+        <p class="pkg-desc">ICH E9(R1) estimand framework for R. Structured S3 objects for the five estimand attributes, all five ICE strategies, consistency checking, SAP text generation, and submission tables. Available on GitHub as a research companion to the suite.</p>
         <ul class="pkg-feats">
-          <li>Structured estimand specification objects</li>
-          <li>Intercurrent event strategy documentation</li>
-          <li>SAP-ready estimand output tables</li>
-          <li>Integrates with clinical trial analysis packages</li>
+          <li>All five ICH E9(R1) ICE strategies as first-class objects</li>
+          <li>check_consistency() — estimand-analysis alignment validation</li>
+          <li>sap_text() — automatic SAP paragraph generation</li>
+          <li>estimand_table() — regulatory submission tables</li>
         </ul>
         <div class="pkg-install"><span class="prompt">&gt; </span>remotes::install_github("repro-stats/estimandr")</div>
         <a href="https://github.com/repro-stats/estimandr" class="pkg-link" target="_blank" rel="noopener">View on GitHub →</a>
@@ -171,23 +170,17 @@
         <p>End-to-end audit logging for a Phase III RSV vaccine trial — GMT, seroconversion, electronic sign-off, and hash chain verification.</p>
         <div class="blog-card-footer"><div class="blog-tags"><span class="tag">regulog</span><span class="tag">21 CFR Part 11</span></div><span class="blog-arrow">→</span></div>
       </a>
+      <a href="blog/lineager-dermatology.html" class="blog-card">
+        <div class="blog-meta"><span class="blog-date">26 Jun 2026</span><span class="blog-read">9 min read</span></div>
+        <h3>Traceable ADaM derivation: every exclusion documented with lineager</h3>
+        <p>Building ADEFF with row-level provenance — population flags, change from baseline, EASI-75 responder flag, CONSORT table, and subject-level tracing.</p>
+        <div class="blog-card-footer"><div class="blog-tags"><span class="tag">lineager</span><span class="tag">CDISC ADaM</span></div><span class="blog-arrow">→</span></div>
+      </a>
       <a href="blog/bayesian-priors-clinical-trials.html" class="blog-card">
         <div class="blog-meta"><span class="blog-date">22 Jun 2026</span><span class="blog-read">8 min read</span></div>
         <h3>Bayesian prior elicitation for clinical trials: a practical guide with bayprior</h3>
         <p>How to elicit, document, and justify informative priors for regulatory submissions — aligned with FDA 2026 draft guidance.</p>
         <div class="blog-card-footer"><div class="blog-tags"><span class="tag">Bayesian</span><span class="tag">bayprior</span></div><span class="blog-arrow">→</span></div>
-      </a>
-      <a href="blog/reproducr-getting-started.html" class="blog-card">
-        <div class="blog-meta"><span class="blog-date">15 Jun 2026</span><span class="blog-read">6 min read</span></div>
-        <h3>Getting started with reproducr: audit trails for clinical R analyses</h3>
-        <p>A step-by-step introduction to reproducr — audit scripts, certify your environment, and generate compliance-ready documentation.</p>
-        <div class="blog-card-footer"><div class="blog-tags"><span class="tag">reproducr</span><span class="tag">Compliance</span></div><span class="blog-arrow">→</span></div>
-      </a>
-      <a href="blog/ich-e9-r1-estimands-in-r.html" class="blog-card">
-        <div class="blog-meta"><span class="blog-date">8 Jun 2026</span><span class="blog-read">10 min read</span></div>
-        <h3>ICH E9(R1) in practice: implementing estimands in R</h3>
-        <p>From protocol estimand definition to SAP implementation using the estimandr framework.</p>
-        <div class="blog-card-footer"><div class="blog-tags"><span class="tag">ICH E9(R1)</span><span class="tag">estimandr</span></div><span class="blog-arrow">→</span></div>
       </a>
     </div>
   </div>
@@ -218,14 +211,14 @@
     <div class="about-layout reveal">
       <div class="about-prose">
         <p>Reproducibility in clinical analyses is harder than it should be. R environments go undocumented, package versions drift, and the steps between raw data and submission output are rarely captured in a way that supports independent verification.</p>
-        <p>ReproStats is an open-source project building the R infrastructure to address this. Five packages covering the key areas: behavioural reproducibility auditing (<strong>reproducr</strong>) and audit logging (<strong>regulog</strong>), Bayesian prior methodology (<strong>bayprior</strong>), data provenance (<strong>lineager</strong>), and estimand specification (<strong>estimandr</strong>).</p>
-        <p><strong>reproducr</strong> and <strong>bayprior</strong> are on CRAN. The remaining three are in active development. All packages are openly developed on GitHub and designed for GxP environments.</p>
+        <p>ReproStats is an open-source project building the R infrastructure to address this. Packages covering behavioural reproducibility auditing (<strong>reproducr</strong>), electronic audit logging (<strong>regulog</strong>), Bayesian prior methodology (<strong>bayprior</strong>), and row-level data provenance (<strong>lineager</strong>).</p>
+        <p><strong>reproducr</strong> and <strong>bayprior</strong> are on CRAN. <strong>regulog</strong> is in CRAN submission. <strong>lineager</strong> is in active development. All packages are openly developed on GitHub and designed for GxP environments.</p>
         <p>ReproStats is maintained by <strong>Ndoh Penn</strong>, a biostatistician based in Brussels, Belgium. The enterprise platform built on this foundation is <a href="https://reprosia.com" target="_blank" rel="noopener">Reprosia</a>.</p>
       </div>
       <div class="about-stats">
-        <div class="astat"><div class="astat-num">2</div><div class="astat-label">packages on CRAN</div></div>
-        <div class="astat"><div class="astat-num">5</div><div class="astat-label">packages in the ecosystem</div></div>
-        <div class="astat"><div class="astat-num">97%</div><div class="astat-label">test coverage in reproducr</div></div>
+        <div class="astat"><div class="astat-num">21 CFR</div><div class="astat-label">Part 11 &amp; EU Annex 11</div></div>
+        <div class="astat"><div class="astat-num">CDISC</div><div class="astat-label">ADaM &amp; SDTM aligned</div></div>
+        <div class="astat"><div class="astat-num">FDA</div><div class="astat-label">2026 Bayesian guidance</div></div>
         <div class="astat"><div class="astat-num">EU</div><div class="astat-label">Brussels, Belgium</div></div>
       </div>
     </div>
