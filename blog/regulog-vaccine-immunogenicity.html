@@ -12,7 +12,6 @@
 </head>
 <body>
 
-<!-- ─── NAV ─── -->
 <nav class="nav">
   <a href="../index.html" class="nav-logo">repro<span>stats</span>.org</a>
   <ul class="nav-links">
@@ -38,7 +37,6 @@
   <a href="https://github.com/repro-stats" target="_blank" rel="noopener">GitHub</a>
 </nav>
 
-<!-- ─── POST HERO ─── -->
 <section class="post-hero">
   <div class="post-hero-inner">
     <a href="../blog.html" class="post-back">← Back to blog</a>
@@ -60,7 +58,6 @@
   </div>
 </section>
 
-<!-- ─── POST BODY ─── -->
 <article class="post-body">
 
   <p>Vaccine immunogenicity analyses supporting regulatory submissions operate under 21 CFR Part 11: every analytical decision, data access event, and result must be traceable, time-stamped, and tamper-evident. In most organisations, this means maintaining a separate paper audit trail that is manually assembled after the analysis — disconnected from the code, unverifiable, and a persistent inspection risk.</p>
@@ -76,7 +73,6 @@
   <h2>Setup</h2>
 
   <pre><code>library(regulog)
-library(dplyr)
 
 # Simulated CDISC-structured ADIS dataset
 # 300 subjects, 3 visits (Day 1, 29, 181)
@@ -86,112 +82,102 @@ set.seed(2026)</code></pre>
 
   <h2>Opening the audit session</h2>
 
-  <p>Every <code>regulog</code> session starts with <code>rl_session()</code>. This records the analyst identity, analysis context, R version, platform, and a unique session ID — and starts the SHA-256 hash chain that links every subsequent log entry.</p>
+  <p><code>regulog_init()</code> creates the session object and writes the genesis record immediately — this starts the SHA-256 hash chain that links every subsequent log entry. Study-level context (SAP version, data cut, analysis set) is captured as the first logged note.</p>
 
-  <pre><code>lg <- rl_session(
-  analyst  = "Ndoh Penn",
-  analysis = "RSV-VAC-301 Primary Immunogenicity Analysis",
-  reason   = "Per SAP v2.0, Section 5.1 — primary endpoint analysis",
-  system   = list(
-    sap_version  = "2.0",
-    protocol     = "RSV-VAC-301",
-    data_cut     = "2026-05-15",
-    analysis_set = "Immunogenicity per-protocol population (PPROTFL = Y)"
-  )
+  <pre><code>log <- regulog_init(
+  app     = "RSV-VAC-301-primary-immunogenicity",
+  version = "1.0.0",
+  user    = "jsmith",
+  path    = "logs/audit_RSV301_primary_v1.rlog"
 )
 
-lg
-# &lt;regulog_session&gt;
-# Session ID: 8f3a2c...
-# Analyst:    Ndoh Penn
-# Started:    2026-06-26T09:14:32Z
-# Entries:    1</code></pre>
+log_note(log,
+  "Primary immunogenicity analysis per SAP v2.0, Section 5.1. Protocol:
+   RSV-VAC-301. Data cut: 2026-05-15. Analysis set: immunogenicity
+   per-protocol population (PPROTFL = Y)."
+)
+
+log
+# <regulog>
+#   App:     RSV-VAC-301-primary-immunogenicity v1.0.0
+#   User:    jsmith
+#   Entries: 1
+#   Path:    logs/audit_RSV301_primary_v1.rlog</code></pre>
 
   <h2>Logging data access</h2>
 
-  <p>Under 21 CFR Part 11 §11.10(e), every access to audit-relevant data must be logged. <code>rl_action()</code> creates a timestamped, mandatory-reason log entry that is immediately incorporated into the hash chain:</p>
+  <p>Under 21 CFR Part 11 §11.10(e), every access to audit-relevant data must be logged. <code>with_log()</code> provides a local <code>read()</code> binding scoped to the block — every read inside it is logged automatically, capturing the resolved file path, row count, and column count:</p>
 
-  <pre><code>rl_action(lg,
-  action = "LOAD_ADSL",
-  reason = "Load subject-level dataset for population filtering",
-  detail = "ADSL: 300 subjects, 12 variables"
-)
-
-rl_action(lg,
-  action = "LOAD_ADIS",
-  reason = "Load immunogenicity analysis dataset (primary endpoint)",
-  detail = "ADIS: 900 records (300 subjects × 3 visits)"
-)</code></pre>
+  <pre><code>with_log(log, {
+  adsl <- read(read.csv, "data/adsl.csv")
+  adis <- read(read.csv, "data/adis.csv")
+})</code></pre>
 
   <h2>Applying the analysis population</h2>
 
-  <p>The primary analysis uses the per-protocol population (PPROTFL = Y). Every subject excluded from the analysis is documented — not just the count, but the individual record:</p>
+  <p>The primary analysis uses the per-protocol population (PPROTFL = Y). Every subject excluded from the analysis is documented — not just the count, but individual exclusion notes for missing-data cases:</p>
 
   <pre><code># Filter to per-protocol population
 adis_pp <- adis |> filter(PPROTFL == "Y")
 
-rl_action(lg,
-  action = "APPLY_PP_POPULATION",
-  reason = "Restrict to per-protocol population per SAP Section 3.2",
-  detail = sprintf(
-    "ITT: 300 subjects | PP: %d subjects | Excluded: %d (protocol deviations)",
+log_action(log,
+  action = "apply_pp_population",
+  object = "RSV-VAC-301 per-protocol population",
+  reason = sprintf(
+    "Restricted to per-protocol population per SAP Section 3.2. ITT: %d
+     subjects | PP: %d subjects | Excluded: %d (protocol deviations)",
+    n_distinct(adis$USUBJID),
     n_distinct(adis_pp$USUBJID),
-    300 - n_distinct(adis_pp$USUBJID)
+    n_distinct(adis$USUBJID) - n_distinct(adis_pp$USUBJID)
   )
 )</code></pre>
 
   <h2>Handling missing Day 29 titres</h2>
 
-  <p>Subjects with missing primary timepoint assessments are excluded from the primary GMT analysis. Each exclusion is individually documented:</p>
+  <p>Subjects with missing primary timepoint assessments are excluded from the primary GMT analysis. Each exclusion is individually documented with <code>log_note()</code>:</p>
 
   <pre><code>miss_d29 <- adis_pp |> filter(AVISITN == 29, is.na(AVAL))
 
-rl_note(lg,
-  action = "MISSING_DATA_REVIEW",
-  detail = sprintf(
-    "Day 29 missing titres: %d subjects (%.1f%%) — excluded per SAP",
-    nrow(miss_d29),
-    nrow(miss_d29) / nrow(filter(adis_pp, AVISITN == 29)) * 100
-  )
-)
+log_note(log, sprintf(
+  "Missing data review — Day 29 missing titres: %d subjects (%.1f%%) —
+   excluded per SAP", nrow(miss_d29),
+  nrow(miss_d29) / nrow(filter(adis_pp, AVISITN == 29)) * 100
+))
 
 # Document each excluded subject individually
 for (subj in miss_d29$USUBJID) {
-  rl_note(lg,
-    action = "SUBJECT_EXCLUDED_MISSING",
-    detail = sprintf("USUBJID %s: Day 29 titre missing", subj)
-  )
+  log_note(log, sprintf(
+    "Subject excluded (missing data) — USUBJID %s: Day 29 titre missing",
+    subj
+  ))
 }</code></pre>
 
   <h2>Primary analysis: GMT ratio</h2>
 
   <p>GMTs are computed as the back-transformed mean of log2-titres. The GMT ratio (Vaccine/Placebo) is tested via a two-sample t-test on the log2 scale:</p>
 
-  <pre><code># GMT by treatment arm at Day 29
-adis_primary <- adis_pp |> filter(AVISITN == 29, !is.na(AVAL))
+  <pre><code>adis_primary <- adis_pp |> filter(AVISITN == 29, !is.na(AVAL))
 
 gmt_d29 <- adis_primary |>
   group_by(TRT01P) |>
   summarise(
-    n      = n(),
-    gmt    = 2^mean(log2(AVAL)),
+    n   = n(),
+    gmt = 2^mean(log2(AVAL)),
     gmt_lo = 2^(mean(log2(AVAL)) - qt(0.975, n()-1) * sd(log2(AVAL)) / sqrt(n())),
     gmt_hi = 2^(mean(log2(AVAL)) + qt(0.975, n()-1) * sd(log2(AVAL)) / sqrt(n()))
   )
 
-# GMT ratio via t-test on log2 scale
 ttest     <- t.test(log2(AVAL) ~ TRT01P, data = adis_primary)
 gmt_ratio <- 2^(-diff(ttest$estimate))
 ratio_ci  <- 2^(-rev(ttest$conf.int))
 
-rl_action(lg,
-  action = "COMPUTE_GMT_RATIO",
-  reason = "Primary endpoint analysis per SAP Section 5.1",
-  detail = sprintf(
-    "GMT ratio (Vaccine/Placebo) = %.2f (95%% CI: %.2f, %.2f), p %s",
+log_action(log,
+  action = "compute_gmt_ratio",
+  object = "GMT ratio (Vaccine/Placebo)",
+  reason = sprintf(
+    "Computed per SAP Section 5.1. GMT ratio = %.2f (95%% CI: %.2f, %.2f), p %s",
     gmt_ratio, ratio_ci[1], ratio_ci[2],
-    ifelse(ttest$p.value < 0.001, "< 0.001",
-           sprintf("= %.3f", ttest$p.value))
+    ifelse(ttest$p.value < 0.001, "< 0.001", sprintf("= %.3f", ttest$p.value))
   )
 )</code></pre>
 
@@ -199,9 +185,8 @@ rl_action(lg,
 
   <p>A seroconverter is defined as a subject with a ≥4-fold rise from baseline. The definition is logged before computing the result — establishing what was pre-specified:</p>
 
-  <pre><code>rl_note(lg,
-  action = "SEROCONVERSION_DEFINITION",
-  detail = "Seroconversion: Day 29/Day 1 titre ratio >= 4 (pre-specified per SAP)"
+  <pre><code>log_note(log,
+  "Seroconversion defined as >= 4-fold rise from baseline (pre-specified per SAP)"
 )
 
 sc_rates <- adis_pp |>
@@ -209,28 +194,24 @@ sc_rates <- adis_pp |>
   mutate(SEROCONV = as.integer(RATIO >= 4)) |>
   group_by(TRT01P) |>
   summarise(
-    n      = n(),
-    n_sc   = sum(SEROCONV),
-    rate   = mean(SEROCONV),
-    rate_lo = prop.test(sum(SEROCONV), n())$conf.int[1],
-    rate_hi = prop.test(sum(SEROCONV), n())$conf.int[2]
+    n    = n(),
+    n_sc = sum(SEROCONV),
+    rate = mean(SEROCONV)
   )
 
-rl_action(lg,
-  action = "COMPUTE_SEROCONVERSION",
-  reason = "Seroconversion rates and 95% Wilson CI per SAP Section 5.2",
-  detail = paste(sprintf(
-    "%s: %d/%d (%.1f%%, 95%% CI: %.1f%%-%.1f%%)",
-    sc_rates$TRT01P, sc_rates$n_sc, sc_rates$n,
-    sc_rates$rate * 100,
-    sc_rates$rate_lo * 100,
-    sc_rates$rate_hi * 100
-  ), collapse = " | ")
+log_action(log,
+  action = "compute_seroconversion",
+  object = "Seroconversion rates",
+  reason = sprintf(
+    "Computed per SAP Section 5.2. %s",
+    paste(sprintf("%s: %d/%d (%.1f%%)", sc_rates$TRT01P, sc_rates$n_sc,
+                  sc_rates$n, sc_rates$rate * 100), collapse = " | ")
+  )
 )</code></pre>
 
   <h2>Outlier review</h2>
 
-  <p>A key audit requirement: flagged-but-retained observations must be documented with the decision rationale. <code>regulog</code> makes this natural:</p>
+  <p>A key audit requirement: flagged-but-retained observations must be documented with the decision rationale. <code>log_note()</code> makes this natural:</p>
 
   <pre><code># Flag extreme observations (|z| > 3 on log2 scale)
 outlier_review <- adis_primary |>
@@ -240,68 +221,47 @@ outlier_review <- adis_primary |>
     outlier = abs(z_score) > 3
   ) |> ungroup()
 
-n_outliers <- sum(outlier_review$outlier)
-
-rl_note(lg,
-  action = "OUTLIER_REVIEW",
-  detail = sprintf(
-    "Outlier screen (|z| > 3, log2 scale): %d flagged — retained per SAP
-     (no clinical basis for exclusion; sensitivity analysis planned)",
-    n_outliers
-  )
-)
+log_note(log, sprintf(
+  "Outlier screen (|z| > 3, log2 scale): %d flagged — retained per SAP
+   (no clinical basis for exclusion; sensitivity analysis planned)",
+  sum(outlier_review$outlier)
+))
 
 # Log each flagged subject individually
 for (i in which(outlier_review$outlier)) {
-  rl_note(lg,
-    action = "OUTLIER_FLAG",
-    detail = sprintf("USUBJID %s: z = %.2f — retained, flagged for sensitivity",
-                     outlier_review$USUBJID[i],
-                     outlier_review$z_score[i])
-  )
+  log_note(log, sprintf(
+    "Outlier flagged — USUBJID %s: z = %.2f — retained, flagged for sensitivity",
+    outlier_review$USUBJID[i], outlier_review$z_score[i]
+  ))
 }</code></pre>
 
   <h2>Electronic sign-off</h2>
 
-  <p>Under 21 CFR Part 11 §11.100 and §11.200, electronic signatures must include the signatory's name, the date and time, and the meaning of the signature. <code>rl_signature()</code> implements this directly in the audit chain:</p>
+  <p>Under 21 CFR Part 11 §11.100 and §11.200, electronic signatures must include the signatory's name, the date and time, and the meaning of the signature. <code>log_signature()</code> resolves the signer identity automatically from the session <code>user</code> set at <code>regulog_init()</code> — it cannot be overridden at signing time — and records the number of entries covered without any extra input:</p>
 
-  <pre><code>rl_signature(lg,
-  signatory = "Ndoh Penn",
-  role      = "Lead Biostatistician",
-  meaning   = "I confirm that this analysis was conducted in accordance with
-               SAP v2.0 and that the results presented are accurate and
-               complete to the best of my knowledge.",
-  date      = Sys.Date()
-)
-
-# Second signature (reviewer)
-rl_signature(lg,
-  signatory = "Statistical Reviewer",
-  role      = "QC Reviewer",
-  meaning   = "I confirm that the outputs and audit trail have been reviewed
-               and verified against the SAP.",
-  date      = Sys.Date()
+  <pre><code>log_signature(log,
+  "I confirm that this analysis was conducted in accordance with SAP v2.0
+   and that the results presented are accurate and complete to the best
+   of my knowledge."
 )</code></pre>
 
   <h2>Verifying the hash chain</h2>
 
-  <p>Any post-hoc modification to any log entry breaks the SHA-256 chain. <code>rl_verify()</code> recomputes the full chain from the first entry and reports the first broken link — or confirms the chain is intact:</p>
+  <p>Any post-hoc modification to any log entry breaks the SHA-256 chain. <code>verify_log()</code> recomputes the full chain from the first entry and reports the first broken link — or confirms the chain is intact:</p>
 
-  <pre><code>rl_verify(lg)
-# ✓ Hash chain verified — 34 entries, chain intact
-# Session ID: 8f3a2c...
-# First entry: 2026-06-26T09:14:32Z
-# Last entry:  2026-06-26T09:47:11Z</code></pre>
+  <pre><code>verify_log(log)
+# regulog: Log intact: 34 entries, chain unbroken</code></pre>
 
   <h2>Exporting the audit trail</h2>
 
-  <pre><code>rl_export(lg,
-  path   = "outputs/audit_trail_RSV301_primary_v1.csv",
-  format = "csv"
+  <pre><code>export_audit_trail(log,
+  format = "csv",
+  signed = TRUE,
+  path   = "outputs/audit_trail_RSV301_primary_v1.csv"
 )
-# ✓ Audit trail exported: 34 entries</code></pre>
+# regulog: exported 34 row(s) to outputs/audit_trail_RSV301_primary_v1.csv</code></pre>
 
-  <p>The exported CSV contains: session ID, entry ID, timestamp (UTC), analyst, action code, detail, and the SHA-256 hash linking each entry to its predecessor. This file is the submission-ready audit trail — self-contained, independently verifiable, and directly connected to the analysis that produced the results.</p>
+  <p>The exported CSV contains: entry ID, timestamp (UTC), analyst, entry type, action, reason, and the SHA-256 hash linking each entry to its predecessor. With <code>signed = TRUE</code>, every row is also stamped with <code>chain_intact</code> and <code>verified_at</code> from a fresh verification run at export time. This file is the submission-ready audit trail — self-contained, independently verifiable, and directly connected to the analysis that produced the results.</p>
 
   <h2>What the audit trail proves</h2>
 
@@ -310,7 +270,7 @@ rl_signature(lg,
   <ul>
     <li><strong>Who</strong> ran the analysis — analyst identity and electronic sign-off</li>
     <li><strong>When</strong> every step was executed — UTC timestamps on every entry</li>
-    <li><strong>What data</strong> were loaded and from where</li>
+    <li><strong>What data</strong> were loaded and from where, with row/column counts captured at read time</li>
     <li><strong>Why</strong> each decision was made — mandatory reason fields throughout</li>
     <li><strong>Which subjects</strong> were excluded and why — individual records</li>
     <li><strong>Which observations</strong> were flagged and what action was taken</li>
@@ -327,11 +287,10 @@ rl_signature(lg,
 
   <hr class="post-divider">
 
-  <p><strong>Ndoh Penn</strong> is a biostatistician based in Brussels, Belgium, and the author of <code>regulog</code>, <code>reproducr</code>, and <code>bayprior</code>. Questions or corrections — <a href="mailto:hello@reprostats.org">hello@reprostats.org</a> or <a href="https://github.com/repro-stats" target="_blank" rel="noopener">open an issue on GitHub</a>.</p>
+  <p><strong>Ndoh Penn</strong> is a biostatistician based in Antwerp, Belgium, and the author of <code>regulog</code>, <code>reproducr</code>, and <code>bayprior</code>. Questions or corrections — <a href="mailto:hello@reprostats.org">hello@reprostats.org</a> or <a href="https://github.com/repro-stats" target="_blank" rel="noopener">open an issue on GitHub</a>.</p>
 
 </article>
 
-<!-- ─── FOOTER ─── -->
 <footer>
   <a href="../" class="footer-logo">repro<span>stats</span>.org</a>
   <ul class="footer-links">
@@ -340,7 +299,7 @@ rl_signature(lg,
     <li><a href="https://ndohpenngit.github.io/bayprior/" target="_blank" rel="noopener">bayprior docs</a></li>
     <li><a href="https://reprosia.com" target="_blank" rel="noopener">Reprosia</a></li>
   </ul>
-  <span class="footer-copy">© 2026 Ndoh Penn · Brussels, Belgium</span>
+  <span class="footer-copy">© 2026 Ndoh Penn · Antwerp, Belgium</span>
 </footer>
 
 <script src="../main.js"></script>

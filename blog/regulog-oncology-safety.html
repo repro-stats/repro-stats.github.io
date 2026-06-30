@@ -12,7 +12,6 @@
 </head>
 <body>
 
-<!-- ─── NAV ─── -->
 <nav class="nav">
   <a href="../index.html" class="nav-logo">repro<span>stats</span>.org</a>
   <ul class="nav-links">
@@ -38,7 +37,6 @@
   <a href="https://github.com/repro-stats" target="_blank" rel="noopener">GitHub</a>
 </nav>
 
-<!-- ─── POST HERO ─── -->
 <section class="post-hero">
   <div class="post-hero-inner">
     <a href="../blog.html" class="post-back">← Back to blog</a>
@@ -61,7 +59,6 @@
   </div>
 </section>
 
-<!-- ─── POST BODY ─── -->
 <article class="post-body">
 
   <p>Oncology safety monitoring operates under intense regulatory scrutiny. Every data cut decision, every SAE narrative, every judgment about treatment-relatedness, every action taken in response to a safety signal — all of it must be traceable, time-stamped, and available for inspection. The audit trail question is not whether to maintain one, but how.</p>
@@ -78,117 +75,125 @@
 
   <h2>Opening the audit session</h2>
 
-  <p>The session captures the analyst, the analysis context, and links to the governing documents — not as free text in a Word file, but as the opening entry in the hash chain:</p>
+  <p><code>regulog_init()</code> creates the session and writes the genesis record immediately, anchoring the hash chain. Study-level context — protocol, data cut, analysis set, governing committee — is captured as the first logged note, not as free text in a Word file:</p>
 
-  <pre><code>lg <- rl_session(
-  analyst  = "Ndoh Penn",
-  analysis = "NSCLC-KRASi-301 Integrated Safety Summary — Data Cut 2026-05-15",
-  reason   = "Scheduled safety data cut for Safety Monitoring Committee review",
-  system   = list(
-    protocol     = "NSCLC-KRASi-301",
-    data_cut     = "2026-05-15",
-    analysis_set = "Safety analysis set (SAFFL = Y)",
-    smc_meeting  = "2026-07-10"
-  )
+  <pre><code>log <- regulog_init(
+  app     = "NSCLC-KRASi-301-safety-summary",
+  version = "1.0.0",
+  user    = "jsmith",
+  path    = "logs/audit_KRASi301_safety_v1.rlog"
+)
+
+log_note(log,
+  "Scheduled safety data cut for Safety Monitoring Committee (SMC) review.
+   Protocol: NSCLC-KRASi-301. Data cut: 2026-05-15. Analysis set: safety
+   analysis set (SAFFL = Y). SMC meeting: 2026-07-10."
 )</code></pre>
 
   <h2>Logging the data cut</h2>
 
-  <p>The data cut date is one of the most frequently questioned items in a safety inspection — when exactly was it, who confirmed it, and what authority established it. In <code>regulog</code> this is a first-class log entry with a mandatory rationale field:</p>
+  <p>The data cut date is one of the most frequently questioned items in a safety inspection — when exactly was it, who confirmed it, and what authority established it. In <code>regulog</code> this is a first-class log entry via <code>log_note()</code>, with no default text — a justification is always required:</p>
 
-  <pre><code>rl_note(lg,
-  action = "DATA_CUT_CONFIRMED",
-  detail = "Data cut date confirmed as 2026-05-15 per DMC charter Section 4.2.
-            All AEs with onset on or before 2026-05-15 included.
-            Lock confirmed by DM team (ref: DM-lock-20260518-001)"
+  <pre><code>log_note(log,
+  "Data cut date confirmed as 2026-05-15 per DMC charter Section 4.2.
+   All AEs with onset on or before 2026-05-15 included.
+   Lock confirmed by DM team (ref: DM-lock-20260518-001)."
 )</code></pre>
 
   <p>This entry is immediately incorporated into the hash chain. Any subsequent modification — changing the date, altering the reference — breaks the chain and is detectable without reference to the original system.</p>
 
   <h2>TEAE incidence and Grade 3/4 analysis</h2>
 
-  <p>The core safety tables are computed and logged at the point of computation. The log entry records the exact result, not a description of what was planned:</p>
+  <p>The core safety tables are computed and logged with <code>log_action()</code> at the point of computation. The log entry records the exact result, not a description of what was planned:</p>
 
-  <pre><code>rl_action(lg,
-  action = "COMPUTE_TEAE_INCIDENCE",
-  reason = "TEAE incidence by SOC and treatment arm per SAP Section 6.1",
-  detail = "KRASi: 187/200 (93.5%) with ≥1 TEAE | Docetaxel: 183/200 (91.5%)"
+  <pre><code>log_action(log,
+  action = "compute_teae_incidence",
+  object = "TEAE incidence table by SOC",
+  reason = "Computed per SAP Section 6.1. KRASi: 187/200 (93.5%) with
+            >=1 TEAE | Docetaxel: 183/200 (91.5%)"
 )
 
-rl_action(lg,
-  action = "COMPUTE_GRADE34_AE",
-  reason = "Grade 3/4 TEAE incidence per SAP Section 6.2 and ICH E9",
-  detail = "Grade 3/4 AEs: 94 events in KRASi arm, 112 in docetaxel arm"
+log_action(log,
+  action = "compute_grade34_ae",
+  object = "Grade 3/4 TEAE table",
+  reason = "Computed per SAP Section 6.2 and ICH E9. Grade 3/4 AEs: 94
+            events in KRASi arm, 112 in docetaxel arm"
 )</code></pre>
 
   <h2>Documenting a safety signal</h2>
 
   <p>This is where the difference between <code>regulog</code> and a Word document becomes most tangible. When a safety signal is identified — in this case, pneumonitis cases in the KRASi arm — the standard process is to email the medical monitor, hold a call, and then write up what was decided. The time between identification and documentation can be days or weeks.</p>
 
-  <p>With <code>regulog</code>, the signal identification, individual case documentation, and medical monitor decision are all logged sequentially in the same session:</p>
+  <p>With <code>regulog</code>, the signal identification, individual case documentation, and medical monitor decision are all logged sequentially in the same session, using <code>log_note()</code> for free-text rationale that doesn't fit a discrete action verb:</p>
 
   <pre><code># Signal identified during analysis
-rl_note(lg,
-  action = "SAFETY_SIGNAL_IDENTIFIED",
-  detail = "Pneumonitis signal identified: 14 cases in KRASi arm vs 2 in docetaxel.
-            Grade 3/4: 5 cases. Flagged for medical monitor review per Safety Review Plan."
+log_note(log,
+  "Safety signal identified: pneumonitis — 14 cases in KRASi arm vs 2 in
+   docetaxel arm. Grade 3/4: 5 cases. Flagged for medical monitor review
+   per Safety Review Plan."
 )
 
 # Individual Grade 3+ cases documented
-rl_note(lg,
-  action = "SAE_PNEUMONITIS_CASE",
-  detail = "USUBJID KRASi301-0047 | Grade 3 | Action: DRUG WITHDRAWN | Related: RELATED"
+log_note(log,
+  "Pneumonitis case — USUBJID KRASi301-0047 | Grade 3 | Action: DRUG
+   WITHDRAWN | Related: RELATED"
 )
 # ... repeated for each case ...
 
 # Medical monitor decision logged
-rl_note(lg,
-  action  = "MEDICAL_MONITOR_DECISION",
-  detail  = "Medical monitor reviewed all 14 pneumonitis cases (ref: MM-review-20260620-001).
-             Conclusion: Incidence consistent with class effect; benefit-risk favourable.
-             Risk mitigation: enhanced monitoring added to IB v4.2 (dated 2026-06-22)."
+log_note(log,
+  "Medical monitor reviewed all 14 pneumonitis cases (ref:
+   MM-review-20260620-001). Conclusion: incidence consistent with class
+   effect; benefit-risk remains favourable. Risk mitigation: enhanced
+   monitoring added to IB v4.2 (dated 2026-06-22)."
 )</code></pre>
 
   <p>The timestamp on the signal identification entry and the medical monitor decision entry are cryptographically bound to every entry before and after them. The question "how long between signal detection and medical monitor review?" has a precise, verifiable answer.</p>
 
   <h2>Dual electronic sign-off</h2>
 
-  <p>Oncology safety reports typically require both the biostatistician and the medical monitor to sign. Under 21 CFR Part 11 §11.100 and §11.200, electronic signatures must include the signatory's name, the date and time, and the meaning of the signature. <code>rl_signature()</code> implements all three, sequentially in the same hash chain:</p>
+  <p>Oncology safety reports typically require both the biostatistician and the medical monitor to sign. Under 21 CFR Part 11 §11.100 and §11.200, electronic signatures must include the signatory's name, the date and time, and the meaning of the signature.</p>
 
-  <pre><code>rl_signature(lg,
-  signatory = "Ndoh Penn",
-  role      = "Lead Biostatistician",
-  meaning   = "I confirm that the safety analyses were conducted in accordance
-               with SAP v2.1 and the SMC charter.",
-  date      = Sys.Date()
+  <p><code>log_signature()</code> resolves the signer identity from the session <code>user</code> set at <code>regulog_init()</code> — it cannot be overridden per call, by design, so a signature always reflects who actually opened that session. For two independent sign-offs, the pattern is two separate sessions writing to the <strong>same <code>.rlog</code> path</strong> — the file accumulates both signatures into one continuous, verifiable chain:</p>
+
+  <pre><code># Biostatistician sign-off — the session used throughout the analysis
+log_signature(log,
+  "I confirm that the safety analyses were conducted in accordance with
+   SAP v2.1 and the SMC charter. All AEs, SAEs, and discontinuations are
+   correctly classified and tabulated."
 )
 
-rl_signature(lg,
-  signatory = "Medical Monitor",
-  role      = "Medical Monitor",
-  meaning   = "I confirm review of all pneumonitis cases and the integrated
-               safety summary. Benefit-risk remains favourable.",
-  date      = Sys.Date()
+# Medical monitor sign-off — independent session, same .rlog path
+log_mm <- regulog_init(
+  app     = "NSCLC-KRASi-301-safety-summary",
+  version = "1.0.0",
+  user    = "medical.monitor",
+  path    = log$path
+)
+
+log_signature(log_mm,
+  "I confirm that I have reviewed the safety data including all
+   pneumonitis cases and the integrated safety summary. The benefit-risk
+   profile remains favourable for KRASi 400mg QD."
 )</code></pre>
 
-  <p>Both signatures are part of the same hash chain as the analysis that produced the results they are signing. You cannot sign one analysis and attach the signature to a different one — the chain would break.</p>
+  <p>Both signatures land in the same hash chain as the analysis that produced the results they are signing. You cannot sign one analysis and attach the signature to a different one — the chain would break.</p>
 
   <h2>Verifying integrity and exporting</h2>
 
-  <pre><code>rl_verify(lg)
-# ✓ Hash chain verified — 41 entries, chain intact
-# Session ID: 4d8f1b...
-# First entry: 2026-06-26T09:14:32Z
-# Last entry:  2026-06-26T11:02:47Z
+  <pre><code># Verify directly from the file path -- covers both sessions' entries
+verify_log(log$path)
+# regulog: Log intact: 41 entries, chain unbroken
 
-rl_export(lg,
-  path   = "outputs/audit_KRASi301_safety_v1.csv",
-  format = "csv"
+export_audit_trail(log$path,
+  format = "csv",
+  signed = TRUE,
+  path   = "outputs/audit_KRASi301_safety_v1.csv"
 )</code></pre>
 
   <h2>What changes in practice</h2>
 
-  <p>The workflow above is not dramatically different from what a careful statistician would do anyway. The discipline of using <code>rl_action()</code> instead of a comment, and <code>rl_note()</code> instead of an email, is modest. What changes is the output.</p>
+  <p>The workflow above is not dramatically different from what a careful statistician would do anyway. The discipline of using <code>log_action()</code> instead of a comment, and <code>log_note()</code> instead of an email, is modest. What changes is the output.</p>
 
   <p>Instead of an audit trail that was assembled retrospectively, you have one that was produced contemporaneously, in the order events actually occurred, with cryptographic evidence that it has not been altered since. The difference matters at an FDA inspection, at an SMC meeting where the chair asks when a decision was made, and in the event of a litigation where the timeline of safety signal response is at issue.</p>
 
@@ -198,11 +203,10 @@ rl_export(lg,
 
   <p>The <a href="https://reprostats.org/regulog/articles/regulog-oncology.html" target="_blank" rel="noopener">full pkgdown article</a> includes complete R code with simulated ADSL/ADAE datasets, all safety tables, AE grade distribution plots, and a rendered audit trail preview. The <code>regulog</code> package is available on <a href="https://github.com/repro-stats/regulog" target="_blank" rel="noopener">GitHub</a>.</p>
 
-  <p><strong>Ndoh Penn</strong> is a biostatistician based in Brussels, Belgium, and the author of <code>regulog</code>, <code>lineager</code>, <code>reproducr</code>, and <code>bayprior</code>. Questions — <a href="mailto:hello@reprostats.org">hello@reprostats.org</a>.</p>
+  <p><strong>Ndoh Penn</strong> is a biostatistician based in Antwerp, Belgium, and the author of <code>regulog</code>, <code>lineager</code>, <code>reproducr</code>, and <code>bayprior</code>. Questions — <a href="mailto:hello@reprostats.org">hello@reprostats.org</a>.</p>
 
 </article>
 
-<!-- ─── FOOTER ─── -->
 <footer>
   <a href="../" class="footer-logo">repro<span>stats</span>.org</a>
   <ul class="footer-links">
@@ -211,7 +215,7 @@ rl_export(lg,
     <li><a href="https://ndohpenngit.github.io/bayprior/" target="_blank" rel="noopener">bayprior docs</a></li>
     <li><a href="https://reprosia.com" target="_blank" rel="noopener">Reprosia</a></li>
   </ul>
-  <span class="footer-copy">© 2026 Ndoh Penn · Brussels, Belgium</span>
+  <span class="footer-copy">© 2026 Ndoh Penn · Antwerp, Belgium</span>
 </footer>
 
 <script src="../main.js"></script>
