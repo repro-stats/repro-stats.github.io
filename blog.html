@@ -148,52 +148,48 @@
       <button class="filter-btn">RWE</button>
     </div>
 
-    <!-- Featured -->
-    <a href="blog/qualifying-regulog-validated-environment.html" class="post-featured reveal" data-tags="regulatory reproducibility">
-      <div>
-        <div class="featured-label">Latest post</div>
-        <h2>Qualifying regulog in a validated R environment</h2>
-        <p>How to run the pre-written IQ/OQ/PQ protocols, capture the qualification record, and log the qualification process itself — for 21 CFR Part 11 and EU Annex 11 regulated environments.</p>
-        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center">
-          <span class="tag">Validation</span><span class="tag">21 CFR Part 11</span><span class="tag">EU Annex 11</span>
-          <span style="font-family:'IBM Plex Mono',monospace;font-size:0.68rem;color:var(--ink-faint);margin-left:0.5rem">1 Jul 2026 · 10 min read</span>
-        </div>
-      </div>
-      <div class="post-featured-arrow">→</div>
-    </a>
+    <!-- Featured post: auto-promoted from first grid card by JS -->
+    <div id="post-featured-slot"></div>
 
     <!-- Grid -->
     <div class="blog-grid reveal">
 
-      <a href="blog/regulog-vaccine-immunogenicity.html" class="blog-card" data-tags="regulatory safety reproducibility">
+      <a href="blog/qualifying-regulog-validated-environment.html" class="blog-card" data-tags="regulatory reproducibility" data-date="2026-07-01">
+        <div class="blog-meta"><span class="blog-date">1 Jul 2026</span><span class="blog-read">10 min read</span></div>
+        <h3>Qualifying regulog in a validated R environment</h3>
+        <p>How to run the pre-written IQ/OQ/PQ protocols, capture the qualification record, and log the qualification process itself — for 21 CFR Part 11 and EU Annex 11 environments.</p>
+        <div class="blog-card-footer"><div class="blog-tags"><span class="tag">Validation</span><span class="tag">21 CFR Part 11</span></div><span class="blog-arrow">→</span></div>
+      </a>
+
+      <a href="blog/regulog-vaccine-immunogenicity.html" class="blog-card" data-date="2026-06-26" data-tags="regulatory safety reproducibility">
         <div class="blog-meta"><span class="blog-date">26 Jun 2026</span><span class="blog-read">12 min read</span></div>
         <h3>21 CFR Part 11-compliant immunogenicity analysis in R with regulog</h3>
         <p>End-to-end audit logging for a Phase III RSV vaccine trial — GMT computation, seroconversion rates, outlier review, electronic sign-off, and hash chain verification.</p>
         <div class="blog-card-footer"><div class="blog-tags"><span class="tag">regulog</span><span class="tag">Immunogenicity</span></div><span class="blog-arrow">→</span></div>
       </a>
 
-      <a href="blog/lineager-dermatology.html" class="blog-card" data-tags="data-provenance">
+      <a href="blog/lineager-dermatology.html" class="blog-card" data-date="2026-06-26" data-tags="data-provenance">
         <div class="blog-meta"><span class="blog-date">26 Jun 2026</span><span class="blog-read">9 min read</span></div>
         <h3>Traceable ADaM derivation: every exclusion documented with lineager</h3>
         <p>Building ADEFF from ADSL and ADLB with row-level provenance — population flags, change from baseline, EASI-75 responder flag, CONSORT table, and subject-level tracing.</p>
         <div class="blog-card-footer"><div class="blog-tags"><span class="tag">lineager</span><span class="tag">CDISC ADaM</span></div><span class="blog-arrow">→</span></div>
       </a>
 
-      <a href="blog/lineager-rwe.html" class="blog-card" data-tags="rwe data-provenance">
+      <a href="blog/lineager-rwe.html" class="blog-card" data-date="2026-06-26" data-tags="rwe data-provenance">
         <div class="blog-meta"><span class="blog-date">26 Jun 2026</span><span class="blog-read">8 min read</span></div>
         <h3>Row-level provenance in real-world evidence studies with lineager</h3>
         <p>New-user active comparator cohort derivation from administrative claims — every exclusion criterion documented, every patient traceable, CONSORT table automatic.</p>
         <div class="blog-card-footer"><div class="blog-tags"><span class="tag">lineager</span><span class="tag">RWE</span><span class="tag">HEOR</span></div><span class="blog-arrow">→</span></div>
       </a>
 
-      <a href="blog/regulog-oncology-safety.html" class="blog-card" data-tags="regulatory safety reproducibility">
+      <a href="blog/regulog-oncology-safety.html" class="blog-card" data-date="2026-06-26" data-tags="regulatory safety reproducibility">
         <div class="blog-meta"><span class="blog-date">26 Jun 2026</span><span class="blog-read">10 min read</span></div>
         <h3>Audit-ready oncology safety monitoring in R with regulog</h3>
         <p>TEAE summaries, SAE flagging, safety signal documentation, dual electronic sign-off, and submission-ready audit trail for a Phase III NSCLC trial.</p>
         <div class="blog-card-footer"><div class="blog-tags"><span class="tag">regulog</span><span class="tag">Oncology</span><span class="tag">Safety</span></div><span class="blog-arrow">→</span></div>
       </a>
 
-      <a href="blog/bayesian-priors-clinical-trials.html" class="blog-card" data-tags="bayesian">
+      <a href="blog/bayesian-priors-clinical-trials.html" class="blog-card" data-date="2026-06-22" data-tags="bayesian">
         <div class="blog-meta"><span class="blog-date">22 Jun 2026</span><span class="blog-read">8 min read</span></div>
         <h3>Bayesian prior elicitation for clinical trials: a practical guide with bayprior</h3>
         <p>How to elicit, document, and justify informative priors for regulatory submissions — aligned with FDA 2026 draft guidance.</p>
@@ -231,29 +227,71 @@
 <script src="main.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
+
+    // ── Sort cards by data-date descending (newest first) ──────────────
+    var grid = document.querySelector('.blog-grid');
+    var cards = Array.from(grid.querySelectorAll('.blog-card'));
+    cards.sort(function(a, b) {
+      return (b.getAttribute('data-date') || '').localeCompare(
+             a.getAttribute('data-date') || '');
+    });
+    cards.forEach(function(c) { grid.appendChild(c); });
+
+    // ── Auto-promote newest card to featured slot ───────────────────────
+    // All posts live as cards in the grid. The featured slot is populated
+    // automatically from the first (newest) card — no manual update needed
+    // when publishing a new post.
+    var slot = document.getElementById('post-featured-slot');
+    if (slot && cards.length > 0) {
+      var first = cards[0];
+      var href  = first.getAttribute('href');
+      var tags  = first.getAttribute('data-tags') || '';
+      var date  = first.getAttribute('data-date') || '';
+      var title = first.querySelector('h3').textContent;
+      var desc  = first.querySelector('p').textContent;
+      var tagsHTML = Array.from(first.querySelectorAll('.blog-tags .tag'))
+                      .map(function(t) {
+                        return '<span class="tag">' + t.textContent + '</span>';
+                      }).join('');
+      var meta = first.querySelector('.blog-date').textContent +
+                 ' · ' + first.querySelector('.blog-read').textContent;
+
+      slot.innerHTML =
+        '<a href="' + href + '" class="post-featured reveal" data-tags="' + tags + '">' +
+          '<div>' +
+            '<div class="featured-label">Latest post</div>' +
+            '<h2>' + title + '</h2>' +
+            '<p>' + desc + '</p>' +
+            '<div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center">' +
+              tagsHTML +
+              '<span style="font-family:'IBM Plex Mono',monospace;font-size:0.68rem;' +
+                'color:var(--ink-faint);margin-left:0.5rem">' + meta + '</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="post-featured-arrow">→</div>' +
+        '</a>';
+
+      // Hide the first card from the grid (it's now shown as featured)
+      first.style.display = 'none';
+    }
+
+    // ── Filter logic ────────────────────────────────────────────────────
     var btns     = document.querySelectorAll('.filter-btn');
     var featured = document.querySelector('.post-featured');
-    var cards    = document.querySelectorAll('.blog-card');
 
     function filterPosts(tag) {
-      /* Featured post */
+      // Featured slot
       if (featured) {
         var ftags = (featured.getAttribute('data-tags') || '').split(' ');
-        if (tag === 'all' || ftags.indexOf(tag) !== -1) {
-          featured.classList.remove('post-hidden');
-        } else {
-          featured.classList.add('post-hidden');
-        }
+        featured.classList.toggle('post-hidden',
+          tag !== 'all' && ftags.indexOf(tag) === -1);
       }
-
-      /* Blog cards */
+      // Grid cards (excluding the hidden promoted card)
       cards.forEach(function(card) {
+        if (card.style.display === 'none') return;
         var ctags = (card.getAttribute('data-tags') || '').split(' ');
-        if (tag === 'all' || ctags.indexOf(tag) !== -1) {
-          card.classList.remove('post-hidden');
-        } else {
-          card.classList.add('post-hidden');
-        }
+        card.classList.toggle('post-hidden',
+          tag !== 'all' && ctags.indexOf(tag) === -1);
       });
     }
 
@@ -261,52 +299,13 @@
       btn.addEventListener('click', function() {
         btns.forEach(function(b) { b.classList.remove('active'); });
         btn.classList.add('active');
-
-        /* Convert button text to tag: lowercase, spaces to hyphens */
         var tag = btn.textContent.trim().toLowerCase().split(' ').join('-');
         filterPosts(tag);
       });
     });
+
   });
 </script>
-<script>
-  (function () {
-    const btns     = document.querySelectorAll('.filter-btn');
-    const featured = document.querySelector('.post-featured');
-    const cards    = document.querySelectorAll('.blog-card');
 
-    function filterPosts(tag) {
-      /* Featured post */
-      if (featured) {
-        const ftags = (featured.dataset.tags || '').split(' ');
-        const show  = tag === 'all' || ftags.includes(tag);
-        featured.style.display = show ? '' : 'none';
-      }
-
-      /* Blog cards */
-      cards.forEach(card => {
-        const ctags = (card.dataset.tags || '').split(' ');
-        const show  = tag === 'all' || ctags.includes(tag);
-        card.style.display = show ? '' : 'none';
-      });
-
-      /* Hide grid wrapper if all cards hidden */
-      const grid = document.querySelector('.blog-grid');
-      if (grid) {
-        const anyVisible = [...cards].some(c => c.style.display !== 'none');
-        grid.style.display = anyVisible ? '' : 'none';
-      }
-    }
-
-    btns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        btns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        const tag = btn.textContent.trim().toLowerCase().replace(/\s+/g, '-');
-        filterPosts(tag);
-      });
-    });
-  })();
-</script>
 </body>
 </html>
