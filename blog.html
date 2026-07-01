@@ -148,8 +148,40 @@
       <button class="filter-btn">RWE</button>
     </div>
 
-    <!-- Featured post: auto-promoted from first grid card by JS -->
-    <div id="post-featured-slot"></div>
+    <!-- Featured post: update href/content/tags when publishing a new post -->
+    <a href="blog/qualifying-regulog-validated-environment.html"
+       id="post-featured-slot"
+       class="blog-card"
+       data-tags="regulatory reproducibility"
+       data-date="2026-07-01"
+       style="display:block;margin-bottom:2rem;padding:2rem 2.5rem;grid-column:1/-1">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:2rem;flex-wrap:wrap">
+        <div style="flex:1;min-width:260px">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:0.7rem;font-weight:500;
+                      text-transform:uppercase;letter-spacing:0.06em;color:var(--accent);
+                      margin-bottom:0.75rem">Latest post</div>
+          <div class="blog-meta" style="margin-bottom:0.75rem">
+            <span class="blog-date">1 Jul 2026</span>
+            <span class="blog-read">10 min read</span>
+          </div>
+          <h2 style="font-family:'IBM Plex Serif',serif;font-size:clamp(1.3rem,2.5vw,1.75rem);
+                     font-weight:600;line-height:1.25;margin-bottom:0.75rem">
+            Qualifying <em>regulog</em> in a validated R environment
+          </h2>
+          <p style="color:var(--ink-mid);margin-bottom:1.25rem">
+            How to run the pre-written IQ/OQ/PQ protocols, capture the qualification record,
+            and log the qualification process itself — for 21 CFR Part 11 and EU Annex 11
+            regulated environments.
+          </p>
+          <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center">
+            <span class="tag">Validation</span>
+            <span class="tag">21 CFR Part 11</span>
+            <span class="tag">EU Annex 11</span>
+          </div>
+        </div>
+        <div style="font-size:1.5rem;color:var(--accent);align-self:center">→</div>
+      </div>
+    </a>
 
     <!-- Grid -->
     <div class="blog-grid reveal">
@@ -237,63 +269,36 @@
     });
     cards.forEach(function(c) { grid.appendChild(c); });
 
-    // ── Auto-promote newest card to featured slot ───────────────────────
-    var slot = document.getElementById('post-featured-slot');
-    if (slot && cards.length > 0) {
-      var first    = cards[0];
-      var href     = first.getAttribute('href');
-      var tags     = first.getAttribute('data-tags') || '';
-      var title    = first.querySelector('h3').textContent;
-      var desc     = first.querySelector('p').textContent;
-      var tagsHTML = Array.from(first.querySelectorAll('.blog-tags .tag'))
-                      .map(function(t) {
-                        return '<span class="tag">' + t.textContent + '</span>';
-                      }).join('');
-      var meta = first.querySelector('.blog-date').textContent +
-                 ' · ' + first.querySelector('.blog-read').textContent;
-
-      var featured = document.createElement('a');
-      featured.href      = href;
-      featured.className = 'post-featured reveal';
-      featured.setAttribute('data-tags', tags);
-      featured.innerHTML =
-        '<div>' +
-          '<div class="featured-label">Latest post</div>' +
-          '<h2>' + title + '</h2>' +
-          '<p>' + desc + '</p>' +
-          '<div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center">' +
-            tagsHTML +
-            '<span style="font-family:monospace;font-size:0.68rem;' +
-              'color:var(--ink-faint);margin-left:0.5rem">' + meta + '</span>' +
-          '</div>' +
-        '</div>' +
-        '<div class="post-featured-arrow">→</div>';
-
-      slot.appendChild(featured);
-      first.style.display = 'none';  // hide from grid — shown as featured
-    }
-
-    // ── Filter logic ────────────────────────────────────────────────────
-    var btns = document.querySelectorAll('.filter-btn');
-
-    function filterPosts(tag) {
-      // Featured element (queried fresh after DOM insertion above)
-      var featuredEl = document.querySelector('.post-featured');
-      if (featuredEl) {
-        var ftags = (featuredEl.getAttribute('data-tags') || '').split(' ');
-        featuredEl.classList.toggle('post-hidden',
-          tag !== 'all' && ftags.indexOf(tag) === -1);
-      }
-      // Grid cards
+    // ── Hide grid duplicate of the featured card ────────────────────
+    var featuredSlot = document.getElementById('post-featured-slot');
+    if (featuredSlot) {
+      var featHref = featuredSlot.getAttribute('href');
       cards.forEach(function(card) {
-        if (card.style.display === 'none') return;
-        var ctags = (card.getAttribute('data-tags') || '').split(' ');
-        card.classList.toggle('post-hidden',
-          tag !== 'all' && ctags.indexOf(tag) === -1);
+        if (card.getAttribute('href') === featHref) card.style.display = 'none';
       });
     }
 
-    btns.forEach(function(btn) {
+    // ── Filter logic ────────────────────────────────────────────────
+    var btns = document.querySelectorAll('.filter-btn');
+
+    function filterPosts(tag) {
+      // Featured card
+      if (featuredSlot) {
+        var ftags = (featuredSlot.getAttribute('data-tags') || '').split(' ');
+        featuredSlot.style.display =
+          (tag === 'all' || ftags.indexOf(tag) !== -1) ? 'block' : 'none';
+      }
+      // Grid cards
+      cards.forEach(function(card) {
+        var featHref = featuredSlot ? featuredSlot.getAttribute('href') : null;
+        if (card.getAttribute('href') === featHref) return; // always hidden
+        var ctags = (card.getAttribute('data-tags') || '').split(' ');
+        card.style.display =
+          (tag === 'all' || ctags.indexOf(tag) !== -1) ? '' : 'none';
+      });
+    }
+
+        btns.forEach(function(btn) {
       btn.addEventListener('click', function() {
         btns.forEach(function(b) { b.classList.remove('active'); });
         btn.classList.add('active');
