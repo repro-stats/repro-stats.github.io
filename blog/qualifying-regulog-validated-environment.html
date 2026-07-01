@@ -1,338 +1,84 @@
 <!DOCTYPE html>
-<html lang="en-GB">
+<html lang="en" data-theme="light">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Qualifying regulog in a Validated R Environment | ReproStats</title>
-  <meta name="description"
-    content="A practical guide to running the regulog IQ/OQ/PQ qualification
-    protocols in a 21 CFR Part 11 or EU Annex 11 regulated environment." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --ink:       #0f1117;
-      --ink-mid:   #3a3d4a;
-      --ink-soft:  #6b6f80;
-      --rule:      #d8dae3;
-      --bg:        #f7f8fc;
-      --bg-card:   #ffffff;
-      --accent:    #1a56db;
-      --accent-lt: #e8effe;
-      --verified:  #0e7a4f;
-      --verified-lt: #e6f4ee;
-      --warn:      #b45309;
-      --warn-lt:   #fef3c7;
-    }
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'IBM Plex Sans', sans-serif;
-      font-size: 1rem;
-      line-height: 1.7;
-      color: var(--ink);
-      background: var(--bg);
-    }
-
-    /* ── Nav ── */
-    nav {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 2rem; height: 56px;
-      background: var(--bg-card);
-      border-bottom: 1px solid var(--rule);
-      position: sticky; top: 0; z-index: 100;
-    }
-    .nav-logo {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: .9rem; font-weight: 500;
-      color: var(--ink); text-decoration: none;
-    }
-    .nav-links { display: flex; gap: 1.5rem; }
-    .nav-links a {
-      font-size: .875rem; color: var(--ink-mid);
-      text-decoration: none;
-    }
-    .nav-links a:hover { color: var(--accent); }
-
-    /* ── Layout ── */
-    .page { max-width: 740px; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
-
-    /* ── Meta ── */
-    .post-meta {
-      display: flex; align-items: center; gap: .75rem;
-      margin-bottom: 2rem;
-    }
-    .tag {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: .7rem; font-weight: 500;
-      letter-spacing: .06em; text-transform: uppercase;
-      padding: .2rem .55rem; border-radius: 3px;
-      background: var(--accent-lt); color: var(--accent);
-    }
-    .tag.green {
-      background: var(--verified-lt); color: var(--verified);
-    }
-    .post-date {
-      font-size: .825rem; color: var(--ink-soft);
-    }
-
-    /* ── Typography ── */
-    h1 {
-      font-family: 'IBM Plex Serif', serif;
-      font-size: clamp(1.6rem, 4vw, 2.2rem);
-      font-weight: 600; line-height: 1.25;
-      margin-bottom: 1rem;
-    }
-    .subtitle {
-      font-size: 1.1rem; color: var(--ink-mid);
-      margin-bottom: 2.5rem;
-      border-bottom: 1px solid var(--rule);
-      padding-bottom: 2rem;
-    }
-    h2 {
-      font-family: 'IBM Plex Serif', serif;
-      font-size: 1.35rem; font-weight: 600;
-      margin: 2.75rem 0 .9rem;
-    }
-    h3 {
-      font-size: 1rem; font-weight: 600;
-      margin: 2rem 0 .5rem;
-      color: var(--ink);
-    }
-    p { margin-bottom: 1.1rem; color: var(--ink-mid); }
-    p strong { color: var(--ink); }
-    a { color: var(--accent); }
-    ul, ol { padding-left: 1.4rem; margin-bottom: 1.1rem; color: var(--ink-mid); }
-    li { margin-bottom: .4rem; }
-    li strong { color: var(--ink); }
-
-    /* ── Callout boxes ── */
-    .callout {
-      padding: 1rem 1.25rem;
-      border-radius: 6px;
-      margin: 1.5rem 0;
-      border-left: 3px solid;
-    }
-    .callout.info {
-      background: var(--accent-lt);
-      border-color: var(--accent);
-    }
-    .callout.pass {
-      background: var(--verified-lt);
-      border-color: var(--verified);
-    }
-    .callout.note {
-      background: var(--warn-lt);
-      border-color: var(--warn);
-    }
-    .callout p { margin-bottom: 0; }
-    .callout-label {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: .7rem; font-weight: 500;
-      text-transform: uppercase; letter-spacing: .06em;
-      margin-bottom: .35rem;
-    }
-    .callout.info .callout-label  { color: var(--accent); }
-    .callout.pass .callout-label  { color: var(--verified); }
-    .callout.note .callout-label  { color: var(--warn); }
-
-    /* ── Code ── */
-    pre {
-      background: #1a1d27;
-      border-radius: 6px;
-      padding: 1.25rem 1.5rem;
-      overflow-x: auto;
-      margin: 1.25rem 0;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: .825rem;
-      line-height: 1.65;
-    }
-    code { color: #c9d1e0; }
-    pre .c  { color: #6b7799; }
-    pre .s  { color: #98c379; }
-    pre .kw { color: #61afef; }
-    pre .fn { color: #e5c07b; }
-    pre .ok { color: #98c379; font-weight: 500; }
-    pre .hd { color: #6b7799; font-weight: 600; }
-    pre .br { color: #e06c75; }
-    code.inline {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: .85em;
-      background: var(--accent-lt);
-      color: var(--accent);
-      padding: .1em .35em;
-      border-radius: 3px;
-    }
-
-    /* ── Result block ── */
-    .result-block {
-      background: var(--verified-lt);
-      border: 1px solid #b2ddc8;
-      border-radius: 6px;
-      padding: 1rem 1.25rem;
-      margin: 1.25rem 0;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: .78rem;
-      line-height: 1.7;
-      color: var(--ink);
-    }
-    .result-block .pass { color: var(--verified); font-weight: 600; }
-    .result-block .head { color: var(--ink-mid); }
-
-    /* ── Table ── */
-    table {
-      width: 100%; border-collapse: collapse;
-      margin: 1.25rem 0; font-size: .875rem;
-    }
-    th {
-      text-align: left; padding: .6rem .75rem;
-      background: var(--accent-lt);
-      color: var(--accent);
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: .75rem; font-weight: 500;
-      letter-spacing: .04em; text-transform: uppercase;
-      border-bottom: 2px solid var(--rule);
-    }
-    td {
-      padding: .6rem .75rem;
-      border-bottom: 1px solid var(--rule);
-      color: var(--ink-mid);
-      vertical-align: top;
-    }
-    td strong { color: var(--ink); }
-    tr:last-child td { border-bottom: none; }
-
-    /* ── Author ── */
-    .author-block {
-      display: flex; align-items: center; gap: 1rem;
-      margin: 2.5rem 0; padding: 1.25rem;
-      background: var(--bg-card);
-      border: 1px solid var(--rule);
-      border-radius: 8px;
-    }
-    .author-avatar {
-      width: 48px; height: 48px; border-radius: 50%;
-      background: var(--accent-lt);
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: .9rem; font-weight: 600; color: var(--accent);
-      flex-shrink: 0;
-    }
-    .author-name { font-weight: 600; font-size: .9rem; }
-    .author-title { font-size: .8rem; color: var(--ink-soft); }
-
-    /* ── Footer ── */
-    footer {
-      margin-top: 4rem; padding-top: 2rem;
-      border-top: 1px solid var(--rule);
-      text-align: center; font-size: .825rem; color: var(--ink-soft);
-    }
-    footer a { color: var(--ink-soft); }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Qualifying regulog in a Validated R Environment — ReproStats</title>
+  <meta name="description" content="A practical guide to running the regulog IQ/OQ/PQ qualification protocols in a 21 CFR Part 11 or EU Annex 11 regulated environment.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Serif:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css">
 </head>
 <body>
 
-<nav>
-  <a class="nav-logo" href="/">reprostats.org</a>
-  <div class="nav-links">
-    <a href="/#packages">Packages</a>
-    <a href="/#consulting">Consulting</a>
-    <a href="/#about">About</a>
-    <a href="https://github.com/repro-stats" target="_blank">GitHub</a>
-    <a href="mailto:hello@reprostats.org">Get in touch</a>
+<nav class="nav">
+  <a href="../index.html" class="nav-logo">repro<span>stats</span>.org</a>
+  <ul class="nav-links">
+    <li><a href="../index.html">Packages</a></li>
+    <li><a href="../blog.html" class="active">Blog</a></li>
+    <li><a href="../index.html#about">About</a></li>
+    <li><a href="https://reprosia.com" target="_blank" rel="noopener">Reprosia ↗</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="theme-toggle" aria-label="Toggle theme">
+      <svg class="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg class="icon-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+    <a href="https://github.com/repro-stats" class="btn btn-outline btn-sm" target="_blank" rel="noopener">GitHub</a>
   </div>
+  <button class="nav-burger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+</nav>
+<nav class="nav-drawer">
+  <a href="../index.html">Packages</a>
+  <a href="../blog.html" class="active">Blog</a>
+  <a href="../index.html#about">About</a>
+  <a href="https://reprosia.com" target="_blank" rel="noopener">Reprosia ↗</a>
+  <a href="https://github.com/repro-stats" target="_blank" rel="noopener">GitHub</a>
 </nav>
 
-<div class="page">
-
-  <div class="post-meta">
-    <span class="tag green">Validation</span>
-    <span class="tag">21 CFR Part 11</span>
-    <span class="tag">EU Annex 11</span>
-    <span class="post-date">July 2026</span>
-  </div>
-
-  <h1>Qualifying regulog in a Validated R Environment</h1>
-
-  <p class="subtitle">
-    Most R packages require weeks of internal validation work before a QA
-    team will sign off on them for use in a regulated environment.
-    <code class="inline">regulog</code> ships pre-written, executable
-    IQ/OQ/PQ qualification protocols. This post explains what they cover,
-    how to run them, and what to do with the output.
-  </p>
-
-  <div class="author-block">
-    <div class="author-avatar">NP</div>
-    <div>
-      <div class="author-name">Ndoh Penn</div>
-      <div class="author-title">Biostatistician · ReproStats</div>
+<section class="post-hero">
+  <div class="post-hero-inner">
+    <a href="../blog.html" class="post-back">← Back to blog</a>
+    <div class="post-meta">
+      <span class="post-meta-item">1 Jul 2026</span>
+      <span class="post-meta-item">·</span>
+      <span class="post-meta-item">10 min read</span>
+      <span class="post-meta-item">·</span>
+      <span class="post-meta-item">Ndoh Penn</span>
+    </div>
+    <h1 class="display display-lg">Qualifying <em>regulog</em> in a validated R environment</h1>
+    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:1.5rem">
+      <span class="tag">Validation</span>
+      <span class="tag">21 CFR Part 11</span>
+      <span class="tag">EU Annex 11</span>
+      <span class="tag">IQ/OQ/PQ</span>
+      <span class="tag">regulog</span>
     </div>
   </div>
+</section>
 
-  <h2>Why qualification is required</h2>
+<article class="post-body">
 
-  <p>
-    Any software used in a regulated environment — one that falls under
-    21 CFR Part 11, EU Annex 11, or GAMP 5 — must be formally qualified
-    before it can be used to generate, modify, or sign electronic records
-    that regulators may inspect. This applies to R packages used in clinical
-    data analysis, regulatory submissions, or GxP quality systems just as
-    much as it applies to validated LIMS or EDC systems.
-  </p>
+  <p>Any software used in a regulated environment — under 21 CFR Part 11, EU Annex 11, or GAMP 5 — must be formally qualified before it can be used to generate or sign electronic records that regulators may inspect. This applies to R packages used in clinical data analysis, regulatory submissions, or GxP quality systems just as much as it applies to validated LIMS or EDC systems.</p>
 
-  <p>
-    Qualification follows a three-phase structure that has been standard in
-    the pharmaceutical industry for decades:
-  </p>
+  <p>Qualification follows a three-phase structure that has been standard in the pharmaceutical industry for decades:</p>
 
   <ul>
-    <li>
-      <strong>Installation Qualification (IQ)</strong> — evidence that the
-      software is installed correctly in this specific environment, with
-      the correct version and its dependencies intact.
-    </li>
-    <li>
-      <strong>Operational Qualification (OQ)</strong> — evidence that the
-      software operates as specified across all relevant functions, including
-      boundary conditions, negative tests, and every control required by
-      the applicable regulation.
-    </li>
-    <li>
-      <strong>Performance Qualification (PQ)</strong> — evidence that the
-      software performs reliably under realistic, end-to-end conditions
-      representative of actual use in this environment.
-    </li>
+    <li><strong>Installation Qualification (IQ)</strong> — evidence that the software is installed correctly in this specific environment, with the correct version and its dependencies intact.</li>
+    <li><strong>Operational Qualification (OQ)</strong> — evidence that the software operates as specified across all relevant functions, including boundary conditions, negative tests, and every control required by the applicable regulation.</li>
+    <li><strong>Performance Qualification (PQ)</strong> — evidence that the software performs reliably under realistic, end-to-end conditions representative of actual use.</li>
   </ul>
 
-  <p>
-    In practice, the bottleneck is almost always the protocol authoring step.
-    Writing IQ/OQ/PQ scripts from scratch, getting them reviewed and approved,
-    and assembling the traceability matrix that links each test to a regulatory
-    requirement is time-consuming work — even for straightforward packages.
-  </p>
+  <p>In practice, the bottleneck is almost always the protocol authoring step. Writing IQ/OQ/PQ scripts from scratch, getting them reviewed and approved, and assembling the traceability matrix that links each test to a regulatory requirement is time-consuming work — even for straightforward packages.</p>
 
-  <div class="callout info">
-    <div class="callout-label">What regulog ships</div>
-    <p>
-      <code class="inline">regulog</code> includes pre-written, executable
-      qualification scripts for all three phases. They are version-controlled
-      alongside the package, updated with every release, and produce a
-      self-contained pass/fail record your team can retain as documented
-      evidence of system qualification.
-    </p>
-  </div>
+  <p><code>regulog</code> ships pre-written, executable qualification protocols for all three phases. They are version-controlled alongside the package, updated with every release, and produce a self-contained pass/fail record your team can retain as documented evidence of system qualification.</p>
 
   <h2>What the protocols cover</h2>
 
   <table>
     <thead>
-      <tr>
-        <th>Protocol</th>
-        <th>Regulatory basis</th>
-        <th>Tests</th>
-        <th>What passes</th>
-      </tr>
+      <tr><th>Protocol</th><th>Regulatory basis</th><th>Tests</th><th>What is verified</th></tr>
     </thead>
     <tbody>
       <tr>
@@ -345,261 +91,123 @@
         <td><strong>OQ</strong></td>
         <td>21 CFR §11.10(a)(b)(c)(e), §11.50, §11.100, §11.200 · EU Annex 11 §9, §11</td>
         <td>26</td>
-        <td>Genesis hash integrity, chain linkage, tamper detection (content and chain), user attribution, ISO-8601 UTC timestamps, before/after change capture, blank reason rejection, CSV and JSON export columns, date filtering, disk persistence, monotonic entry IDs, log_note, log_signature identity and coverage, with_log error isolation and state isolation</td>
+        <td>Genesis hash integrity, chain linkage, tamper detection, user attribution, timestamps, before/after change capture, blank reason rejection, CSV/JSON export, date filtering, disk persistence, monotonic entry IDs, log_note, log_signature identity and coverage, with_log error isolation</td>
       </tr>
       <tr>
         <td><strong>PQ</strong></td>
-        <td>21 CFR Part 11 end-to-end · EU Annex 11 performance</td>
+        <td>21 CFR Part 11 end-to-end · EU Annex 11</td>
         <td>7</td>
         <td>Clinical data review workflow, signed regulatory export, multi-user session independence, 500-entry load test with full chain verification, file-level tamper detection, annotated clinical analysis with electronic signature, inspector query simulation</td>
       </tr>
     </tbody>
   </table>
 
-  <p>
-    The OQ is the most substantive protocol. Each of its 26 tests maps
-    explicitly to a regulatory clause and includes an acceptance criterion.
-    The traceability from test to requirement is documented in the
-    Requirements Traceability Matrix (RTM) included with the package:
-  </p>
+  <p>The OQ maps explicitly to regulatory clauses. The full traceability matrix linking every test to its requirement is included with the package:</p>
 
-  <pre><code><span class="c"># View the RTM</span>
-<span class="fn">read.csv</span>(system.<span class="fn">file</span>(<span class="s">"validation/RTM_regulog.csv"</span>, package = <span class="s">"regulog"</span>))</code></pre>
+<pre><code>read.csv(system.file("validation/RTM_regulog.csv", package = "regulog"))</code></pre>
 
   <h2>Running the qualification</h2>
 
-  <p>
-    Run all three protocols in sequence in the target environment — the
-    machine and R installation that will be used for regulated work.
-    Each script is self-contained and requires only that <code class="inline">regulog</code>
-    is installed.
-  </p>
+  <p>Run each script in sequence in the target environment — the R installation that will be used for regulated work:</p>
 
-  <pre><code><span class="c"># Phase 1: Installation Qualification</span>
-<span class="fn">source</span>(system.<span class="fn">file</span>(<span class="s">"validation/IQ_regulog.R"</span>, package = <span class="s">"regulog"</span>))
+<pre><code># Phase 1: Installation Qualification (10 tests)
+source(system.file("validation/IQ_regulog.R", package = "regulog"))
 
-<span class="c"># Phase 2: Operational Qualification</span>
-<span class="fn">source</span>(system.<span class="fn">file</span>(<span class="s">"validation/OQ_regulog.R"</span>, package = <span class="s">"regulog"</span>))
+# Phase 2: Operational Qualification (26 tests)
+source(system.file("validation/OQ_regulog.R", package = "regulog"))
 
-<span class="c"># Phase 3: Performance Qualification</span>
-<span class="fn">source</span>(system.<span class="fn">file</span>(<span class="s">"validation/PQ_regulog.R"</span>, package = <span class="s">"regulog"</span>))</code></pre>
-
-  <p>
-    When all three pass, the output looks like this:
-  </p>
-
-  <div class="result-block">
-<span class="head">=============================================================</span>
-<span class="head">regulog Installation Qualification (IQ)</span>
-<span class="head">Protocol: regulog-IQ-v0.2</span>
-<span class="head">=============================================================</span>
-<span class="pass">[PASS]</span> IQ-001 — R version >= 4.2.0
-<span class="pass">[PASS]</span> IQ-002 — regulog package installed
-<span class="pass">[PASS]</span> IQ-003 — regulog package loadable
-<span class="pass">[PASS]</span> IQ-004 — Dependency: digest installed
-<span class="pass">[PASS]</span> IQ-005 — Dependency: jsonlite installed
-<span class="pass">[PASS]</span> IQ-006 — SHA-256 produces 64-char hex output
-<span class="pass">[PASS]</span> IQ-007 — jsonlite round-trip integrity
-<span class="pass">[PASS]</span> IQ-008 — File system write access in tempdir()
-<span class="pass">[PASS]</span> IQ-009 — regulog_init() executes without error
-<span class="pass">[PASS]</span> IQ-010 — v0.2.0 functions available
-
-<span class="head">=============================================================</span>
-<span class="head">IQ RESULT: 10 PASS / 0 FAIL</span>
-<span class="pass">STATUS: PASS — proceed to Operational Qualification (OQ)</span>
-<span class="head">=============================================================</span>
-
-<span class="head">... (OQ: 26 PASS / 0 FAIL) ...</span>
-<span class="head">... (PQ:  7 PASS / 0 FAIL) ...</span>
-
-<span class="head">=============================================================</span>
-<span class="pass">STATUS: PASS — regulog is qualified for use in this environment</span>
-<span class="head">=============================================================</span>
-  </div>
+# Phase 3: Performance Qualification (7 tests)
+source(system.file("validation/PQ_regulog.R", package = "regulog"))</code></pre>
 
   <h2>Capturing the qualification record</h2>
 
-  <p>
-    The output of each protocol — including the platform, R version,
-    date, and pass/fail status of every test — should be retained as your
-    documented evidence of system qualification. The simplest approach is
-    to capture it directly:
-  </p>
+  <p>The output of each run — including platform, R version, date, and pass/fail status of every test — should be retained as documented evidence. The simplest approach:</p>
 
-  <pre><code><span class="c"># Capture and save the full qualification output</span>
-sink(<span class="s">"IQ_execution_record.txt"</span>)
-<span class="fn">source</span>(system.<span class="fn">file</span>(<span class="s">"validation/IQ_regulog.R"</span>, package = <span class="s">"regulog"</span>))
+<pre><code>sink("IQ_execution_record.txt")
+source(system.file("validation/IQ_regulog.R", package = "regulog"))
 sink()
 
-sink(<span class="s">"OQ_execution_record.txt"</span>)
-<span class="fn">source</span>(system.<span class="fn">file</span>(<span class="s">"validation/OQ_regulog.R"</span>, package = <span class="s">"regulog"</span>))
+sink("OQ_execution_record.txt")
+source(system.file("validation/OQ_regulog.R", package = "regulog"))
 sink()
 
-sink(<span class="s">"PQ_execution_record.txt"</span>)
-<span class="fn">source</span>(system.<span class="fn">file</span>(<span class="s">"validation/PQ_regulog.R"</span>, package = <span class="s">"regulog"</span>))
+sink("PQ_execution_record.txt")
+source(system.file("validation/PQ_regulog.R", package = "regulog"))
 sink()</code></pre>
 
-  <p>
-    Each execution record includes the timestamp, R version, platform, and
-    full test results. These files, along with the protocol scripts
-    themselves and the RTM, form the core of a qualification dossier
-    that can be presented during an inspection or internal audit.
-  </p>
+  <h2>Logging the qualification itself</h2>
 
-  <div class="callout note">
-    <div class="callout-label">Re-qualification on upgrade</div>
-    <p>
-      Any significant change to the software — a new package version, a
-      change to the R environment, or a platform migration — triggers
-      re-qualification. Re-running the three protocols in the updated
-      environment and retaining the new execution records is sufficient
-      evidence that the qualified state has been re-established.
-    </p>
-  </div>
+  <p>The qualification run is itself an activity in a regulated environment. Using <code>regulog</code> to audit its own qualification produces a Part 11-compliant record of who ran it, when, and the outcome:</p>
 
-  <h2>What the OQ actually tests</h2>
+<pre><code>library(regulog)
 
-  <p>
-    The OQ is the most directly relevant protocol for regulatory review.
-    Its 26 tests are grouped by the clause they address:
-  </p>
-
-  <h3>§11.10(e) — Audit trail requirements</h3>
-  <ul>
-    <li>Genesis hash is correctly formed and 64 hex characters</li>
-    <li>Each entry links cryptographically to its predecessor</li>
-    <li>Content modification in any entry is detected</li>
-    <li>Entry insertion, deletion, or reordering is detected</li>
-    <li>User identity is preserved on every entry</li>
-    <li>Timestamps are ISO-8601 UTC format</li>
-    <li>Blank reason fields are rejected — no silent entries possible</li>
-    <li><code class="inline">log_note()</code> creates hash-chained NOTE entries</li>
-    <li><code class="inline">with_log()</code> isolates errors without corrupting the chain</li>
-  </ul>
-
-  <h3>§11.10(b) — Record retrieval and export</h3>
-  <ul>
-    <li>CSV export contains all required regulatory columns</li>
-    <li>Signed export includes <code class="inline">chain_intact</code> and <code class="inline">verified_at</code> fields</li>
-    <li>Date filtering correctly excludes out-of-range entries</li>
-    <li><code class="inline">filter_log()</code> returns only entries of the requested type</li>
-    <li>Genesis record is excluded from user-facing exports</li>
-  </ul>
-
-  <h3>§11.10(c) — Record protection</h3>
-  <ul>
-    <li>Entries persist to disk and verify correctly from the <code class="inline">.rlog</code> file path without an active session</li>
-  </ul>
-
-  <h3>§11.100 / §11.200 — Electronic signatures</h3>
-  <ul>
-    <li>Signer identity and meaning are recorded on every signature entry</li>
-    <li>Entries covered by the signature are counted automatically</li>
-    <li>Signature entries are part of the hash chain</li>
-    <li>Tampering with any entry before the signature is detected</li>
-  </ul>
-
-  <h2>Using regulog to audit the qualification itself</h2>
-
-  <p>
-    There is a useful circularity here: the qualification run of
-    <code class="inline">regulog</code> is itself an activity in a regulated
-    environment, and it should therefore be logged. You can use
-    <code class="inline">regulog</code> to create an audit trail of the
-    qualification process:
-  </p>
-
-  <pre><code><span class="kw">library</span>(regulog)
-
-<span class="c"># Open a session for the qualification run</span>
-log <- <span class="fn">regulog_init</span>(
-  app     = <span class="s">"regulog-qualification"</span>,
-  version = <span class="s">"0.2.0"</span>,
-  user    = <span class="s">"val.lead"</span>,
-  path    = <span class="s">"qualification/audit_trail.rlog"</span>
+log &lt;- regulog_init(
+  app     = "regulog-qualification",
+  version = "0.2.0",
+  user    = "val.lead",
+  path    = "qualification/audit_trail.rlog"
 )
 
-<span class="fn">log_action</span>(log,
-  action = <span class="s">"qualification_start"</span>,
-  object = <span class="s">"regulog 0.2.0"</span>,
-  reason = <span class="s">"IQ/OQ/PQ qualification initiated per SOP-VAL-007"</span>
+log_action(log,
+  action = "qualification_start",
+  object = "regulog 0.2.0",
+  reason = "IQ/OQ/PQ qualification initiated per SOP-VAL-007"
 )
 
-<span class="c"># Run IQ</span>
-<span class="fn">source</span>(system.<span class="fn">file</span>(<span class="s">"validation/IQ_regulog.R"</span>, package = <span class="s">"regulog"</span>))
-<span class="fn">log_action</span>(log,
-  action = <span class="s">"IQ_complete"</span>,
-  object = <span class="s">"IQ_regulog.R"</span>,
-  reason = <span class="s">"10 tests passed. Proceeding to OQ."</span>
+source(system.file("validation/IQ_regulog.R", package = "regulog"))
+log_action(log,
+  action = "IQ_complete",
+  object = "IQ_regulog.R",
+  reason = "10 tests passed. Proceeding to OQ."
 )
 
-<span class="c"># Run OQ</span>
-<span class="fn">source</span>(system.<span class="fn">file</span>(<span class="s">"validation/OQ_regulog.R"</span>, package = <span class="s">"regulog"</span>))
-<span class="fn">log_action</span>(log,
-  action = <span class="s">"OQ_complete"</span>,
-  object = <span class="s">"OQ_regulog.R"</span>,
-  reason = <span class="s">"26 tests passed. Proceeding to PQ."</span>
+source(system.file("validation/OQ_regulog.R", package = "regulog"))
+log_action(log,
+  action = "OQ_complete",
+  object = "OQ_regulog.R",
+  reason = "26 tests passed. Proceeding to PQ."
 )
 
-<span class="c"># Run PQ</span>
-<span class="fn">source</span>(system.<span class="fn">file</span>(<span class="s">"validation/PQ_regulog.R"</span>, package = <span class="s">"regulog"</span>))
-<span class="fn">log_action</span>(log,
-  action = <span class="s">"PQ_complete"</span>,
-  object = <span class="s">"PQ_regulog.R"</span>,
-  reason = <span class="s">"7 tests passed. Qualification complete."</span>
+source(system.file("validation/PQ_regulog.R", package = "regulog"))
+log_action(log,
+  action = "PQ_complete",
+  object = "PQ_regulog.R",
+  reason = "7 tests passed. Qualification complete."
 )
 
-<span class="c"># Sign off</span>
-<span class="fn">log_signature</span>(log,
-  <span class="s">"I certify that regulog 0.2.0 has been qualified in this environment
-   per SOP-VAL-007 and is approved for use in regulated R workflows."</span>
+log_signature(log,
+  "I certify that regulog 0.2.0 has been qualified in this environment
+   per SOP-VAL-007 and is approved for use in regulated R workflows."
 )
 
-<span class="c"># Verify and export the qualification audit trail</span>
-<span class="fn">verify_log</span>(log)
-<span class="fn">export_audit_trail</span>(log,
-  format = <span class="s">"csv"</span>,
-  signed = <span class="kw">TRUE</span>,
-  path   = <span class="s">"qualification/audit_trail_export.csv"</span>
+verify_log(log)
+export_audit_trail(log,
+  format = "csv",
+  signed = TRUE,
+  path   = "qualification/audit_trail_export.csv"
 )</code></pre>
 
-  <p>
-    The resulting <code class="inline">audit_trail_export.csv</code> is itself
-    a Part 11-compliant electronic record documenting the qualification
-    activity — who ran it, when, and that the outcome was reviewed and
-    signed.
-  </p>
+  <h2>Re-qualification</h2>
 
-  <div class="callout pass">
-    <div class="callout-label">Bottom line</div>
-    <p>
-      The IQ/OQ/PQ protocols shipped with <code class="inline">regulog</code>
-      reduce the qualification burden from weeks of protocol authoring to
-      three commands. The output is auditable, traceable to regulatory
-      requirements, and produced in the environment where the package will
-      actually be used — which is exactly what an inspector expects to see.
-    </p>
-  </div>
+  <p>Any significant change — a new package version, a change to the R environment, or a platform migration — requires re-qualification. Re-run the three protocols in the updated environment and retain the new execution records as evidence that the qualified state has been re-established.</p>
 
-  <h2>Questions or consulting support</h2>
+  <hr class="post-divider">
 
-  <p>
-    If you need support deploying <code class="inline">regulog</code> in a
-    validated environment — including SOPs, gap assessments against your
-    existing validation framework, or custom qualification documentation —
-    <a href="mailto:hello@reprostats.org">get in touch</a>.
-  </p>
+  <p>Questions or corrections — <a href="mailto:hello@reprostats.org">hello@reprostats.org</a>.</p>
 
-</div>
+</article>
 
 <footer>
-  <p>
-    <a href="/">reprostats.org</a> ·
-    <a href="https://github.com/repro-stats/regulog">GitHub</a> ·
-    <a href="/regulog/">regulog docs</a> ·
-    <a href="mailto:hello@reprostats.org">hello@reprostats.org</a>
-  </p>
+  <a href="../" class="footer-logo">repro<span>stats</span>.org</a>
+  <ul class="footer-links">
+    <li><a href="https://github.com/repro-stats" target="_blank" rel="noopener">GitHub</a></li>
+    <li><a href="../blog.html">Blog</a></li>
+    <li><a href="https://ndohpenngit.github.io/bayprior/" target="_blank" rel="noopener">bayprior docs</a></li>
+    <li><a href="https://reprosia.com" target="_blank" rel="noopener">Reprosia</a></li>
+  </ul>
+  <span class="footer-copy">© 2026 Ndoh Penn · Antwerp, Belgium</span>
 </footer>
 
+<script src="../main.js"></script>
 </body>
 </html>
