@@ -5,6 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Blog — Reprostats</title>
   <meta name="description" content="Practical guides, methodology notes, and regulatory context for pharma statisticians working in R.">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" sizes="16x16 32x32 48x48">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#1a56db">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Serif:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
@@ -149,11 +159,11 @@
     </div>
 
     <!-- Featured post: update href/content/tags when publishing a new post -->
-    <a href="blog/qualifying-regulog-validated-environment.html"
+    <a href="blog/reproducr-behavioural-reproducibility.html"
        id="post-featured-slot"
        class="blog-card"
-       data-tags="regulatory reproducibility"
-       data-date="2026-07-01"
+       data-tags="reproducibility"
+       data-date="2026-07-09"
        style="display:block;margin-bottom:2rem;padding:2rem 2.5rem;grid-column:1/-1">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:2rem;flex-wrap:wrap">
         <div style="flex:1;min-width:260px">
@@ -161,22 +171,21 @@
                       text-transform:uppercase;letter-spacing:0.06em;color:var(--accent);
                       margin-bottom:0.75rem">Latest post</div>
           <div class="blog-meta" style="margin-bottom:0.75rem">
-            <span class="blog-date">1 Jul 2026</span>
-            <span class="blog-read">10 min read</span>
+            <span class="blog-date">9 Jul 2026</span>
+            <span class="blog-read">12 min read</span>
           </div>
           <h2 style="font-family:'IBM Plex Serif',serif;font-size:clamp(1.3rem,2.5vw,1.75rem);
                      font-weight:600;line-height:1.25;margin-bottom:0.75rem">
-            Qualifying <em>regulog</em> in a validated R environment
+            Behavioural reproducibility auditing in R with <em>reproducr</em>
           </h2>
           <p style="color:var(--ink-mid);margin-bottom:1.25rem">
-            How to run the pre-written IQ/OQ/PQ protocols, capture the qualification record,
-            and log the qualification process itself — for 21 CFR Part 11 and EU Annex 11
-            regulated environments.
+            How reproducr scans scripts for silent breaking changes, flags stochastic calls
+            missing set.seed(), detects numerical drift, and generates audit reports for
+            regulated and academic workflows.
           </p>
           <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center">
-            <span class="tag">Validation</span>
-            <span class="tag">21 CFR Part 11</span>
-            <span class="tag">EU Annex 11</span>
+            <span class="tag">reproducr</span>
+            <span class="tag">Reproducibility</span>
           </div>
         </div>
         <div style="font-size:1.5rem;color:var(--accent);align-self:center">→</div>
@@ -185,6 +194,13 @@
 
     <!-- Grid -->
     <div class="blog-grid reveal">
+
+      <a href="blog/reproducr-behavioural-reproducibility.html" class="blog-card" data-tags="reproducibility" data-date="2026-07-09">
+        <div class="blog-meta"><span class="blog-date">9 Jul 2026</span><span class="blog-read">12 min read</span></div>
+        <h3>Behavioural reproducibility auditing in R with reproducr</h3>
+        <p>How reproducr scans scripts for silent breaking changes, flags stochastic calls missing set.seed(), detects numerical drift, and generates audit reports for regulated and academic workflows.</p>
+        <div class="blog-card-footer"><div class="blog-tags"><span class="tag">reproducr</span><span class="tag">Reproducibility</span></div><span class="blog-arrow">→</span></div>
+      </a>
 
       <a href="blog/qualifying-regulog-validated-environment.html" class="blog-card" data-tags="regulatory reproducibility" data-date="2026-07-01">
         <div class="blog-meta"><span class="blog-date">1 Jul 2026</span><span class="blog-read">10 min read</span></div>
