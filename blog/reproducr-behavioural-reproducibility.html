@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en-GB" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Behavioural reproducibility auditing in R with reproducr — Reprostats</title>
+  <meta name="description" content="How reproducr scans R scripts for silent breaking changes, flags stochastic calls missing set.seed(), detects numerical drift, and generates audit reports for regulated and academic workflows.">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" sizes="16x16 32x32 48x48">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#1a56db">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Serif:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+<nav class="nav">
+  <a href="../index.html" class="nav-logo">repro<span>stats</span>.org</a>
+  <ul class="nav-links">
+    <li><a href="../index.html">Packages</a></li>
+    <li><a href="../blog.html" class="active">Blog</a></li>
+    <li><a href="../index.html#about">About</a></li>
+    <li><a href="https://reprosia.com" target="_blank" rel="noopener">Reprosia ↗</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="theme-toggle" aria-label="Toggle theme">
+      <svg class="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg class="icon-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+    <a href="https://github.com/repro-stats" class="btn btn-outline btn-sm" target="_blank" rel="noopener">GitHub</a>
+  </div>
+  <button class="nav-burger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+</nav>
+<nav class="nav-drawer">
+  <a href="../index.html">Packages</a>
+  <a href="../blog.html" class="active">Blog</a>
+  <a href="../index.html#about">About</a>
+  <a href="https://reprosia.com" target="_blank" rel="noopener">Reprosia ↗</a>
+  <a href="https://github.com/repro-stats" target="_blank" rel="noopener">GitHub</a>
+</nav>
+
+<section class="post-hero">
+  <div class="post-hero-inner">
+    <a href="../blog.html" class="post-back">← Back to blog</a>
+    <div class="post-meta">
+      <span class="post-meta-item">9 Jul 2026</span>
+      <span class="post-meta-item">·</span>
+      <span class="post-meta-item">12 min read</span>
+      <span class="post-meta-item">·</span>
+      <span class="post-meta-item">Ndoh Penn</span>
+    </div>
+    <h1 class="display display-lg">Behavioural reproducibility auditing in R with <em>reproducr</em></h1>
+    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:1.5rem">
+      <span class="tag">reproducr</span>
+      <span class="tag">Reproducibility</span>
+      <span class="tag">Audit</span>
+      <span class="tag">R</span>
+    </div>
+  </div>
+</section>
+
+<article class="post-body">
+
+  <p>You finish an analysis. The code runs. The numbers look right. But if you ran the same code again next month — after a routine <code>update.packages()</code> — would you get the same results?</p>
+
+  <p>Often, you would not. Package updates change function behaviour silently. A stochastic function called without a fixed seed returns different values every run. A <code>sort()</code> on character data can return different orderings depending on the system locale. None of these produce errors. None produce warnings. They just produce different numbers.</p>
+
+  <p><code>reproducr</code> makes these risks visible before they reach a regulator, a journal, or a collaborator.</p>
+
+  <h2>What reproducr actually does</h2>
+
+  <p>The package is organised around three tiers, each building on the previous:</p>
+
+  <table>
+    <thead>
+      <tr><th>Tier</th><th>Functions</th><th>What it does</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>1 — Scan &amp; score</strong></td>
+        <td><code>audit_script()</code>, <code>risk_score()</code></td>
+        <td>Parse scripts, extract all <code>pkg::function</code> calls, check against the breaking-changes database</td>
+      </tr>
+      <tr>
+        <td><strong>2 — Baseline &amp; drift</strong></td>
+        <td><code>certify()</code>, <code>check_drift()</code>, <code>list_certs()</code></td>
+        <td>Hash and store analytical outputs; detect any numerical change on subsequent runs</td>
+      </tr>
+      <tr>
+        <td><strong>3 — Report &amp; export</strong></td>
+        <td><code>repro_report()</code>, <code>repro_badge()</code></td>
+        <td>Generate audit reports in three styles; badge your README</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>Tier 1 alone is useful for a quick scan. Tier 2 adds a persistent audit trail. All three together produce the kind of documentation that satisfies a journal's reproducibility policy or a QC reviewer's sign-off requirements.</p>
+
+  <h2>Tier 1: scanning scripts for risk</h2>
+
+  <p><code>audit_script()</code> parses an R script and extracts every qualified <code>pkg::function</code> call, along with the installed version of that package and the line number of each call.</p>
+
+<pre><code>library(reproducr)
+
+report <- audit_script("analysis.R")
+print(report)
+#>
+#> -- reproducr audit report [2026-07-09 09:14] --
+#>
+#>   Files scanned:    1
+#>   Packages found:   4
+#>   Calls detected:   23
+#>   R version:        4.4.2
+#>   Platform:         aarch64-apple-darwin20
+#>   Versions from:    installed library
+#>
+#>   Next step: risks <- risk_score(report)</code></pre>
+
+  <p><code>risk_score()</code> then checks every detected call against the built-in breaking-changes database. A call is only flagged if the installed version falls within a known risky version window — so if you are already on a version beyond the breaking change, it passes cleanly.</p>
+
+<pre><code>risks <- risk_score(report)
+print(risks)
+#>
+#> -- reproducr risk score --
+#>
+#>   HIGH:      1
+#>   MEDIUM:    2
+#>   LOW:       1
+#>
+#> [HIGH]   dplyr::summarise (line 14 in analysis.R)
+#>          Check    : changelog
+#>          Details  : In dplyr 1.1.0, summarise() changed its default
+#>                     grouping behaviour. Results from grouped pipelines
+#>                     may differ silently from pre-1.1.0 outputs.
+#>          Reference: https://dplyr.tidyverse.org/news/index.html#dplyr-110</code></pre>
+
+  <h3>The three risk checks</h3>
+
+  <p><strong>Breaking-changes database</strong> (<code>"changelog"</code>) — the core check. A curated database of known cases where a package update changed function output silently, without an error or deprecation warning. Current coverage includes <code>dplyr</code>, <code>tidyr</code>, <code>ggplot2</code>, <code>readr</code>, <code>purrr</code>, <code>stringr</code>, <code>lubridate</code>, <code>broom</code>, <code>data.table</code>, <code>lme4</code>, <code>caret</code>, <code>rstan</code>, and base R itself (including the RNG change in R 3.6.0 and <code>hclust()</code> tie-breaking in R 4.0.0). Each entry specifies the version window, risk level, and a reference URL.</p>
+
+  <p><strong>Seed check</strong> (<code>"seed_check"</code>) — flags any call to a stochastic function (<code>rnorm</code>, <code>sample</code>, <code>rbinom</code>, and others) where no <code>set.seed()</code> appears within 50 lines above. The check is deliberately local — a <code>set.seed()</code> at the top of a 500-line script does not protect a stochastic call 400 lines later from being inadvertently affected by earlier random draws.</p>
+
+<pre><code># Flagged — no set.seed() within 50 lines:
+x <- stats::rnorm(100)
+
+# Not flagged:
+set.seed(42)
+x <- stats::rnorm(100)</code></pre>
+
+  <p><strong>Locale check</strong> (<code>"locale_check"</code>) — flags functions whose output depends on the system locale: <code>sort()</code>, <code>format()</code>, <code>strftime()</code>, and similar. A sort on character data returns different orderings on a Belgian server and a US server if the locale differs. Relevant any time code runs on remote infrastructure, cloud platforms, or shared compute environments.</p>
+
+  <h2>Tier 2: certifying outputs and detecting drift</h2>
+
+  <p>Auditing a script tells you what <em>might</em> change. Certification tells you what <em>has</em> changed.</p>
+
+  <p><code>certify()</code> hashes a set of named outputs — model coefficients, p-values, sample sizes, summary statistics — and stores them under a named tag in a <code>.reproducr.rds</code> file in the project root.</p>
+
+<pre><code>model <- lm(mpg ~ wt, data = mtcars)
+
+certify(
+  outputs = list(
+    coefs     = coef(model),
+    r_squared = summary(model)$r.squared,
+    n_obs     = nrow(mtcars)
+  ),
+  tag    = "submission-v1",
+  script = "analysis.R"
+)
+#> reproducr: certified 3 output(s) [2026-07-09] under tag 'submission-v1'</code></pre>
+
+  <p>After any environment change — a package upgrade, an R version update, a platform migration — <code>check_drift()</code> compares the current outputs against the stored baseline:</p>
+
+<pre><code>check_drift(
+  outputs = list(
+    coefs     = coef(model),
+    r_squared = summary(model)$r.squared,
+    n_obs     = nrow(mtcars)
+  ),
+  against = "submission-v1"
+)
+#>
+#> -- reproducr drift check vs 'submission-v1' --
+#>
+#>   Verdict  : ALL OUTPUTS MATCH
+#>   OK       : 3
+#>   Drifted  : 0</code></pre>
+
+  <p>If any output has changed — even by a single floating point digit — the verdict reports which outputs drifted and by how much. The <code>.reproducr.rds</code> file accumulates certifications across tags. Commit it to version control: it is your numerical audit trail.</p>
+
+  <p><code>list_certs()</code> shows all certifications stored in the project:</p>
+
+<pre><code>list_certs()
+#>   tag            certified_at  script        n_outputs
+#>   submission-v1  2026-07-09    analysis.R    3</code></pre>
+
+  <h2>Tier 3: reports and badges</h2>
+
+  <p><code>repro_report()</code> renders an audit report from the <code>audit_script()</code> and <code>risk_score()</code> outputs. Three styles are available:</p>
+
+  <ul>
+    <li><strong>minimal</strong> — a compact summary covering environment, verdict, and risk table. Suitable for internal QC or project documentation.</li>
+    <li><strong>academic</strong> — a ready-to-paste methods paragraph for journal submissions, including R version, package versions, audit verdict, and a note that the full report is in the supplementary materials.</li>
+    <li><strong>pharma</strong> — a structured QC document with execution environment table, full package inventory, risk register, drift assessment, and sign-off fields for analyst and reviewer. Suitable for regulated submissions.</li>
+  </ul>
+
+<pre><code>repro_report(
+  report,
+  risks,
+  format      = "html",
+  style       = "pharma",
+  output_file = "qc_report.html"
+)</code></pre>
+
+  <p><code>repro_badge()</code> writes a shields.io badge to your README reflecting the current audit status. In CI, this updates automatically on every push — the badge in your README reflects the state of the most recent run, not the state at the time you last remembered to update it.</p>
+
+  <h2>CI integration</h2>
+
+  <p><code>reproducr</code> is designed to run in CI on every push. The gallery repositories — <a href="https://github.com/repro-stats/reproducr-clinical" target="_blank" rel="noopener">reproducr-clinical</a>, <a href="https://github.com/repro-stats/reproducr-rwe" target="_blank" rel="noopener">reproducr-rwe</a>, <a href="https://github.com/repro-stats/reproducr-ecology" target="_blank" rel="noopener">reproducr-ecology</a>, and <a href="https://github.com/repro-stats/reproducr-cmc" target="_blank" rel="noopener">reproducr-cmc</a> — demonstrate the complete workflow across different domains and regulatory contexts, with and without <code>renv</code>.</p>
+
+  <p>A typical CI workflow audits the scripts, checks for drift against the last certified run, and updates the badge. The <code>DEMO.md</code> in each gallery repository walks through the complete pipeline with real output at every step.</p>
+
+  <h2>The breaking-changes database</h2>
+
+  <p>The database that powers <code>risk_score()</code> is maintained in a separate community repository — <a href="https://github.com/repro-stats/reproducr-db" target="_blank" rel="noopener">reproducr-db</a>. Each entry specifies a <code>pkg::fn</code> key, a version window, a risk level, a plain-English description of the breaking change, and a reference URL (the package <code>NEWS.md</code>, CRAN page, or GitHub release).</p>
+
+  <p>The database is checked weekly against current CRAN versions via <code>check_db_staleness()</code>. Community contributions are welcome — the format is a small JSON file and the contributing guide covers the version window design principles in detail.</p>
+
+  <h2>Works with or without renv</h2>
+
+  <p>If <code>renv</code> is active in the project, <code>reproducr</code> reads the lockfile automatically and reports package versions from there rather than from the installed library. If <code>renv</code> is not in use, it falls back to the installed library. No configuration is required either way.</p>
+
+  <h2>Getting started</h2>
+
+<pre><code>install.packages("reproducr")
+
+library(reproducr)
+
+# Scan a script
+report <- audit_script("my_analysis.R")
+
+# Score for risk
+risks <- risk_score(report)
+
+# Certify outputs
+certify(
+  outputs = list(primary_result = my_estimate),
+  tag     = "v1"
+)
+
+# Generate a report
+repro_report(
+  report,
+  risks,
+  style  = "minimal",
+  format = "html"
+)</code></pre>
+
+  <p>Full documentation at <a href="https://repro-stats.github.io/reproducr/" target="_blank" rel="noopener">repro-stats.github.io/reproducr/</a>. The breaking-changes database and gallery repositories are at <a href="https://github.com/repro-stats" target="_blank" rel="noopener">github.com/repro-stats</a>.</p>
+
+  <hr class="post-divider">
+
+  <p>Questions or corrections — <a href="mailto:contact@reprostats.org">contact@reprostats.org</a>.</p>
+
+</article>
+
+<footer>
+  <a href="../" class="footer-logo">repro<span>stats</span>.org</a>
+  <ul class="footer-links">
+    <li><a href="https://github.com/repro-stats" target="_blank" rel="noopener">GitHub</a></li>
+    <li><a href="../blog.html">Blog</a></li>
+    <li><a href="https://repro-stats.github.io/reproducr/" target="_blank" rel="noopener">reproducr docs</a></li>
+    <li><a href="https://reprosia.com" target="_blank" rel="noopener">Reprosia</a></li>
+  </ul>
+  <span class="footer-copy">© 2026 Ndoh Penn · Antwerp, Belgium</span>
+</footer>
+
+<script src="../main.js"></script>
+</body>
+</html>
