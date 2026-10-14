@@ -6,6 +6,17 @@
   <title>From a bayprior MAP prior to a fitted model: handing priors to rstanarm and brms — ReproStats</title>
   <meta name="description" content="Derive a meta-analytic-predictive prior from historical trials with bayprior, then pass it to rstanarm or brms without silently changing it.">
 
+  <!-- Open Graph / LinkedIn preview -->
+  <meta property="og:type"        content="article">
+  <meta property="og:url"         content="https://reprostats.org/blog/bayprior-rstanarm-brms.html">
+  <meta property="og:site_name"   content="Reprostats">
+  <meta property="og:title"       content="From a bayprior MAP prior to a fitted model: handing priors to rstanarm and brms">
+  <meta property="og:description" content="Derive a meta-analytic-predictive prior from historical trials with bayprior, then pass it to rstanarm or brms without silently changing it.">
+  <meta property="og:image"       content="https://reprostats.org/logo-social.png">
+  <meta property="og:image:width"  content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card"       content="summary_large_image">
+
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="icon" type="image/x-icon" href="/favicon.ico" sizes="16x16 32x32 48x48">
@@ -95,6 +106,8 @@ plot_tau_posterior(map)</code></pre>
   <p>If you already have per-trial estimates and standard errors on the log-odds scale, you can pass them to <code>map_prior()</code> directly as <code>y</code> and <code>se</code>.</p>
 
   <p>The <code>outcome_type</code> choice matters. It selects the default prior on the between-trial heterogeneity <code>tau</code>, and <code>"log_or"</code> and <code>"single_arm_log_odds"</code> get different default scales. <code>plot_tau_posterior()</code> shows how much the data say about heterogeneity, which is worth a look before you borrow strength from historical trials.</p>
+
+  <p>Prefer to explore without writing code? The Shiny app includes a MAP prior module. Try it in the <a href="https://ndohpenn-bayprior.share.connect.posit.cloud" target="_blank" rel="noopener">live demo</a>, or run it locally with <code>bayprior::run_app()</code>.</p>
 
   <h2>Step 2: Read off the hyperparameters</h2>
 
