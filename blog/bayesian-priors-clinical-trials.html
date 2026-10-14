@@ -28,7 +28,8 @@
     <li><a href="../index.html">Packages</a></li>
     <li><a href="../blog.html" class="active">Blog</a></li>
     <li><a href="../index.html#about">About</a></li>
-    <li><a href="https://reprosia.com" target="_blank" rel="noopener">Reprosia ↗</a></li>
+    <!-- Reprosia link removed during active job search (Oct 2026).
+         Reinstate: <li><a href="https://reprosia.com" target="_blank" rel="noopener">Reprosia ↗</a></li> -->
   </ul>
   <div class="nav-right">
     <button class="theme-toggle" aria-label="Toggle theme">
@@ -43,7 +44,8 @@
   <a href="../index.html">Packages</a>
   <a href="../blog.html" class="active">Blog</a>
   <a href="../index.html#about">About</a>
-  <a href="https://reprosia.com" target="_blank" rel="noopener">Reprosia ↗</a>
+  <!-- Reprosia link removed during active job search (Oct 2026).
+       Reinstate: <a href="https://reprosia.com" target="_blank" rel="noopener">Reprosia ↗</a> -->
   <a href="https://github.com/repro-stats" target="_blank" rel="noopener">GitHub</a>
 </nav>
 
@@ -89,7 +91,7 @@
 
   <h2>Installation</h2>
 
-  <pre><code>install.packages("bayprior") # v<span data-cran-version="bayprior">0.2.12</span>
+  <pre><code>install.packages("bayprior") # v<span data-cran-version="bayprior">0.4.0</span>
 library(bayprior)</code></pre>
 
   <p>An interactive Shiny application is also available for teams who prefer a point-and-click interface:</p>
@@ -123,7 +125,7 @@ agg &lt;- aggregate_experts(list(E1 = e1, E2 = e2), weights = c(0.6, 0.4))</code
 
   <h2>Step 2: Prior-data conflict diagnostics</h2>
 
-  <p>Once trial data are available, <code>prior_conflict()</code> computes four complementary diagnostics: Box's prior predictive p-value, surprise index, Bhattacharyya overlap, and KL divergence. Binary, continuous, Poisson/count, and survival data types are all supported.</p>
+  <p>Once trial data are available, <code>prior_conflict()</code> computes complementary diagnostics: Box's prior predictive p-value, an S-value (the same p-value expressed as surprisal in bits), the surprise index, Bhattacharyya overlap, and KL divergence. Binary, continuous, Poisson/count, and survival data types are all supported.</p>
 
   <pre><code># Observed data: 18 responders out of 40 patients
 cd &lt;- prior_conflict(
@@ -133,7 +135,9 @@ cd &lt;- prior_conflict(
 
 print(cd)</code></pre>
 
-  <p>Box's p-value close to 0 or 1 indicates the observed data are surprising under the prior predictive distribution — a signal of potential conflict between the prior and the trial data.</p>
+  <p>A small Box's p-value indicates the observed data are surprising under the prior predictive distribution — a signal of potential conflict between the prior and the trial data. By default the p-value uses a Normal approximation. For a Beta prior with binary data, or a Gamma prior with count data, add <code>exact = TRUE</code> to compute it from the exact prior predictive distribution; check <code>cd$box_pvalue_method</code> to see which was used.</p>
+
+  <p>If you have historical trial data rather than expert opinion, <code>map_prior()</code> can derive the prior for you. A follow-up post shows how to <a href="bayprior-rstanarm-brms.html">pass such a prior to rstanarm or brms</a>.</p>
 
   <h2>Step 3: Sensitivity analysis</h2>
 
@@ -198,7 +202,8 @@ scep &lt;- sceptical_prior(null_value = 0.20, family = "beta", strength = "moder
     <li><a href="https://github.com/repro-stats" target="_blank" rel="noopener">GitHub</a></li>
     <li><a href="../blog.html">Blog</a></li>
     <li><a href="https://ndohpenngit.github.io/bayprior/" target="_blank" rel="noopener">bayprior docs</a></li>
-    <li><a href="https://reprosia.com" target="_blank" rel="noopener">Reprosia</a></li>
+    <!-- Reprosia link removed during active job search (Oct 2026).
+         Reinstate: <li><a href="https://reprosia.com" target="_blank" rel="noopener">Reprosia</a></li> -->
   </ul>
   <span class="footer-copy">© 2026 Ndoh Penn · Antwerp, Belgium</span>
 </footer>

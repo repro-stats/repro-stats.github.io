@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>From a bayprior MAP prior to a fitted model: handing priors to rstanarm and brms — ReproStats</title>
+  <meta name="description" content="Derive a meta-analytic-predictive prior from historical trials with bayprior, then pass it to rstanarm or brms without silently changing it.">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" sizes="16x16 32x32 48x48">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#1a56db">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Serif:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+<nav class="nav">
+  <a href="../index.html" class="nav-logo">repro<span>stats</span>.org</a>
+  <ul class="nav-links">
+    <li><a href="../index.html">Packages</a></li>
+    <li><a href="../blog.html" class="active">Blog</a></li>
+    <li><a href="../index.html#about">About</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="theme-toggle" aria-label="Toggle theme">
+      <svg class="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg class="icon-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+    <a href="https://github.com/repro-stats" class="btn btn-outline btn-sm" target="_blank" rel="noopener">GitHub</a>
+  </div>
+  <button class="nav-burger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+</nav>
+<nav class="nav-drawer">
+  <a href="../index.html">Packages</a>
+  <a href="../blog.html" class="active">Blog</a>
+  <a href="../index.html#about">About</a>
+  <a href="https://github.com/repro-stats" target="_blank" rel="noopener">GitHub</a>
+</nav>
+
+<section class="post-hero">
+  <div class="post-hero-inner">
+    <a href="../blog.html" class="post-back">← Back to blog</a>
+    <div class="post-meta">
+      <span class="post-meta-item">14 Oct 2026</span>
+      <span class="post-meta-item">·</span>
+      <span class="post-meta-item">6 min read</span>
+      <span class="post-meta-item">·</span>
+      <span class="post-meta-item">Ndoh Penn</span>
+    </div>
+    <h1 class="display display-lg">From a <em>bayprior</em> MAP prior to a fitted model: handing priors to rstanarm and brms</h1>
+    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:1.5rem">
+      <span class="tag">Bayesian</span>
+      <span class="tag">bayprior</span>
+      <span class="tag">rstanarm</span>
+      <span class="tag">brms</span>
+    </div>
+  </div>
+</section>
+
+<article class="post-body">
+
+  <p><code>bayprior</code> handles prior specification, elicitation, pooling and diagnostics. It does not fit posterior models itself. For that step most teams already use <code>rstanarm</code> or <code>brms</code>, so the practical question is how to pass a prior from one to the other without it being altered on the way.</p>
+
+  <p>This post walks through the handoff for a common case: a historical control-arm response rate, combined across trials into a meta-analytic-predictive (MAP) prior, then used as the intercept prior in a logistic model for the current trial.</p>
+
+  <blockquote><code>rstanarm</code> and <code>brms</code> are suggested packages of <code>bayprior</code>, not dependencies, and <code>historical_effect_sizes()</code> needs <code>metafor</code>. Install what you need: <code>install.packages(c("rstanarm", "brms", "metafor"))</code>. Both modelling packages need a working Stan toolchain.</blockquote>
+
+  <h2>Step 1: Derive the prior from historical trials</h2>
+
+  <p>Start from raw event counts per historical trial. <code>historical_effect_sizes()</code> converts them into the estimate and standard error that <code>map_prior()</code> expects. For a control-arm response rate the outcome type is <code>"single_arm_log_odds"</code>, and the columns must be named <code>xi</code> (events) and <code>ni</code> (patients):</p>
+
+  <pre><code>library(bayprior)
+
+trials &lt;- data.frame(xi = c(12, 8, 15), ni = c(40, 35, 50))
+es     &lt;- historical_effect_sizes("single_arm_log_odds", trials)
+
+map &lt;- map_prior(
+  y            = es$y,
+  se           = es$se,
+  outcome_type = "single_arm_log_odds",
+  label        = "Historical control (3 trials)"
+)
+
+print(map)
+plot_tau_posterior(map)</code></pre>
+
+  <p>If you already have per-trial estimates and standard errors on the log-odds scale, you can pass them to <code>map_prior()</code> directly as <code>y</code> and <code>se</code>.</p>
+
+  <p>The <code>outcome_type</code> choice matters. It selects the default prior on the between-trial heterogeneity <code>tau</code>, and <code>"log_or"</code> and <code>"single_arm_log_odds"</code> get different default scales. <code>plot_tau_posterior()</code> shows how much the data say about heterogeneity, which is worth a look before you borrow strength from historical trials.</p>
+
+  <h2>Step 2: Read off the hyperparameters</h2>
+
+  <p>The MAP prior is a Normal distribution on the log-odds scale. Its mean and SD are stored in <code>fit_summary</code>:</p>
+
+  <pre><code>mu    &lt;- map$fit_summary$mean
+sigma &lt;- map$fit_summary$sd
+c(mu = mu, sigma = sigma)</code></pre>
+
+  <p>A logistic-regression intercept is also on the log-odds scale, and both modelling packages accept a Normal prior for it. No change of distribution family is needed, only the right call.</p>
+
+  <h2>Step 3: Handoff to rstanarm</h2>
+
+  <p><code>rstanarm::normal()</code> evaluates <code>location</code> and <code>scale</code> as ordinary R expressions, so <code>mu</code> and <code>sigma</code> can be passed directly. Set <code>autoscale = FALSE</code>. Otherwise <code>rstanarm</code> may rescale the SD you supply relative to the data, which silently changes the prior <code>bayprior</code> computed.</p>
+
+  <pre><code>library(rstanarm)
+
+# Toy current-trial data: 40 patients, binary response
+set.seed(1)
+dat &lt;- data.frame(y = rbinom(40, 1, 0.32))
+
+fit_rstanarm &lt;- stan_glm(
+  y ~ 1,
+  data            = dat,
+  family          = binomial(link = "logit"),
+  prior_intercept = normal(location = mu, scale = sigma, autoscale = FALSE),
+  chains          = 4,
+  iter            = 2000,
+  refresh         = 0,
+  seed            = 1
+)
+
+print(fit_rstanarm, digits = 3)</code></pre>
+
+  <h2>Step 4: Handoff to brms</h2>
+
+  <p><code>brms::prior()</code> is not a drop-in replacement. It captures its argument by non-standard evaluation and stores it as text, so <code>prior(normal(mu, sigma), class = "Intercept")</code> stores the variable names, not their values, and fails at fit time. <code>prior_string()</code> builds the specification from an already-evaluated string, which is the reliable way to pass numbers programmatically:</p>
+
+  <pre><code>library(brms)
+
+prior_spec &lt;- prior_string(
+  paste0("normal(", mu, ",", sigma, ")"),
+  class = "Intercept"
+)
+prior_spec
+
+fit_brms &lt;- brm(
+  y ~ 1,
+  data    = dat,
+  family  = bernoulli(link = "logit"),
+  prior   = prior_spec,
+  chains  = 4,
+  iter    = 2000,
+  refresh = 0,
+  seed    = 1
+)
+
+summary(fit_brms)</code></pre>
+
+  <h2>Two limits to keep in mind</h2>
+
+  <ul>
+    <li><strong>Intercepts only.</strong> The values from <code>map_prior()</code> describe the control-arm log-odds. Use them for the intercept, not for slope or coefficient priors (<code>class = "b"</code> in <code>brms</code>), which are on a different parameter.</li>
+    <li><strong>Check what "intercept" means in your model.</strong> Both packages define the default intercept with predictors centred. If your model has covariates and you want the prior to apply to the control-arm log-odds at specific covariate values, check how you parametrise the model first. In <code>brms</code>, the <code>0 + Intercept</code> formula syntax gives the intercept without centring.</li>
+  </ul>
+
+  <p>Only a single Normal prior hands off this way. A mixture, such as one from <code>robust_prior()</code>, is not a single Normal, so it is not covered by this recipe.</p>
+
+  <h2>Keep the justification with the model</h2>
+
+  <p>The prior in your model and the prior in your documentation should be the same object. Pass the same <code>map</code> to <code>prior_report()</code> so the report that goes in the submission package records exactly what was handed to Stan:</p>
+
+  <pre><code>prior_report(
+  prior         = map,
+  output_format = "html",
+  trial_name    = "TRIAL-001",
+  sponsor       = "Example Pharma Ltd",
+  author        = "N.P., Biostatistician"
+)</code></pre>
+
+  <p>Summary: <code>rstanarm</code> needs <code>normal(location = mu, scale = sigma, autoscale = FALSE)</code>; <code>brms</code> needs <code>prior_string()</code> with the evaluated values.</p>
+
+  <h2>References</h2>
+
+  <ul>
+    <li>Schmidli, H. et al. (2014). Robust meta-analytic-predictive priors in clinical trials with historical control information. <em>Biometrics</em>, 70, 1023–1032.</li>
+    <li>Neuenschwander, B. et al. (2010). Summarizing historical information on controls in clinical trials. <em>Clinical Trials</em>, 7, 5–18.</li>
+    <li>Röver, C. et al. (2021). On weakly informative prior distributions for the heterogeneity parameter in Bayesian random-effects meta-analysis. <em>Research Synthesis Methods</em>, 12, 448–474.</li>
+  </ul>
+
+  <hr class="post-divider">
+
+  <p>Questions or corrections — <a href="mailto:contact@reprostats.org">contact@reprostats.org</a>.</p>
+
+</article>
+
+<footer>
+  <a href="../" class="footer-logo">repro<span>stats</span>.org</a>
+  <ul class="footer-links">
+    <li><a href="https://github.com/repro-stats" target="_blank" rel="noopener">GitHub</a></li>
+    <li><a href="../blog.html">Blog</a></li>
+    <li><a href="https://ndohpenngit.github.io/bayprior/" target="_blank" rel="noopener">bayprior docs</a></li>
+  </ul>
+  <span class="footer-copy">© 2026 Ndoh Penn · Antwerp, Belgium</span>
+</footer>
+
+<script src="../main.js"></script>
+</body>
+</html>

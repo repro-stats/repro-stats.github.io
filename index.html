@@ -185,11 +185,12 @@
     <div class="pkg-grid">
       <div class="pkg-card reveal">
         <div class="pkg-header"><span class="pkg-name">bayprior</span><div class="pkg-badges"><span class="badge badge-cran">CRAN</span><span class="badge badge-shiny">Shiny app</span></div></div>
-        <p class="pkg-desc">Structured Bayesian prior elicitation, conflict diagnostics, sensitivity analysis, and regulatory reporting for clinical trials. Aligned with the FDA 2026 draft guidance on Bayesian methods.</p>
+        <p class="pkg-desc">Structured Bayesian prior elicitation, historical-data borrowing, conflict diagnostics, sensitivity analysis, and regulatory reporting for clinical trials. Designed around the FDA 2026 draft guidance on Bayesian methods.</p>
         <ul class="pkg-feats">
-          <li>SHELF-style elicitation across 6 distribution families</li>
-          <li>Prior-data conflict diagnostics</li>
-          <li>Sensitivity analysis with tornado plots</li>
+          <li>SHELF-style elicitation across 6 distribution families, for binary, continuous, count, and survival data</li>
+          <li>MAP priors from historical trials, plus sceptical, robust-mixture, and power priors</li>
+          <li>Prior-data conflict diagnostics with exact prior-predictive p-values</li>
+          <li>Sensitivity analysis with tornado plots; rstanarm/brms integration</li>
           <li>Regulatory prior justification reports (HTML/PDF/Word)</li>
         </ul>
         <div class="pkg-install"><span class="prompt">&gt; </span>install.packages("bayprior")</div>
@@ -244,6 +245,12 @@
     <h2 class="display display-md" style="margin-bottom:0.875rem">Recent writing on<br><em>R in regulated settings.</em></h2>
     <p style="font-size:1rem;color:var(--ink-mid);max-width:480px;line-height:1.75;font-weight:300;margin-bottom:3rem">Practical guides, methodology notes, and regulatory context for pharma statisticians. <a href="blog.html" style="color:var(--accent)">See all posts →</a></p>
     <div class="blog-grid reveal">
+      <a href="blog/bayprior-rstanarm-brms.html" class="blog-card">
+        <div class="blog-meta"><span class="blog-date">14 Oct 2026</span><span class="blog-read">6 min read</span></div>
+        <h3>From a bayprior MAP prior to a fitted model: handing priors to rstanarm and brms</h3>
+        <p>Derive a MAP prior from historical trials, then pass it to rstanarm or brms without silently changing it.</p>
+        <div class="blog-card-footer"><div class="blog-tags"><span class="tag">Bayesian</span><span class="tag">bayprior</span><span class="tag">rstanarm</span></div><span class="blog-arrow">→</span></div>
+      </a>
       <a href="blog/qualifying-regulog-validated-environment.html" class="blog-card">
         <div class="blog-meta"><span class="blog-date">1 Jul 2026</span><span class="blog-read">10 min read</span></div>
         <h3>Qualifying regulog in a validated R environment</h3>
@@ -255,12 +262,6 @@
         <h3>21 CFR Part 11-compliant immunogenicity analysis in R with regulog</h3>
         <p>End-to-end audit logging for a Phase III RSV vaccine trial — GMT, seroconversion, electronic sign-off, and hash chain verification.</p>
         <div class="blog-card-footer"><div class="blog-tags"><span class="tag">regulog</span><span class="tag">21 CFR Part 11</span></div><span class="blog-arrow">→</span></div>
-      </a>
-      <a href="blog/lineager-dermatology.html" class="blog-card">
-        <div class="blog-meta"><span class="blog-date">26 Jun 2026</span><span class="blog-read">9 min read</span></div>
-        <h3>Traceable ADaM derivation: every exclusion documented with lineager</h3>
-        <p>Building ADEFF with row-level provenance — population flags, change from baseline, EASI-75 responder flag, CONSORT table, and subject-level tracing.</p>
-        <div class="blog-card-footer"><div class="blog-tags"><span class="tag">lineager</span><span class="tag">CDISC ADaM</span></div><span class="blog-arrow">→</span></div>
       </a>
       <a href="blog/bayesian-priors-clinical-trials.html" class="blog-card">
         <div class="blog-meta"><span class="blog-date">22 Jun 2026</span><span class="blog-read">8 min read</span></div>
